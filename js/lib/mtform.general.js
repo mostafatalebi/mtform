@@ -75,3 +75,17 @@ mtFormInit.prototype.forEach = function(obj, callback)
         }
     }
 }
+
+mtFormInit.prototype.getUniqueId = function(){
+    var ui;
+    ui = this.uniqueId;
+    this.uniqueId++;
+    return ui;
+}
+
+mtFormInit.prototype.addToRepo = function(elementType, elementId) {
+    var newRepo = {
+        type : elementType,
+        id : elementId,
+    }
+}

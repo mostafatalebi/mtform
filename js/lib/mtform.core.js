@@ -29,6 +29,8 @@ function mtFormInit(container){
     this.alternateContent = "";
     this.contentBefore = "";
     this.contentAfter = "";
+    this.uniqueId = 0; // the unique id assigned to each generated component
+    this.logs = []; // an array of objects (key:value pairs)
 
     this.defaultItemTemplate = {
         before : "",
