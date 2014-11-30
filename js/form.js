@@ -1,10 +1,11 @@
 
 window.onload = function(){
-    var MtForm = new mtFormInit(document.getElementById("form-cont"));
+    var ele = document.getElementsByTagName("body")[0];
 
-    MtForm.Input().addRule("email").
-        addRule("mobile", "true").
-        setContainer(document.getElementsByTagName("body")[0]).makeAppend();
+    var MtForm = new mtFormInit(document.getElementById("form-cont"));
+    MtForm.Input().Hidden().addRule("email").Password().
+        addRule("mobile", "false").Textarea().addRule("length", "250").
+        setContainer(ele).breakBetween().makeAppend().JSON().printJSON();
 };
 
 

@@ -21,8 +21,22 @@ function mtFormInit(container){
     this.htmlResult = []; // assigns the HTML output to this var
     this.htmlResultObj = []; // push comoponent each time to this array
     this.rules = []; // a list of rules for each element
+    this.rulesAll = []; // a list of rules for each element
     this.lastQueried = ""; // the last queried element
     this.basePlaceholder = "@mtForm@"; // used for placeholders inside components
+    this.jsonResult; // the json-converted array of form components
+    this.islternate = false;
+    this.alternateContent = "";
+    this.contentBefore = "";
+    this.contentAfter = "";
+
+    this.defaultItemTemplate = {
+        before : "",
+        after : "",
+        condition : function(input, type){},
+    };
+
+    this.defaultTemplateStack = {};
 };
 
 /**
