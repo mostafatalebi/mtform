@@ -4,7 +4,6 @@
  existing element
  **/
 
-<<<<<<< HEAD
 /**
  * Generates an HTML markup of all created inputs. It does not output anything, it
  * just prepares the HTML markup for other methods such as make(), makeAppend and makePrepend
@@ -29,21 +28,12 @@ mtFormInit.prototype.generateJSON = function(){
     if(this.hasRule() === true)
     {
         var rules = this._rulesToString();
-=======
-mtFormInit.prototype.generate = function(){
-
-    if(this.hasRule() === true)
-    {
-        var rules = this._rulesToString();
-        console.log(rules);
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
         for(var i = 0; i < this.inputs.length; i++)
         {
             this.inputs[i] = this.inputs[i].replace(this.basePlaceholder, rules);
         }
 
     }
-<<<<<<< HEAD
 
     // make a JSON version
     this.jsonResult = JSON.stringify(this.inputs);
@@ -56,14 +46,6 @@ mtFormInit.prototype.generate = function(){
  * @param element optional a DOM element, which overrides the last container Element
  * @returns {mtFormInit}
  */
-=======
-    for(var i = 0; i < this.inputs.length; i++)
-    {
-        this.htmls += this.inputs[i];
-    }
-};
-
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 mtFormInit.prototype.make = function(element){
     this.generate();
     var html = this.htmls;
@@ -74,13 +56,10 @@ mtFormInit.prototype.make = function(element){
     return this;
 }
 
-<<<<<<< HEAD
 /**
  * Appends the HTML markup to the last specified container Element.
  * @param element optional a DOM element, which overrides the last container Element
  */
-=======
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 mtFormInit.prototype.makeAppend = function(element){
     this.generate();
     var html = this.htmls;
@@ -89,7 +68,6 @@ mtFormInit.prototype.makeAppend = function(element){
         this.container.innerHTML = containerContent+html;
     else
         element.innerHTML = containerContent+html;
-<<<<<<< HEAD
 
     return this;
 }
@@ -98,10 +76,6 @@ mtFormInit.prototype.makeAppend = function(element){
  * Prepends the HTML markup to the last specified container Element.
  * @param element optional a DOM element, which overrides the last container Element
  */
-=======
-}
-
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 mtFormInit.prototype.makePrepend = function(element){
     this.generate();
     var html = this.htmls;
@@ -110,7 +84,6 @@ mtFormInit.prototype.makePrepend = function(element){
         this.container.innerHTML = html+containerContent;
     else
         element.innerHTML = html+containerContent;
-<<<<<<< HEAD
 
     return this;
 }
@@ -174,16 +147,10 @@ mtFormInit.prototype.get = function(){
  * prints the result into the console.
  * @returns {mtFormInit}
  */
-=======
-}
-
-
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 mtFormInit.prototype.print = function(){
     console.log(this.htmls);
     return this;
 };
-<<<<<<< HEAD
 
 
 
@@ -222,5 +189,3 @@ mtFormInit.prototype.wrapInHtml = function(openTag, closeTag){
     }
     return this;
 };
-=======
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf

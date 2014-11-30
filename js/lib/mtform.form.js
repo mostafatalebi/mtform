@@ -23,11 +23,8 @@ mtFormInit.prototype.create = function(element, args){
         inp = this.addHidden(this.attrs);
     else if (element.trim().toLowerCase() == 'password')
         inp = this.addPassword(this.attrs);
-<<<<<<< HEAD
     else if (element.trim().toLowerCase() == 'textarea')
         inp = this.addTextarea(this.attrs);
-=======
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 
     this.inputs.push(inp);
     this.lastQueried = inp;
@@ -43,7 +40,6 @@ mtFormInit.prototype.addHidden = function(attrs){
 };
 
 mtFormInit.prototype.addPassword = function(attrs){
-<<<<<<< HEAD
     return "<input type='password'" + attrs + " @mtForm@ />";
 };
 
@@ -51,9 +47,6 @@ mtFormInit.prototype.addTextarea = function(attrs, value){
     value = (typeof value == 'undefined' || typeof value == null)
         ? "" : value;
     return "<textarea " + attrs + " @mtForm@ >" + value + "</textarea>";
-=======
-    return "<input type='hidden'" + attrs + " @mtForm@ />";
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 };
 
 mtFormInit.prototype.Input = function(args){
@@ -61,7 +54,6 @@ mtFormInit.prototype.Input = function(args){
 };
 
 mtFormInit.prototype.Hidden = function(args){
-<<<<<<< HEAD
     return this.create("hidden", args);
 };
 
@@ -71,11 +63,4 @@ mtFormInit.prototype.Password = function(args){
 
 mtFormInit.prototype.Textarea = function(args){
     return this.create("textarea", args);
-=======
-    return this.create("input", args);
-};
-
-mtFormInit.prototype.Password = function(args){
-    return this.create("input", args);
->>>>>>> b3b250651e40c1656cc44f899379d4679d07f5cf
 };
