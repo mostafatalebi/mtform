@@ -6,12 +6,12 @@ window.onload = function(){
 
     MtForm.Input().Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea().addRule("length", "250").
-        Radios({}, {
+        Radios({
             name : 'students',
-            values : ["female", "male", "old", "young"],
+            values : ["female", "male", "old", "young"], // can accept a function too
             labels : ["Female", "Male", "Aged", "Young"], // can accepts a function too
             attrs : {class : "good.bad"},
-        }).Submit("Click Here").
+        }).addRule("mobile", "10numbers").Submit("Click Here").
         setContainer(ele).breakBetween().makeAppend().JSON().printJSON();
 
 };

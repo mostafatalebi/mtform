@@ -38,13 +38,17 @@ mtFormInit.prototype.create = function(element, args, secondaryArgs){
 
     // why concat? because it will both join string with array and array with array,
     // making our workflow seamless here.
-    this.inputs.concat(inp);
+    inp = this.__cleanPlaceholder(inp); // cleans the placeholders, if any remained 'unused'
+    this.inputs = this.inputs.concat(inp);
     this.lastQueried = inp;
     return this;
 }
 
 mtFormInit.prototype.addInput = function(attrs){
-    return "<input" + attrs + " "+ this.ph("attr") +" />";
+    var input = this.getTpl("input");
+    return this.parser(input, [":attrs"], [attrs]);
+
+    // return "<input" + attrs + " "+ this.ph("attr") +" />";
 };
 
 mtFormInit.prototype.addHidden = function(attrs){
@@ -82,21 +86,25 @@ mtFormInit.prototype.addButton = function(attrs){
     return "<button " + attrs + " "+ this.ph("attr") +" >" + value + "</button>";
 };
 
-mtFormInit.prototype.addRadios = function(attrs){
+mtFormInit.prototype.addRadios = function(attrs, args){
     var value = "";
     value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
         ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
 
     var radios = [];
-    console.log(attrs);
-    for(var i = 0; i < attrs.values.length; i++)
+
+    for(var i = 0; i < args.values.length; i++)
     {
         var currentInput = "";
-        var extra;
-        extra = "value=" + "'" + attrs.values[i] + "' ";
-        extra = "name=" + attrs.name;
-        extra = "class=" + attrs.class;
-        currentInput = "<input type='radio' "  + extra +  " " + this.ph("attr") + " />";
+        var extra = "";
+        if(typeof args.values !== undefined &&
+            typeof args.values !== 'null') extra += " value=" + "'" + args.values[i] + "' ";
+        if(typeof args.name !== undefined &&
+            typeof args.name !== 'null') extra += " name=" + "'" + args.name + "' ";
+        if(typeof attrs.class !== undefined &&
+            typeof attrs.class !== 'null') extra += " class="  + "'" + attrs.class + "' ";
+        currentInput = "<label >"+ args.labels[i] +"</label>";
+        currentInput += "<input type='radio' "  + extra +  " " + this.ph("rules") + " />";
         radios.push(currentInput);
     }
 
@@ -129,5 +137,5 @@ mtFormInit.prototype.Button = function(args){
 };
 
 mtFormInit.prototype.Radios = function(args){
-    return this.create("radios", args);
+    return this.create("radios", args.attrs, args);
 };

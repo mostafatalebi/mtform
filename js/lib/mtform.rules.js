@@ -19,6 +19,7 @@ mtFormInit.prototype.addRule = function(ruleName, ruleValue){
 
 
 mtFormInit.prototype.__rulesToString = function(type){
+
     type = (typeof type === null || typeof type === 'undefined')
         ? "single" : type;
     var baseAttr = "data-rules";
@@ -51,6 +52,7 @@ mtFormInit.prototype.hasRule = function(){
  * @private
  */
 mtFormInit.prototype.__applyRules = function(emptyRules){
+
     emptyRules = (typeof emptyRules === null || typeof emptyRules === 'undefined')
         ? false : emptyRules;
     if(this.hasRule() === true)
@@ -61,6 +63,7 @@ mtFormInit.prototype.__applyRules = function(emptyRules){
             this.inputs[i] = this.inputs[i].replace(this.ph("attr"), rules);
         }
     }
+
     if(emptyRules === true)
     {
         this.rules = []; // empty the rules

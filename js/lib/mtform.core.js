@@ -32,20 +32,25 @@ function mtFormInit(container){
     this.contentAfter = "";
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
-    this.placeholders = {
-        attr : "attr",
-        component : "component",
-        before : "before",
-        after : "after"
-    }
 
-    this.defaultItemTemplate = {
-        before : "",
-        after : "",
-        condition : function(input, type){},
+    this.placeholders = {
+        rules : ":rules",
+        component : ":component",
+        before : ":before",
+        after : ":after",
+        message : ":message",
+        label : ":label",
     };
 
-    this.defaultTemplateStack = {};
+
+
+    // each entry into the array has to be
+    // an object {} (containing type and htmlContent)
+    this.templateDefault = [];
+
+    // string. since it will be immediately used for the last inserted element(s)
+    this.templateImmediate = "";
+
 };
 
 /**

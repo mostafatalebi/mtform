@@ -85,20 +85,7 @@ mtFormInit.prototype.forEach = function(obj, callback)
     }
 }
 
-<<<<<<< HEAD
-mtFormInit.prototype.getUniqueId = function(){
-    var ui;
-    ui = this.uniqueId;
-    this.uniqueId++;
-    return ui;
-}
 
-mtFormInit.prototype.addToRepo = function(elementType, elementId) {
-    var newRepo = {
-        type : elementType,
-        id : elementId,
-    }
-=======
 /**
  * Gets the placeholder for the provided key
  * @param key the key of the placeholder
@@ -106,8 +93,7 @@ mtFormInit.prototype.addToRepo = function(elementType, elementId) {
  */
 mtFormInit.prototype.ph = function(key)
 {
-    var value = this.placeholders[key];
-    return this.namespaceDelimiter+this.mainNamespace+":"+value+this.namespaceDelimiter;
+    return this.placeholders[key];
 }
 
 /**
@@ -117,28 +103,5 @@ mtFormInit.prototype.ph = function(key)
  */
 mtFormInit.prototype.setPh = function(key, value)
 {
-    this.placeholders[key] =this.namespaceDelimiter+value+this.namespaceDelimiter;
-}
-
-/**
- * Sets a namespace (for mainNamespace)
- * @param value [default=mtform]
- */
-mtFormInit.prototype.setNamespace = function(value)
-{
-    this.mainNamespace = value;
-}
-
-/**
- * Sets a delimiter to be wrapped around placeholders
- * @param value [default=@]
- */
-mtFormInit.prototype.setDelimiter = function(value)
-{
-    this.namespaceDelimiter = value;
-}
-
-mtFormInit.prototype.__eraseRemainingPlaceholders = function(){
-
->>>>>>> 73114546bf443eb4c84f5d86c9e6eeb4c86b42c7
+    this.placeholders[key] = value;
 }

@@ -14,10 +14,8 @@ mtFormInit.prototype.generate = function(){
     // checks to see if there any rules to be applied
     this.__applyRules(true);
     this.__makeAlternate(); // if it is set, then applies it
-    this.__eraseRemainingPlaceholders();
+
     this.htmls += this.inputs.join("");
-
-
 };
 
 /**
