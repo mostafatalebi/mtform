@@ -9,45 +9,100 @@
  * @param args object key represent the name attribute and value is its value
  * @returns {mtFormInit} string HTML Markup
  */
-mtFormInit.prototype.create = function(element, args){
-    if(typeof args !== 'object')
-        args = {};
-    this.argsToAttrs(args);
+mtFormInit.prototype.create = function(element, args, secondaryArgs){
+    // we make sure if no param is passed, to re-declare it
+    // as a object so to avoid future undefined errors
+    if(typeof args !== 'object' && typeof args !== 'string')
+        args = "";
+    if(typeof args === 'object') this.argsToAttrs(args);
+    var arguments = (typeof args === 'object' && args.length > 0)
+            ? this.attrs : args;
     var inp;
 
     if(element.trim().toLowerCase() == 'input')
-        inp = this.addInput(this.attrs);
+        inp = this.addInput(arguments);
     else if (element.trim().toLowerCase() == 'hidden')
-        inp = this.addHidden(this.attrs);
+        inp = this.addHidden(arguments);
     else if (element.trim().toLowerCase() == 'hidden')
-        inp = this.addHidden(this.attrs);
+        inp = this.addHidden(arguments);
     else if (element.trim().toLowerCase() == 'password')
-        inp = this.addPassword(this.attrs);
+        inp = this.addPassword(arguments);
     else if (element.trim().toLowerCase() == 'textarea')
-        inp = this.addTextarea(this.attrs);
+        inp = this.addTextarea(arguments);
+    else if (element.trim().toLowerCase() == 'submit')
+        inp = this.addSubmit(arguments);
+    else if (element.trim().toLowerCase() == 'button')
+        inp = this.addButton(arguments);
+    else if (element.trim().toLowerCase() == 'radios')
+        inp = this.addRadios(arguments, secondaryArgs);
 
-    this.inputs.push(inp);
+    // why concat? because it will both join string with array and array with array,
+    // making our workflow seamless here.
+    this.inputs.concat(inp);
     this.lastQueried = inp;
     return this;
 }
 
 mtFormInit.prototype.addInput = function(attrs){
-    return "<input" + attrs + " @mtForm@ />";
+    return "<input" + attrs + " "+ this.ph("attr") +" />";
 };
 
 mtFormInit.prototype.addHidden = function(attrs){
-    return "<input type='hidden'" + attrs + " @mtForm@ />";
+    if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
+        console.warn("Hidden input already has a 'type' attribute. Cannot be changed.");
+    return "<input type='hidden'" + attrs + " "+ this.ph("attr") +" />";
 };
 
 mtFormInit.prototype.addPassword = function(attrs){
-    return "<input type='password'" + attrs + " @mtForm@ />";
+    if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
+        console.warn("Password input already has a 'type' attribute. Cannot be changed.");
+    return "<input type='password'" + attrs + " "+ this.ph("attr") +" />";
 };
 
-mtFormInit.prototype.addTextarea = function(attrs, value){
-    value = (typeof value == 'undefined' || typeof value == null)
-        ? "" : value;
-    return "<textarea " + attrs + " @mtForm@ >" + value + "</textarea>";
+mtFormInit.prototype.addTextarea = function(attrs, innerValue){
+    innerValue = (typeof innerValue == 'undefined' || typeof innerValue === null)
+        ? "" : innerValue;
+    return "<textarea " + attrs + " "+ this.ph("attr") +" >" + innerValue + "</textarea>";
 };
+
+mtFormInit.prototype.addSubmit = function(attrs){
+    var value = "";
+    value = (typeof attrs === 'string' && (typeof attrs.value === "undefined" || typeof attrs.value === "null") )
+        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+    if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
+            console.warn("Submit input already has a 'type' attribute. Cannot be changed.");
+
+    return "<input type='submit' " + attrs + " "+ this.ph("attr") +" " + value + " />";
+};
+
+mtFormInit.prototype.addButton = function(attrs){
+    var value = "";
+    value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
+        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+    return "<button " + attrs + " "+ this.ph("attr") +" >" + value + "</button>";
+};
+
+mtFormInit.prototype.addRadios = function(attrs){
+    var value = "";
+    value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
+        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+
+    var radios = [];
+    console.log(attrs);
+    for(var i = 0; i < attrs.values.length; i++)
+    {
+        var currentInput = "";
+        var extra;
+        extra = "value=" + "'" + attrs.values[i] + "' ";
+        extra = "name=" + attrs.name;
+        extra = "class=" + attrs.class;
+        currentInput = "<input type='radio' "  + extra +  " " + this.ph("attr") + " />";
+        radios.push(currentInput);
+    }
+
+    return radios;
+};
+
 
 mtFormInit.prototype.Input = function(args){
     return this.create("input", args);
@@ -63,4 +118,16 @@ mtFormInit.prototype.Password = function(args){
 
 mtFormInit.prototype.Textarea = function(args){
     return this.create("textarea", args);
+};
+
+mtFormInit.prototype.Submit = function(args){
+    return this.create("submit", args);
+};
+
+mtFormInit.prototype.Button = function(args){
+    return this.create("button", args);
+};
+
+mtFormInit.prototype.Radios = function(args){
+    return this.create("radios", args);
 };

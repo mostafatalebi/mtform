@@ -16,6 +16,7 @@ function mtFormInit(container){
     this.inputs = []; // assigns the inputs to this var
     this.selects = []; // assigns the inputs to this var
     this.checkBoxes = []; // assigns the checkBoxes to this var
+    this.radios = []; // assigns the checkBoxes to this var
     this.textareas = []; // assigns the textareas to this var
     this.textareas = []; // assigns the textareas to this var
     this.htmlResult = []; // assigns the HTML output to this var
@@ -29,9 +30,29 @@ function mtFormInit(container){
     this.alternateContent = "";
     this.contentBefore = "";
     this.contentAfter = "";
+<<<<<<< HEAD
     this.uniqueId = 0; // the unique id assigned to each generated component
     this.logs = []; // an array of objects (key:value pairs)
     this.template = "";
+=======
+
+    this.mainNamespace = "mtform";
+    this.namespaceDelimiter = "@";
+    this.placeholders = {
+        attr : "attr",
+        component : "component",
+        before : "before",
+        after : "after"
+    }
+
+    this.defaultItemTemplate = {
+        before : "",
+        after : "",
+        condition : function(input, type){},
+    };
+
+    this.defaultTemplateStack = {};
+>>>>>>> 73114546bf443eb4c84f5d86c9e6eeb4c86b42c7
 };
 
 /**
