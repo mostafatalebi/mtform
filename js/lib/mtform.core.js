@@ -30,12 +30,6 @@ function mtFormInit(container){
     this.alternateContent = "";
     this.contentBefore = "";
     this.contentAfter = "";
-<<<<<<< HEAD
-    this.uniqueId = 0; // the unique id assigned to each generated component
-    this.logs = []; // an array of objects (key:value pairs)
-    this.template = "";
-=======
-
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
     this.placeholders = {
@@ -52,7 +46,6 @@ function mtFormInit(container){
     };
 
     this.defaultTemplateStack = {};
->>>>>>> 73114546bf443eb4c84f5d86c9e6eeb4c86b42c7
 };
 
 /**
