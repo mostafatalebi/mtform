@@ -23,7 +23,7 @@ function mtFormInit(container){
     this.rules = []; // a list of rules for each element
     this.rulesAll = []; // a list of rules for each element
     this.lastQueried = ""; // the last queried element
-    this.basePlaceholder = "@mtForm@"; // used for placeholders inside components
+    this.basePlaceholder = "@mtForm:attr@"; // used for placeholders inside components
     this.jsonResult; // the json-converted array of form components
     this.islternate = false;
     this.alternateContent = "";
@@ -31,14 +31,7 @@ function mtFormInit(container){
     this.contentAfter = "";
     this.uniqueId = 0; // the unique id assigned to each generated component
     this.logs = []; // an array of objects (key:value pairs)
-
-    this.defaultItemTemplate = {
-        before : "",
-        after : "",
-        condition : function(input, type){},
-    };
-
-    this.defaultTemplateStack = {};
+    this.template = "";
 };
 
 /**
