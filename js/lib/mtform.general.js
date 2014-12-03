@@ -5,14 +5,23 @@
 mtFormInit.prototype.argsToAttrs = function(args){
     if(typeof args !== 'object')
         console.error("You have not passed an object as args. Function: argsToAttrs()");
-    var attrsStr = " "; // declared with a space at the beginning
-    this.forEach(args, function(element, key, isFirst, isLast){
-        attrsStr += " " + key+'='+"'" + element + "' ";
-        if(isLast == true) attrsStr += " ";
-    });
-    this.attrs = attrsStr;
-
-    return this;
+    else
+    {
+        if(args.length == 0)
+        {
+            return this;
+        }
+        else
+        {
+            var attrsStr = " "; // declared with a space at the beginning
+            this.forEach(args, function(element, key, isFirst, isLast){
+                attrsStr += " " + key+'='+"'" + element + "' ";
+                if(isLast == true) attrsStr += " ";
+            });
+            this.attrs = attrsStr;
+            return this;
+        }
+    }
 }
 
 mtFormInit.prototype.isArrayOrObject = function(inp)
@@ -74,4 +83,47 @@ mtFormInit.prototype.forEach = function(obj, callback)
             });
         }
     }
+}
+
+/**
+ * Gets the placeholder for the provided key
+ * @param key the key of the placeholder
+ * @returns {*}
+ */
+mtFormInit.prototype.ph = function(key)
+{
+    var value = this.placeholders[key];
+    return this.namespaceDelimiter+this.mainNamespace+":"+value+this.namespaceDelimiter;
+}
+
+/**
+ * Edits current placeholder
+ * @param key the name of placeholder
+ * @param value
+ */
+mtFormInit.prototype.setPh = function(key, value)
+{
+    this.placeholders[key] =this.namespaceDelimiter+value+this.namespaceDelimiter;
+}
+
+/**
+ * Sets a namespace (for mainNamespace)
+ * @param value [default=mtform]
+ */
+mtFormInit.prototype.setNamespace = function(value)
+{
+    this.mainNamespace = value;
+}
+
+/**
+ * Sets a delimiter to be wrapped around placeholders
+ * @param value [default=@]
+ */
+mtFormInit.prototype.setDelimiter = function(value)
+{
+    this.namespaceDelimiter = value;
+}
+
+mtFormInit.prototype.__eraseRemainingPlaceholders = function(){
+
 }

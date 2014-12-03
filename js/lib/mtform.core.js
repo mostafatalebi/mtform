@@ -30,6 +30,15 @@ function mtFormInit(container){
     this.contentBefore = "";
     this.contentAfter = "";
 
+    this.mainNamespace = "mtform";
+    this.namespaceDelimiter = "@";
+    this.placeholders = {
+        attr : "attr",
+        component : "component",
+        before : "before",
+        after : "after"
+    }
+
     this.defaultItemTemplate = {
         before : "",
         after : "",
