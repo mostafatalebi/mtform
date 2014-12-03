@@ -16,6 +16,7 @@ function mtFormInit(container){
     this.inputs = []; // assigns the inputs to this var
     this.selects = []; // assigns the inputs to this var
     this.checkBoxes = []; // assigns the checkBoxes to this var
+    this.radios = []; // assigns the checkBoxes to this var
     this.textareas = []; // assigns the textareas to this var
     this.textareas = []; // assigns the textareas to this var
     this.htmlResult = []; // assigns the HTML output to this var

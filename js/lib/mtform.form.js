@@ -9,7 +9,7 @@
  * @param args object key represent the name attribute and value is its value
  * @returns {mtFormInit} string HTML Markup
  */
-mtFormInit.prototype.create = function(element, args){
+mtFormInit.prototype.create = function(element, args, secondaryArgs){
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
     if(typeof args !== 'object' && typeof args !== 'string')
@@ -33,8 +33,12 @@ mtFormInit.prototype.create = function(element, args){
         inp = this.addSubmit(arguments);
     else if (element.trim().toLowerCase() == 'button')
         inp = this.addButton(arguments);
+    else if (element.trim().toLowerCase() == 'radios')
+        inp = this.addRadios(arguments, secondaryArgs);
 
-    this.inputs.push(inp);
+    // why concat? because it will both join string with array and array with array,
+    // making our workflow seamless here.
+    this.inputs.concat(inp);
     this.lastQueried = inp;
     return this;
 }
@@ -78,6 +82,27 @@ mtFormInit.prototype.addButton = function(attrs){
     return "<button " + attrs + " "+ this.ph("attr") +" >" + value + "</button>";
 };
 
+mtFormInit.prototype.addRadios = function(attrs){
+    var value = "";
+    value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
+        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+
+    var radios = [];
+    console.log(attrs);
+    for(var i = 0; i < attrs.values.length; i++)
+    {
+        var currentInput = "";
+        var extra;
+        extra = "value=" + "'" + attrs.values[i] + "' ";
+        extra = "name=" + attrs.name;
+        extra = "class=" + attrs.class;
+        currentInput = "<input type='radio' "  + extra +  " " + this.ph("attr") + " />";
+        radios.push(currentInput);
+    }
+
+    return radios;
+};
+
 
 mtFormInit.prototype.Input = function(args){
     return this.create("input", args);
@@ -101,4 +126,8 @@ mtFormInit.prototype.Submit = function(args){
 
 mtFormInit.prototype.Button = function(args){
     return this.create("button", args);
+};
+
+mtFormInit.prototype.Radios = function(args){
+    return this.create("radios", args);
 };
