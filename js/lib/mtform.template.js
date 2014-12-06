@@ -21,7 +21,7 @@ mtFormInit.prototype.parser = function(str, placeholders, values)
     var result = "";
     for(var i = 0; i < placeholders.length; i++)
     {
-        result += str.replace(placeholders[i], values[i]);
+        result = str.replace(placeholders[i], values[i]);
     }
     return result;
 }
