@@ -21,8 +21,8 @@ mtFormInit.prototype.create = function(element, args, secondaryArgs){
 
     if(element.trim().toLowerCase() == 'input')
         inp = this.addInput(arguments);
-    else if (element.trim().toLowerCase() == 'hidden')
-        inp = this.addHidden(arguments);
+    else if (element.trim().toLowerCase() == 'text')
+        inp = this.addInput(arguments);
     else if (element.trim().toLowerCase() == 'hidden')
         inp = this.addHidden(arguments);
     else if (element.trim().toLowerCase() == 'password')

@@ -71,10 +71,8 @@ mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
 }
 
 mtFormInit.prototype.setDefaultTemplate = function(htmlContent, componentType){
-    this.templateDefault.push({
-        html : htmlContent,
-        type : componentType,
-    });
+    this.templatesFormComponents[componentType] = htmlContent;
+    return this;
 }
 
 mtFormInit.prototype.setTemplate = function(html){
@@ -87,6 +85,10 @@ mtFormInit.prototype.parseTemplate = function(){
         this.inputs = this.__parseTemplate("component");
     }
 }
+
+mtFormInit.prototype.getAllTemplates = function(){
+    return this.templatesFormComponents;
+};
 
 mtFormInit.prototype.Template = function(html){
     this.setTemplate(html);

@@ -39,11 +39,11 @@ mtFormInit.prototype.__rulesToString = function(type){
     }
 
     return baseAttr+"="+"'"+rules+"'";
-}
+};
 
 mtFormInit.prototype.hasRule = function(){
     return (this.rules.length > 0) ? true : false;
-}
+};
 
 /**
  * Parses the rules and injects them into last generated inputs.
