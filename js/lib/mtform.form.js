@@ -10,13 +10,13 @@
  * @returns {mtFormInit} string HTML Markup
  */
 mtFormInit.prototype.create = function(element, args, secondaryArgs){
+    var arguments = "";
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
     if(typeof args !== 'object' && typeof args !== 'string')
         args = "";
-    if(typeof args === 'object') this.argsToAttrs(args);
-    var arguments = (typeof args === 'object' && args.length > 0)
-            ? this.attrs : args;
+    else if (typeof args === 'object')
+        arguments = this.argsToAttrs(args);
     var inp;
 
     if(element.trim().toLowerCase() == 'input')
@@ -46,44 +46,64 @@ mtFormInit.prototype.create = function(element, args, secondaryArgs){
 
 mtFormInit.prototype.addInput = function(attrs){
     var input = this.getTpl("input");
-    return this.parser(input, [":attrs"], [attrs]);
-
-    // return "<input" + attrs + " "+ this.ph("attr") +" />";
+    var prs = this.parser(input, [":attrs"], [attrs]);
+    this.__setLastComponentType("input");
+    this.__addComponentInstance(prs, "inputs");
+    return prs;
 };
 
 mtFormInit.prototype.addHidden = function(attrs){
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("Hidden input already has a 'type' attribute. Cannot be changed.");
-    return "<input type='hidden'" + attrs + " "+ this.ph("attr") +" />";
+    var input = this.getTpl("hidden");
+    var prs = this.parser(input, [":attrs"], [attrs]);
+    this.__setLastComponentType("input");
+    this.__addComponentInstance(prs, "inputs");
+    return prs;
 };
 
 mtFormInit.prototype.addPassword = function(attrs){
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("Password input already has a 'type' attribute. Cannot be changed.");
-    return "<input type='password'" + attrs + " "+ this.ph("attr") +" />";
+    var input = this.getTpl("password");
+    var prs = this.parser(input, [":attrs"], [attrs]);
+    this.__setLastComponentType("input");
+    this.__addComponentInstance(prs, "inputs");
+    return prs;
 };
 
 mtFormInit.prototype.addTextarea = function(attrs, innerValue){
     innerValue = (typeof innerValue == 'undefined' || typeof innerValue === null)
         ? "" : innerValue;
-    return "<textarea " + attrs + " "+ this.ph("attr") +" >" + innerValue + "</textarea>";
+    var textarea = this.getTpl("textarea");
+    var prs = this.parser(textarea, [":attrs"], [attrs]);
+    this.__setLastComponentType("textarea");
+    this.__addComponentInstance(prs, "textareas");
+    return prs;
 };
 
 mtFormInit.prototype.addSubmit = function(attrs){
     var value = "";
     value = (typeof attrs === 'string' && (typeof attrs.value === "undefined" || typeof attrs.value === "null") )
-        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+        ? "value='"+attrs+"'" : attrs;
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
             console.warn("Submit input already has a 'type' attribute. Cannot be changed.");
-
-    return "<input type='submit' " + attrs + " "+ this.ph("attr") +" " + value + " />";
+    var submit = this.getTpl("submit");
+    var prs = this.parser(submit, [":attrs"], [attrs]);
+    this.__setLastComponentType("submit");
+    this.__addComponentInstance(prs, "submits");
+    return prs;
 };
 
-mtFormInit.prototype.addButton = function(attrs){
+mtFormInit.prototype.addButton = function(attrs, innerValue){
     var value = "";
-    value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
-        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
-    return "<button " + attrs + " "+ this.ph("attr") +" >" + value + "</button>";
+    value = (typeof innerValue === "undefined" || typeof innerValue === "null")
+        ? "" : innerValue;
+    var button = this.getTpl("button");
+    var prs = this.parser(button, [":attrs", ":innerValue"], [attrs, innerValue]);
+    this.__setLastComponentType("button");
+    this.__addComponentInstance(prs, "buttons");
+    return prs;
 };
 
 mtFormInit.prototype.addRadios = function(attrs, args){
@@ -139,3 +159,13 @@ mtFormInit.prototype.Button = function(args){
 mtFormInit.prototype.Radios = function(args){
     return this.create("radios", args.attrs, args);
 };
+
+
+
+mtFormInit.prototype.__getComponentsFromStack = function(componentType){
+    return this.stacks[componentType];
+};
+
+mtFormInit.prototype.AllComponents = function(){
+    return this.stacks;
+}

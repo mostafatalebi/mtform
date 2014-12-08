@@ -12,7 +12,7 @@
 mtFormInit.prototype.generate = function(){
 
     // checks to see if there any rules to be applied
-    this.__applyRules(true);
+    this.__parseRules(true);
     this.__makeAlternate(); // if it is set, then applies it
 
     this.htmls += this.inputs.join("");
@@ -24,17 +24,7 @@ mtFormInit.prototype.generate = function(){
  */
 mtFormInit.prototype.generateJSON = function(){
 
-    /**
-    if(this.hasRule() === true)
-    {
-        var rules = this.__rulesToString();
-        for(var i = 0; i < this.inputs.length; i++)
-        {
-            this.inputs[i] = this.inputs[i].replace(this.ph("attr"), rules);
-        }
-    }
-     **/
-    this.__applyRules();
+    this.__parseRules();
 
     // make a JSON version
     this.jsonResult = JSON.stringify(this.inputs);

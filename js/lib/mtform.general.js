@@ -9,7 +9,7 @@ mtFormInit.prototype.argsToAttrs = function(args){
     {
         if(args.length == 0)
         {
-            return this;
+            return false;
         }
         else
         {
@@ -19,7 +19,7 @@ mtFormInit.prototype.argsToAttrs = function(args){
                 if(isLast == true) attrsStr += " ";
             });
             this.attrs = attrsStr;
-            return this;
+            return attrsStr;
         }
     }
 }

@@ -32,6 +32,32 @@ function mtFormInit(container){
     this.contentAfter = "";
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
+    this.stacks = {
+        "forms" : [],
+        "inputs" : [],
+        "radios" : [],
+        "checkboxes" : [],
+        "rules" : [], // global rules to be applied
+        "inputs" : [],
+        "submits" : [],
+        "buttons" : [],
+        "textareas" : [],
+        "options" : [],
+    };
+
+    // each component has a fixed "unchangeable" attribute called
+    // data-mtformid which stores a unique id of each component.
+
+    // this array-attribute holds events for each component at occurrence of which the
+    // validation for that certain component is carried out. This is optional, since
+    // all components are validated by default on "submit" event.
+    this.validationEvents = {
+        change : [],
+        blur : [],
+        submit : [],
+        custom : [], // each entry must be an object containing a function and a unique id corresponding
+        // to a specific component
+    }
 
     this.placeholders = {
         rules : ":rules",
@@ -50,6 +76,9 @@ function mtFormInit(container){
 
     // string. since it will be immediately used for the last inserted element(s)
     this.templateImmediate = "";
+
+    // the type of the last component generated
+    this.lastComponentType = "";
 
 };
 
@@ -77,4 +106,22 @@ mtFormInit.prototype.getContainer = function(){
 mtFormInit.prototype.setContainer = function(element){
     this.container = element;
     return this;
+}
+
+/**
+ * This functions adds the most recent [created] components into its related
+ * stack for later use.
+ * @param component the component which is created
+ * @param componentStack the stack onto which the component should be pushed
+ * @private
+ */
+mtFormInit.prototype.__addComponentInstance = function(component, componentStack){
+    this.stacks[componentStack].push(component);
+    // returns nothing, since this is a system function
+}
+
+
+mtFormInit.prototype.__setLastComponentType = function(componentType){
+    this.lastComponentType = componentType;
+    // returns nothing, since this is a system function
 }

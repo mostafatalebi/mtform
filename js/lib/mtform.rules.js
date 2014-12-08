@@ -13,7 +13,7 @@ mtFormInit.prototype.addRule = function(ruleName, ruleValue){
     if(typeof ruleValue === null || typeof ruleValue === "undefined")
         ruleValue = "true"; // set a default value, most of the rules just need this
     this.rules.push(ruleName+":"+ruleValue);
-    this.__applyRules(true);
+    this.__parseRules(true);
     return this;
 };
 
@@ -51,7 +51,7 @@ mtFormInit.prototype.hasRule = function(){
  * @returns {mtFormInit} returns the main Object
  * @private
  */
-mtFormInit.prototype.__applyRules = function(emptyRules){
+mtFormInit.prototype.__parseRules = function(emptyRules){
 
     emptyRules = (typeof emptyRules === null || typeof emptyRules === 'undefined')
         ? false : emptyRules;
