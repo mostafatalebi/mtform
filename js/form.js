@@ -6,8 +6,8 @@ window.onload = function(){
 
     var MTFormer = MtForm.setDefaultTemplate("<div id='someID'><input type='text' :attrs" +
     " :rules /></div>", "input");
-    console.log(MTFormer.AllComponents());
-    MTFormer.Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
+
+    MTFormer.Input().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea().addRule("length", "250").
         Radios({
             name : 'students',

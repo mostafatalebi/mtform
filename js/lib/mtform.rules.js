@@ -55,12 +55,26 @@ mtFormInit.prototype.__parseRules = function(emptyRules){
 
     emptyRules = (typeof emptyRules === null || typeof emptyRules === 'undefined')
         ? false : emptyRules;
+
+    var new_stacks = this.stacks;
+
     if(this.hasRule() === true)
     {
         var rules = this.__rulesToString();
-        for(var i = 0; i < this.inputs.length; i++)
+
+        var stack_keys = Object.keys(this.stacks);
+        for(var i =0; i < stack_keys; i++)
         {
-            this.inputs[i] = this.inputs[i].replace(this.ph("attr"), rules);
+            if(this.isArrayOrObject(new_stacks[stack_keys[i]]) !== false)
+            {
+                // we expect this to be an array and not an object
+                // thus, we use .length property than Object.keys(), unlike the
+                // above parent iterator.
+                for(var t = 0; t < new_stacks[stack_keys[i]].length; t++ )
+                {
+                    new_stacks[stack_keys[i]][i] = new_stacks[stack_keys[i]][i].replace(this.ph("attr"), rules);
+                }
+            }
         }
     }
 
@@ -68,5 +82,6 @@ mtFormInit.prototype.__parseRules = function(emptyRules){
     {
         this.rules = []; // empty the rules
     }
-    return this;
+
+    return new_stacks;
 }

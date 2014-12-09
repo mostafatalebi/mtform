@@ -12,11 +12,16 @@
 mtFormInit.prototype.generate = function(){
 
     // checks to see if there any rules to be applied
-    this.__parseRules(true);
-    this.__makeAlternate(); // if it is set, then applies it
+    this.stackParsed = this.__parseRules(true);
 
-    this.htmls += this.inputs.join("");
+    // if it is set, then applies it
+    // this.__makeAlternate();
+
+    var new_stack = this.stackIterationByStackSequential(this.stacks, this.stackSequential);
+
+    this.htmls += new_stack.join("");
 };
+
 
 /**
  * Generates an JSON version of all created components. It does not output anything, it
@@ -102,6 +107,7 @@ mtFormInit.prototype.__makeAlternate = function(){
     if(this.isAlternate === true)
     {
         var new_result = [];
+        var new_stacks = this.stackSequential;
         var content = this.alternateContent;
         if (typeof content !== "object") {
             for (var i = 0; i < this.inputs.length; i++) {
@@ -111,12 +117,28 @@ mtFormInit.prototype.__makeAlternate = function(){
         }
         else // it is object
         {
-            var content_iterator = 0;
+
             for (var i = 0; i < this.inputs.length; i++) {
-                if(content_iterator == content.length ) content_iterator = 0;
-                new_result.push(this.inputs[i]);
-                new_result.push(content[content_iterator]);
-                content_iterator++;
+
+            }
+
+            var stack_keys = Object.keys(this.stacks);
+            var content_iterator = 0;
+            for(var i =0; i < stack_keys; i++)
+            {
+                if(this.isArrayOrObject(new_stacks[stack_keys[i]]) !== false)
+                {
+                    // we expect this to be an array and not an object
+                    // thus, we use .length property than Object.keys(), unlike the
+                    // above parent iterator.
+                    for(var t = 0; t < new_stacks[stack_keys[i]].length; t++ )
+                    {
+                        if(content_iterator == content.length ) content_iterator = 0;
+                        new_result.push(this.inputs[i]);
+                        new_result.push(content[content_iterator]);
+                        content_iterator++;
+                    }
+                }
             }
         }
 

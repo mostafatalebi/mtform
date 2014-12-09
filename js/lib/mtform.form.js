@@ -9,7 +9,7 @@
  * @param args object key represent the name attribute and value is its value
  * @returns {mtFormInit} string HTML Markup
  */
-mtFormInit.prototype.create = function(element, args, secondaryArgs){
+mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     var arguments = "";
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
@@ -19,28 +19,39 @@ mtFormInit.prototype.create = function(element, args, secondaryArgs){
         arguments = this.argsToAttrs(args);
     var inp;
 
-    if(element.trim().toLowerCase() == 'input')
+    var component_type = component_type.trim().toLowerCase();
+
+    if(component_type == 'input')
         inp = this.addInput(arguments);
-    else if (element.trim().toLowerCase() == 'text')
+    else if (component_type == 'text')
         inp = this.addInput(arguments);
-    else if (element.trim().toLowerCase() == 'hidden')
+    else if (component_type== 'hidden')
         inp = this.addHidden(arguments);
-    else if (element.trim().toLowerCase() == 'password')
+    else if (component_type == 'password')
         inp = this.addPassword(arguments);
-    else if (element.trim().toLowerCase() == 'textarea')
+    else if (component_type == 'textarea')
         inp = this.addTextarea(arguments);
-    else if (element.trim().toLowerCase() == 'submit')
+    else if (component_type == 'submit')
         inp = this.addSubmit(arguments);
-    else if (element.trim().toLowerCase() == 'button')
+    else if (component_type == 'button')
         inp = this.addButton(arguments);
-    else if (element.trim().toLowerCase() == 'radios')
+    else if (component_type == 'radio')
         inp = this.addRadios(arguments, secondaryArgs);
 
     // why concat? because it will both join string with array and array with array,
     // making our workflow seamless here.
     inp = this.__cleanPlaceholder(inp); // cleans the placeholders, if any remained 'unused'
-    this.inputs = this.inputs.concat(inp);
-    this.lastQueried = inp;
+
+    // we check to see what is the last component's index in the stacks. We just want to have a
+    // sequence of pointers in order to just parse one real string objects. As our components
+    // are grouped respective to their type, while the user expects the generation of the components
+    // to be in order of their call. Thus, we have to keep the order in which they are called.
+
+    var component_stack_properties = { type : component_type , index : this.stackSequentialLastIndex(component_type) };
+    this.addStackSequential( component_stack_properties.type, component_stack_properties.index );
+
+    // we keep track of the last generated component's type and index.
+    this.lastQueried = component_type;
     return this;
 }
 
@@ -48,7 +59,7 @@ mtFormInit.prototype.addInput = function(attrs){
     var input = this.getTpl("input");
     var prs = this.parser(input, [":attrs"], [attrs]);
     this.__setLastComponentType("input");
-    this.__addComponentInstance(prs, "inputs");
+    this.__addComponentInstance(prs, "input");
     return prs;
 };
 
@@ -58,7 +69,7 @@ mtFormInit.prototype.addHidden = function(attrs){
     var input = this.getTpl("hidden");
     var prs = this.parser(input, [":attrs"], [attrs]);
     this.__setLastComponentType("input");
-    this.__addComponentInstance(prs, "inputs");
+    this.__addComponentInstance(prs, "input");
     return prs;
 };
 
@@ -67,8 +78,8 @@ mtFormInit.prototype.addPassword = function(attrs){
         console.warn("Password input already has a 'type' attribute. Cannot be changed.");
     var input = this.getTpl("password");
     var prs = this.parser(input, [":attrs"], [attrs]);
-    this.__setLastComponentType("input");
-    this.__addComponentInstance(prs, "inputs");
+    this.__setLastComponentType("password");
+    this.__addComponentInstance(prs, "password");
     return prs;
 };
 
@@ -78,7 +89,7 @@ mtFormInit.prototype.addTextarea = function(attrs, innerValue){
     var textarea = this.getTpl("textarea");
     var prs = this.parser(textarea, [":attrs"], [attrs]);
     this.__setLastComponentType("textarea");
-    this.__addComponentInstance(prs, "textareas");
+    this.__addComponentInstance(prs, "textarea");
     return prs;
 };
 
@@ -91,7 +102,7 @@ mtFormInit.prototype.addSubmit = function(attrs){
     var submit = this.getTpl("submit");
     var prs = this.parser(submit, [":attrs"], [attrs]);
     this.__setLastComponentType("submit");
-    this.__addComponentInstance(prs, "submits");
+    this.__addComponentInstance(prs, "submit");
     return prs;
 };
 
@@ -102,7 +113,7 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
     var button = this.getTpl("button");
     var prs = this.parser(button, [":attrs", ":innerValue"], [attrs, innerValue]);
     this.__setLastComponentType("button");
-    this.__addComponentInstance(prs, "buttons");
+    this.__addComponentInstance(prs, "button");
     return prs;
 };
 
@@ -115,7 +126,7 @@ mtFormInit.prototype.addRadios = function(attrs, args){
 
     for(var i = 0; i < args.values.length; i++)
     {
-        var currentInput = "";
+        var current_input = "";
         var extra = "";
         if(typeof args.values !== undefined &&
             typeof args.values !== 'null') extra += " value=" + "'" + args.values[i] + "' ";
@@ -123,9 +134,9 @@ mtFormInit.prototype.addRadios = function(attrs, args){
             typeof args.name !== 'null') extra += " name=" + "'" + args.name + "' ";
         if(typeof attrs.class !== undefined &&
             typeof attrs.class !== 'null') extra += " class="  + "'" + attrs.class + "' ";
-        currentInput = "<label >"+ args.labels[i] +"</label>";
-        currentInput += "<input type='radio' "  + extra +  " " + this.ph("rules") + " />";
-        radios.push(currentInput);
+        current_input = "<label >"+ args.labels[i] +"</label>";
+        current_input += "<input type='radio' "  + extra +  " " + this.ph("rules") + " />";
+        radios.push(current_input);
     }
 
     return radios;
@@ -157,7 +168,7 @@ mtFormInit.prototype.Button = function(args){
 };
 
 mtFormInit.prototype.Radios = function(args){
-    return this.create("radios", args.attrs, args);
+    return this.create("radio", args.attrs, args);
 };
 
 

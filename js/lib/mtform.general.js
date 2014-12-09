@@ -105,3 +105,30 @@ mtFormInit.prototype.setPh = function(key, value)
 {
     this.placeholders[key] = value;
 }
+
+
+mtFormInit.prototype.addStackSequential = function(componentType, componentIndex)
+{
+    this.stackSequential.push({ type : componentType, index : componentIndex });
+}
+
+mtFormInit.prototype.stackSequentialLastIndex = function(componentType)
+{
+    if(typeof this.stacks[componentType] === 'object')
+    {
+        return ( (this.stacks[componentType].length) != 0)
+            ? this.stacks[componentType].length-1 : 0;
+    }
+}
+
+
+mtFormInit.prototype.stackIterationByStackSequential = function(stackOriginal, stackSequential){
+    var new_stack = [];
+    for(var i = 0; i < stackSequential.length; i++)
+    {
+       // console.log(stackSequential[i]);
+        var component = stackOriginal[stackSequential[i].type][stackSequential[i].index];
+        new_stack.push(component);
+    }
+    return new_stack;
+}

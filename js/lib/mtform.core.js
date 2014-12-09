@@ -23,7 +23,7 @@ function mtFormInit(container){
     this.htmlResultObj = []; // push comoponent each time to this array
     this.rules = []; // a list of rules for each element
     this.rulesAll = []; // a list of rules for each element
-    this.lastQueried = ""; // the last queried element
+    this.lastQueried = {}; // the last queried element
     this.basePlaceholder = "@mtForm:attr@"; // used for placeholders inside components
     this.jsonResult; // the json-converted array of form components
     this.islternate = false;
@@ -33,17 +33,28 @@ function mtFormInit(container){
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
     this.stacks = {
-        "forms" : [],
-        "inputs" : [],
-        "radios" : [],
-        "checkboxes" : [],
-        "rules" : [], // global rules to be applied
-        "inputs" : [],
-        "submits" : [],
-        "buttons" : [],
-        "textareas" : [],
-        "options" : [],
+        "form" : [],
+        "input" : [],
+        "password" : [],
+        "hidden" : [],
+        "radio" : [],
+        "checkbox" : [],
+        "rule" : [], // global rules to be applied
+        "input" : [],
+        "submit" : [],
+        "button" : [],
+        "textarea" : [],
+        "option" : [],
     };
+
+    this.stackParsed = {};
+
+
+    // this stack accepts an object on each push(). this
+    // object holds two properties. One is .type and another is
+    // .index, which when combioned, points exactly to the
+    // component place in this.stacks array.
+    this.stackSequential = [];
 
     // each component has a fixed "unchangeable" attribute called
     // data-mtformid which stores a unique id of each component.
