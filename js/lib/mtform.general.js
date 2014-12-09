@@ -121,7 +121,13 @@ mtFormInit.prototype.stackSequentialLastIndex = function(componentType)
     }
 }
 
-
+/**
+ * Traverses through all generated components, not by their type (since components are originally treated
+ * by their types),
+ * @param stackOriginal
+ * @param stackSequential
+ * @returns {Array}
+ */
 mtFormInit.prototype.stackIterationByStackSequential = function(stackOriginal, stackSequential){
     var new_stack = [];
     for(var i = 0; i < stackSequential.length; i++)
