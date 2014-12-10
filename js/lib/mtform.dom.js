@@ -82,9 +82,9 @@ mtFormInit.prototype.__addHtmls = function(component_last_stack_properties, inse
     }
 }
 
-mtFormInit.prototype.__label = function(component_last_stack_properties, labelValue)
+mtFormInit.prototype.__label = function(component_last_stack_properties, labelValue, args)
 {
-    var label = this.createElement("label", {}, labelValue);
+    var label = this.createElement("label", labelValue, args);
     this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
         =
         label+this.stacks[component_last_stack_properties.type][component_last_stack_properties.index];
@@ -97,9 +97,13 @@ mtFormInit.prototype.__label = function(component_last_stack_properties, labelVa
 
 mtFormInit.prototype.createElement = function(name, args, content)
 {
+    args = (typeof args !== 'object') ? {} : args;
     if(name == 'label')
+    {
         var attrs = this.argsToAttrs(args, "local");
         return "<label "  + attrs + ">" + content + "</label>";
+    }
+
 }
 
 

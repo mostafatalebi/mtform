@@ -35,6 +35,15 @@ mtFormInit.prototype.Radios = function(args){
     return this.create("radio", args.attrs, args);
 };
 
+
+mtFormInit.prototype.Label = function(args, innerValue)
+{
+    var last_comp_info = this.componentLastInfo;
+    this.__label(last_comp_info, args, innerValue);
+    return this;
+}
+
+
 mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
 {
     array_skip = (typeof array_skip === "undefined" || typeof array_skip === null)
