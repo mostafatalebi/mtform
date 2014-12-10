@@ -10,21 +10,9 @@ mtFormInit.prototype.templatesFormComponents = {
     button : "<textarea :rules  :attrs >:value</textarea>",
 }
 
-
-
-mtFormInit.prototype.getTpl = function(key){
-    return this.templatesFormComponents[key];
-}
-
-mtFormInit.prototype.parser = function(str, placeholders, values)
-{
-    var result = "";
-    for(var i = 0; i < placeholders.length; i++)
-    {
-        result = str.replace(placeholders[i], values[i]);
-    }
-    return result;
-}
+// ===================
+// PRIVATE FUNCTIONS
+// ===================
 
 /**
  * Receives an array object of generated form components, or one single form component (string)
@@ -40,19 +28,15 @@ mtFormInit.prototype.parser = function(str, placeholders, values)
 mtFormInit.prototype.__cleanPlaceholder = function(input)
 {
     var result = input;
-
     var keys = Object.keys(this.placeholders);
     var stack_keys = Object.keys(result);
-
     // checks to see if the input is object at all
     if(typeof result === 'object')
     {
-
         // loops through the main stack
         for(var w = 0; w < stack_keys.length; w++)
         {
             // checks to see if stack's component type has any element
-
             if(typeof result[stack_keys[w]] === 'object' && result[stack_keys[w]].length > 0)
             {
                 // loops through the component's type of any component added
@@ -64,7 +48,6 @@ mtFormInit.prototype.__cleanPlaceholder = function(input)
                     // set of components.
                     if( typeof result[stack_keys[w]][t] === 'object')
                     {
-                        __("Hold me again");
                         for(var q = 0; q < result[stack_keys[w]][t].length; q++)
                         {
                             // we loop over the set of components (such as radios or checkboxes)
@@ -81,7 +64,6 @@ mtFormInit.prototype.__cleanPlaceholder = function(input)
                             result[stack_keys[w]][t] = result[stack_keys[w]][t].replace(this.placeholders[keys[i]], "");
                         }
                     }
-
                 }
             }
         }
@@ -93,18 +75,14 @@ mtFormInit.prototype.__cleanPlaceholder = function(input)
             result = result.replace(this.placeholders[keys[i]], "");
         }
     }
-
     return result;
 }
-
 /**
-Used for template parsing
+ Used for template parsing
  **/
-
 mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
 {
     var result = [];
-
     if(this.templateImmediate != "")
     {
         for(var i = 0; i < this.inputs.length; i++)
@@ -113,31 +91,33 @@ mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
         }
         return result;
     }
-
 }
 
-mtFormInit.prototype.setDefaultTemplate = function(htmlContent, componentType){
-    this.templatesFormComponents[componentType] = htmlContent;
-    return this;
-}
+// =======================
+// PROTECTED FUNCTIONS
+// =======================
 
+mtFormInit.prototype.getTpl = function(key){
+    return this.templatesFormComponents[key];
+}
+mtFormInit.prototype.parser = function(str, placeholders, values)
+{
+    var result = "";
+    for(var i = 0; i < placeholders.length; i++)
+    {
+        result = str.replace(placeholders[i], values[i]);
+    }
+    return result;
+}
 mtFormInit.prototype.setTemplate = function(html){
     this.templateImmediate = html;
 }
-
 mtFormInit.prototype.parseTemplate = function(){
     if(typeof this.inputs === 'object' && this.inputs.length != 0)
     { // parse inputs
         this.inputs = this.__parseTemplate("component");
     }
 }
-
 mtFormInit.prototype.getAllTemplates = function(){
     return this.templatesFormComponents;
 };
-
-mtFormInit.prototype.Template = function(html){
-    this.setTemplate(html);
-    this.parseTemplate("component");
-    return this;
-}

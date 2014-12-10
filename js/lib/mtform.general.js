@@ -2,7 +2,9 @@
  General methods and properties used across all the other methods
  **/
 
-mtFormInit.prototype.argsToAttrs = function(args){
+mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage){
+    scope_of_usage = (typeof  scope_of_usage === 'undefined' || typeof  scope_of_usage === null)
+        ? "global" : scope_of_usage;
     if(typeof args !== 'object')
         console.error("You have not passed an object as args. Function: argsToAttrs()");
     else
@@ -18,7 +20,7 @@ mtFormInit.prototype.argsToAttrs = function(args){
                 attrsStr += " " + key+'='+"'" + element + "' ";
                 if(isLast == true) attrsStr += " ";
             });
-            this.attrs = attrsStr;
+            if(scope_of_usage == "global") this.attrs = attrsStr;
             return attrsStr;
         }
     }
@@ -138,3 +140,7 @@ mtFormInit.prototype.stackIterationByStackSequential = function(stackOriginal, s
     }
     return new_stack;
 }
+
+mtFormInit.prototype.__getComponentsFromStack = function(componentType){
+    return this.stacks[componentType];
+};

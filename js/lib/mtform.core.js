@@ -140,6 +140,10 @@ mtFormInit.prototype.setContainer = function(element){
     return this;
 }
 
+// ===================
+// PRIVATE FUNCTIONS
+// ===================
+
 /**
  * This functions adds the most recent [created] components into its related
  * stack for later use.

@@ -71,76 +71,8 @@ mtFormInit.prototype.generateJSON = function(){
     return this;
 };
 
-/**
- * puts the HTML markup in the container Element.
- * @param element optional a DOM element, which overrides the last container Element
- * @returns {mtFormInit}
- */
-mtFormInit.prototype.make = function(element){
-    this.generate();
-    var html = this.htmls;
-    if(typeof element === 'null' || typeof element === 'undefined')
-        this.container.innerHTML = html;
-    else
-        element.innerHTML = html;
-    return this;
-}
-
-/**
- * Appends the HTML markup to the last specified container Element.
- * @param element optional a DOM element, which overrides the last container Element
- */
-mtFormInit.prototype.makeAppend = function(element){
-    this.generate();
-    var html = this.htmls;
-    var containerContent = this.container.innerHTML;
-    if(typeof element === 'null' || typeof element === 'undefined')
-        this.container.innerHTML = containerContent+html;
-    else
-        element.innerHTML = containerContent+html;
-
-    return this;
-}
-
-/**
- * Prepends the HTML markup to the last specified container Element.
- * @param element optional a DOM element, which overrides the last container Element
- */
-mtFormInit.prototype.makePrepend = function(element){
-    this.generate();
-    var html = this.htmls;
-    var containerContent = this.container.innerHTML;
-    if(typeof element === 'null' || typeof element === 'undefined')
-        this.container.innerHTML = html+containerContent;
-    else
-        element.innerHTML = html+containerContent;
-
-    return this;
-}
-
-/**
- * puts the HTML markup in the container Element.
- * @param element optional a DOM element, which overrides the last container Element
- * @returns {mtFormInit}
- */
-mtFormInit.prototype.JSON = function(element){
-    this.generateJSON();
-    return this;
-}
 
 
-/**
- *
- * @param html
- * @param from_zero
- * @returns {mtFormInit}
- * @constructor
- */
-mtFormInit.prototype.Alternate = function(html, from_zero){
-    this.isAlternate = true;
-    this.alternateContent = html;
-    return this;
-}
 
 
 mtFormInit.prototype.__makeAlternate = function()
@@ -202,10 +134,7 @@ mtFormInit.prototype.printArray = function(){
 };
 
 
-mtFormInit.prototype.BreakBetween = function(){
-    this.Alternate("<br />");
-    return this;
-};
+
 
 mtFormInit.prototype.wrapInHtml = function(openTag, closeTag){
     this.content("<br />");
