@@ -1,0 +1,11 @@
+***
+Comments placeholders. These placeholders will get processed. This helps our script to be documented
+with a high maintainability.
+***
+
+@__mtformObject : the main object of mtform
+@__lastComponent : last added component
+@__attributes : an object containing any attribute form the HTML element
+@__innerValue : the value stored inside the tags <tag>innerValue</tag>
+@__template : the template
+
