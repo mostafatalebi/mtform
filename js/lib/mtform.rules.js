@@ -62,17 +62,32 @@ mtFormInit.prototype.__parseRules = function(emptyRules){
     {
         var rules = this.__rulesToString();
 
-        var stack_keys = Object.keys(this.stacks);
-        for(var i =0; i < stack_keys; i++)
+        var stack_keys = Object.keys(new_stacks);
+
+        for(var i =0; i < stack_keys.length; i++)
         {
+
             if(this.isArrayOrObject(new_stacks[stack_keys[i]]) !== false)
             {
+
                 // we expect this to be an array and not an object
                 // thus, we use .length property than Object.keys(), unlike the
                 // above parent iterator.
                 for(var t = 0; t < new_stacks[stack_keys[i]].length; t++ )
                 {
-                    new_stacks[stack_keys[i]][i] = new_stacks[stack_keys[i]][i].replace(this.ph("attr"), rules);
+                    if(typeof new_stacks[stack_keys[i]][t] === 'object')
+                    {
+                        for(var q = 0; q < new_stacks[stack_keys[i]][t].length; q++ )
+                        {
+                            new_stacks[stack_keys[i]][t][q] = new_stacks[stack_keys[i]][t][q].replace(this.ph("rules"), rules);
+                        }
+                    }
+                    else
+                    {
+
+                        new_stacks[stack_keys[i]][t] = new_stacks[stack_keys[i]][t].replace(this.ph("rules"), rules);
+
+                    }
                 }
             }
         }

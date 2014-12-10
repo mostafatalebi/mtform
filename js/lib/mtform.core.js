@@ -77,6 +77,9 @@ function mtFormInit(container){
         after : ":after",
         message : ":message",
         label : ":label",
+        attrs : ":attrs",
+        value : ":value",
+        innerValue : ":innerValue",
     };
 
 

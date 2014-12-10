@@ -17,6 +17,10 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         args = "";
     else if (typeof args === 'object')
         arguments = this.argsToAttrs(args);
+    else if (typeof args === 'string')
+        secondaryArgs = args;
+        args = {};
+
     var inp;
 
     var component_type = component_type.trim().toLowerCase();
@@ -25,28 +29,24 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addInput(arguments);
     else if (component_type == 'text')
         inp = this.addInput(arguments);
-    else if (component_type== 'hidden')
+    else if (component_type == 'hidden')
         inp = this.addHidden(arguments);
     else if (component_type == 'password')
         inp = this.addPassword(arguments);
     else if (component_type == 'textarea')
-        inp = this.addTextarea(arguments);
+        inp = this.addTextarea(arguments, secondaryArgs);
     else if (component_type == 'submit')
         inp = this.addSubmit(arguments);
     else if (component_type == 'button')
         inp = this.addButton(arguments);
     else if (component_type == 'radio')
-        inp = this.addRadios(arguments, secondaryArgs);
+        inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
 
-    // why concat? because it will both join string with array and array with array,
-    // making our workflow seamless here.
-    inp = this.__cleanPlaceholder(inp); // cleans the placeholders, if any remained 'unused'
 
-    // we check to see what is the last component's index in the stacks. We just want to have a
-    // sequence of pointers in order to just parse one real string objects. As our components
-    // are grouped respective to their type, while the user expects the generation of the components
+    // we check the last component's index in the stack. We just want to have a
+    // sequence of pointers in order to parse one real string objects during the whole process. As our components
+    // are grouped respective to their type,  the user expects the generation of the components
     // to be in order of their call. Thus, we have to keep the order in which they are called.
-
     var component_stack_properties = { type : component_type , index : this.stackSequentialLastIndex(component_type) };
     this.addStackSequential( component_stack_properties.type, component_stack_properties.index );
 
@@ -68,8 +68,9 @@ mtFormInit.prototype.addHidden = function(attrs){
         console.warn("Hidden input already has a 'type' attribute. Cannot be changed.");
     var input = this.getTpl("hidden");
     var prs = this.parser(input, [":attrs"], [attrs]);
-    this.__setLastComponentType("input");
-    this.__addComponentInstance(prs, "input");
+    this.__setLastComponentType("hidden");
+    this.__addComponentInstance(prs, "hidden");
+    __(prs);
     return prs;
 };
 
@@ -84,10 +85,10 @@ mtFormInit.prototype.addPassword = function(attrs){
 };
 
 mtFormInit.prototype.addTextarea = function(attrs, innerValue){
-    innerValue = (typeof innerValue == 'undefined' || typeof innerValue === null)
+    innerValue = (typeof innerValue === 'undefined' || typeof innerValue === null)
         ? "" : innerValue;
     var textarea = this.getTpl("textarea");
-    var prs = this.parser(textarea, [":attrs"], [attrs]);
+    var prs = this.parser(textarea, [":attrs", ":innerValue"], [attrs, innerValue]);
     this.__setLastComponentType("textarea");
     this.__addComponentInstance(prs, "textarea");
     return prs;
@@ -117,28 +118,45 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
     return prs;
 };
 
-mtFormInit.prototype.addRadios = function(attrs, args){
+mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
     var value = "";
-    value = (typeof attrs == 'string' || typeof attrs.value === "undefined" || typeof attrs.value === "null")
-        ? "value='"+attrs+"'" : "value='"+attrs.value+"'";
+    value = (typeof radiosArgs == 'string' || typeof radiosArgs.value === "undefined" || typeof radiosArgs.value === "null")
+        ? "value='"+radiosArgs+"'" : "value='"+radiosArgs.value+"'";
 
     var radios = [];
+    var radiosTplMain = this.getTpl("radio");
 
-    for(var i = 0; i < args.values.length; i++)
+    // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
+    // value if the user passer lower number of templates than number of radios.
+    var templatePossibleIterator = 0;
+    var radiosTpl = "";
+
+    for(var i = 0; i < radiosArgs.values.length; i++)
     {
-        var current_input = "";
-        var extra = "";
-        if(typeof args.values !== undefined &&
-            typeof args.values !== 'null') extra += " value=" + "'" + args.values[i] + "' ";
-        if(typeof args.name !== undefined &&
-            typeof args.name !== 'null') extra += " name=" + "'" + args.name + "' ";
-        if(typeof attrs.class !== undefined &&
-            typeof attrs.class !== 'null') extra += " class="  + "'" + attrs.class + "' ";
-        current_input = "<label >"+ args.labels[i] +"</label>";
-        current_input += "<input type='radio' "  + extra +  " " + this.ph("rules") + " />";
-        radios.push(current_input);
-    }
+        var radio_value = "value='"+radiosArgs.values[i]+"'";
+        // we check to see if the user has passed an array of templates for each radio, since
+        // we like to support template for each individual component generated within the form
+        if(typeof radiosTplMain === 'object')
+        {
+            radiosTpl  = radiosTplMain[templatePossibleIterator];
+            // here we check to see if the current iteration for templates (in case it is array)
+            // is smaller than i and equals the length of the templates array, if true, then we
+            // set it back to zero for the iteration to work. Doing this, we guarantee the coverage
+            // of the templates for all the components. e.g. the user can pass an array of two-templates
+            // for 6 radios, which allows him/her to have an alternate template pattern for that set of
+            // radios.
+            if( templatePossibleIterator === radiosTplMain.length ) templatePossibleIterator = 0;
+        }
+        else
+        {
+            radiosTpl = radiosTplMain;
+        }
 
+        // we then parse them individually
+        radios[i] = this.parser(radiosTpl, [":attrs", ":values"], [attrs, radio_value]);
+    }
+    this.__setLastComponentType("radio");
+    this.__addComponentInstance(radios, "radio");
     return radios;
 };
 
@@ -155,8 +173,8 @@ mtFormInit.prototype.Password = function(args){
     return this.create("password", args);
 };
 
-mtFormInit.prototype.Textarea = function(args){
-    return this.create("textarea", args);
+mtFormInit.prototype.Textarea = function(args, innerValue){
+    return this.create("textarea", args, innerValue);
 };
 
 mtFormInit.prototype.Submit = function(args){
