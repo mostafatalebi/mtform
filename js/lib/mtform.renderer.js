@@ -19,7 +19,8 @@ mtFormInit.prototype.generate = function(){
     // this.__makeAlternate();
 
     var new_stack = this.stackIterationByStackSequential(this.stackParsed, this.stackSequential);
-
+    __(this.stacks);
+    __(new_stack);
     var html_result = "";
 
     var stack_keys = Object.keys(new_stack);
@@ -30,24 +31,27 @@ mtFormInit.prototype.generate = function(){
     // easier with one-dimensional collection.
     for(var i = 0; i < stack_keys.length; i++)
     {
+
         if(typeof new_stack[stack_keys[i]] === 'object')
         {
+
             for(var w = 0; w < new_stack[stack_keys[i]].length; w++)
             {
                 this.collectionOrdered.push(new_stack[stack_keys[i]][w]);
-                this.htmls += new_stack[stack_keys[i]][w];
+
             }
         }
         else
         {
             this.collectionOrdered.push(new_stack[stack_keys[i]]);
-            this.htmls += new_stack[stack_keys[i]];
+
         }
     }
 
     // Since makeAlternate works with one-dimension linear collection of components,
     // we have to call it right after flattening the multi-dimensional collection
     this.__makeAlternate();
+
 
     this.htmls = this.collectionOrdered.join("");
 };

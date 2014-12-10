@@ -157,6 +157,7 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
         // we then parse them individually
         radios[i] = this.parser(radiosTpl, [":attrs", ":values"], [attrs, radio_value]);
     }
+
     this.__setLastComponentType("radio");
     this.__addComponentInstance(radios, "radio");
     return radios;
