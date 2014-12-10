@@ -82,6 +82,14 @@ mtFormInit.prototype.__addHtmls = function(component_last_stack_properties, inse
     }
 }
 
+/**
+ * Creates a label for the last created form component.
+ * @param component_last_stack_properties an object containing the info about the last created
+ *          component
+ * @param labelValue the title of the label
+ * @param args an object accepting key-value pairs for attributes.
+ * @private
+ */
 mtFormInit.prototype.__label = function(component_last_stack_properties, labelValue, args)
 {
     var label = this.createElement("label", labelValue, args);

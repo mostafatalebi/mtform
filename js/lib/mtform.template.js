@@ -97,6 +97,11 @@ mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
 // PROTECTED FUNCTIONS
 // =======================
 
+/**
+ * returns @__template
+ * @param key type of the tmeplate
+ * @returns {*}
+ */
 mtFormInit.prototype.getTpl = function(key){
     return this.templatesFormComponents[key];
 }

@@ -7,6 +7,10 @@
 // FORM COMPONENTS
 // ===================
 
+mtFormInit.prototype.Form = function(args){
+    return this.create("form", args, form_name);
+};
+
 mtFormInit.prototype.Input = function(args){
     return this.create("input", args);
 };
@@ -35,15 +39,28 @@ mtFormInit.prototype.Radios = function(args){
     return this.create("radio", args.attrs, args);
 };
 
-
-mtFormInit.prototype.Label = function(args, innerValue)
+/**
+ * Creates a label for @__lastComponent. It is different form Laebl() function in that
+ * it comes after the component's specific function. Input().AttachLabel()
+ * @param args @__attributes
+ * @param innerValue @__innerValue
+ * @returns {mtFormInit} @__mtformObject
+ * @constructor
+ */
+mtFormInit.prototype.AttachLabel = function(args, innerValue)
 {
     var last_comp_info = this.componentLastInfo;
     this.__label(last_comp_info, args, innerValue);
     return this;
 }
 
-
+/**
+ * Injects HTML after the @__lastComponent
+ * @param htmlContent @__htmlContent
+ * @param array_skip if set to true, skips the array as one single collection
+ * @returns {mtFormInit} @__mtformObject
+ * @constructor
+ */
 mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
 {
     array_skip = (typeof array_skip === "undefined" || typeof array_skip === null)
@@ -54,6 +71,13 @@ mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
     return this;
 }
 
+/**
+ * Injects HTML before the @__lastComponent
+ * @param htmlContent @__htmlContent
+ * @param array_skip if set to true, skips the array as one single collection
+ * @returns {mtFormInit} @__mtformObject
+ * @constructor
+ */
 mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 {
     array_skip = (typeof array_skip === "undefined" || typeof array_skip === null)
@@ -67,6 +91,7 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 // ===================
 // TEMPLATE PROCESSING
 // ===================
+
 
 mtFormInit.prototype.AllComponents = function(){
     return this.stacks;
