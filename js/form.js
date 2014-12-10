@@ -17,7 +17,8 @@ window.onload = function(){
             attrs : {class : "good.bad"},
         }).addRule("mobile", "10numbers").
             HtmlBefore("<div style='border: 1px red solid;'>This is added before the components.</div>", true).HtmlAfter("<p>This is added after an input</p>").Submit({value : "Click Here", "data-id" : 28}).
-        setContainer(ele).Alternate("<p>---------------------------------</p>", true).makeAppend().JSON().printJSON();
+        setContainer(ele).Alternate("<p>---------------------------------</p>", true).MakeAppend()
+        .JSON().PrintJSON();
 };
 
 

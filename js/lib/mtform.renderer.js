@@ -101,37 +101,7 @@ mtFormInit.prototype.get = function(){
     return (this.htmls);
 };
 
-/**
- * [developer]
- * prints the result into the console.
- * @returns {mtFormInit}
- */
-mtFormInit.prototype.print = function(){
-    console.log(this.htmls);
-    return this;
-};
 
-
-
-/**
- * [developer]
- * prints the JSON result into the console.
- * @returns {mtFormInit}
- */
-mtFormInit.prototype.printJSON = function(){
-    console.log(this.jsonResult);
-    return this;
-};
-
-/**
- * [developer]
- * prints the array result into the console.
- * @returns {mtFormInit}
- */
-mtFormInit.prototype.printArray = function(){
-    console.log(this.inputs);
-    return this;
-};
 
 
 

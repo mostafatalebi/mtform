@@ -3,6 +3,10 @@
  which required to generate a form component of any type.
  **/
 
+// ===================
+// FORM COMPONENTS
+// ===================
+
 mtFormInit.prototype.Input = function(args){
     return this.create("input", args);
 };
@@ -51,6 +55,10 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
     return this;
 }
 
+// ===================
+// TEMPLATE PROCESSING
+// ===================
+
 mtFormInit.prototype.AllComponents = function(){
     return this.stacks;
 }
@@ -86,12 +94,16 @@ mtFormInit.prototype.Alternate = function(html, from_zero){
     return this;
 }
 
+// ===================
+// OUTPUTTING RESULTED CONTENT
+// ===================
+
 /**
  * puts the HTML markup in the container Element.
  * @param element optional a DOM element, which overrides the last container Element
  * @returns {mtFormInit}
  */
-mtFormInit.prototype.make = function(element){
+mtFormInit.prototype.Make = function(element){
     this.generate();
     var html = this.htmls;
     if(typeof element === 'null' || typeof element === 'undefined')
@@ -105,7 +117,7 @@ mtFormInit.prototype.make = function(element){
  * Appends the HTML markup to the last specified container Element.
  * @param element optional a DOM element, which overrides the last container Element
  */
-mtFormInit.prototype.makeAppend = function(element){
+mtFormInit.prototype.MakeAppend = function(element){
     this.generate();
     var html = this.htmls;
     var containerContent = this.container.innerHTML;
@@ -121,7 +133,7 @@ mtFormInit.prototype.makeAppend = function(element){
  * Prepends the HTML markup to the last specified container Element.
  * @param element optional a DOM element, which overrides the last container Element
  */
-mtFormInit.prototype.makePrepend = function(element){
+mtFormInit.prototype.MakePrepend = function(element){
     this.generate();
     var html = this.htmls;
     var containerContent = this.container.innerHTML;
@@ -142,3 +154,33 @@ mtFormInit.prototype.JSON = function(element){
     this.generateJSON();
     return this;
 }
+
+/**
+ * [developer]
+ * prints the result into the console.
+ * @returns {mtFormInit}
+ */
+mtFormInit.prototype.print = function(){
+    console.log(this.htmls);
+    return this;
+};
+
+/**
+ * [developer]
+ * prints the JSON result into the console.
+ * @returns {mtFormInit}
+ */
+mtFormInit.prototype.printJSON = function(){
+    console.log(this.jsonResult);
+    return this;
+};
+
+/**
+ * [developer]
+ * prints the array result into the console.
+ * @returns {mtFormInit}
+ */
+mtFormInit.prototype.printArray = function(){
+    console.log(this.inputs);
+    return this;
+};
