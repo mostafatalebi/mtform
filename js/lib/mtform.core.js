@@ -50,11 +50,22 @@ function mtFormInit(container){
     this.stackParsed = {};
 
 
+    this.htmlObject = {
+        after : "",
+        before : ""
+    };
+
+    this.isHtml = false;
+
     // this stack accepts an object on each push(). this
     // object holds two properties. One is .type and another is
     // .index, which when combioned, points exactly to the
     // component place in this.stacks array.
     this.stackSequential = [];
+
+    // Array of parsed, ordered components without any association of types
+    this.collectionOrdered = [];
+
 
     // each component has a fixed "unchangeable" attribute called
     // data-mtformid which stores a unique id of each component.
@@ -84,6 +95,8 @@ function mtFormInit(container){
 
 
 
+
+
     // each entry into the array has to be
     // an object {} (containing type and htmlContent)
     this.templateDefault = [];
@@ -93,6 +106,11 @@ function mtFormInit(container){
 
     // the type of the last component generated
     this.lastComponentType = "";
+
+    this.componentLastInfo = {
+        index : 0,
+        type : ""
+    }
 
 };
 

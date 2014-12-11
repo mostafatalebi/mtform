@@ -47,11 +47,13 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     // sequence of pointers in order to parse one real string objects during the whole process. As our components
     // are grouped respective to their type,  the user expects the generation of the components
     // to be in order of their call. Thus, we have to keep the order in which they are called.
-    var component_stack_properties = { type : component_type , index : this.stackSequentialLastIndex(component_type) };
-    this.addStackSequential( component_stack_properties.type, component_stack_properties.index );
+    var component_last_stack_properties = { type : component_type , index : this.stackSequentialLastIndex(component_type) };
+    this.addStackSequential( component_last_stack_properties.type, component_last_stack_properties.index );
+
 
     // we keep track of the last generated component's type and index.
     this.lastQueried = component_type;
+    this.componentLastInfo = component_last_stack_properties;
     return this;
 }
 
