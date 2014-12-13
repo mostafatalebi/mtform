@@ -117,9 +117,9 @@ mtFormInit.prototype.BreakBetween = function(){
 
 /**
  *
- * @param html
+ * @param html @__htmlContent
  * @param from_zero
- * @returns {mtFormInit}
+ * @returns {mtFormInit} @__mtformObject
  * @constructor
  */
 mtFormInit.prototype.Alternate = function(html, from_zero){
@@ -134,8 +134,8 @@ mtFormInit.prototype.Alternate = function(html, from_zero){
 
 /**
  * puts the HTML markup in the container Element.
- * @param element optional a DOM element, which overrides the last container Element
- * @returns {mtFormInit}
+ * @param @__elementJavascript
+ * @returns {mtFormInit} @__mtformObject
  */
 mtFormInit.prototype.Make = function(element){
     this.generate();
@@ -148,7 +148,7 @@ mtFormInit.prototype.Make = function(element){
 }
 
 /**
- * Appends the HTML markup to the last specified container Element.
+ * Appends @__htmlContent @__lastContainer
  * @param element optional a DOM element, which overrides the last container Element
  */
 mtFormInit.prototype.MakeAppend = function(element){
