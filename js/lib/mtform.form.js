@@ -94,7 +94,7 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 
 
 mtFormInit.prototype.AllComponents = function(){
-    return this.stacks;
+    return this.collections;
 }
 
 mtFormInit.prototype.Template = function(html){

@@ -12,38 +12,38 @@
 mtFormInit.prototype.generate = function(){
 
     // checks to see if there any rules to be applied
-    this.stackParsed = this.__parseRules(true);
-    this.stackParsed = this.__cleanPlaceholder(this.stackParsed);
+    this.collectionParsed = this.__parseRules(true);
+    this.collectionParsed = this.__cleanPlaceholder(this.collectionParsed);
 
     // if it is set, then applies it
     // this.__makeAlternate();
 
-    var new_stack = this.stackIterationByStackSequential(this.stackParsed, this.stackSequential);
-    __(this.stacks);
-    __(new_stack);
+    var new_collection = this.collectionIterationByCollectionSequential(this.collectionParsed, this.collectionSequential);
+    __(this.collections);
+    __(new_collection);
     var html_result = "";
 
-    var stack_keys = Object.keys(new_stack);
+    var collection_keys = Object.keys(new_collection);
 
     // So far, we have parsed and generated multi-dimensional collections, now it's time to
     // flatten them to one-dimensional collection. This new collection allows us to inject
     // html and further things which are hard with multi-dimensional collection and/or are
     // easier with one-dimensional collection.
-    for(var i = 0; i < stack_keys.length; i++)
+    for(var i = 0; i < collection_keys.length; i++)
     {
 
-        if(typeof new_stack[stack_keys[i]] === 'object')
+        if(typeof new_collection[collection_keys[i]] === 'object')
         {
 
-            for(var w = 0; w < new_stack[stack_keys[i]].length; w++)
+            for(var w = 0; w < new_collection[collection_keys[i]].length; w++)
             {
-                this.collectionOrdered.push(new_stack[stack_keys[i]][w]);
+                this.collectionOrdered.push(new_collection[collection_keys[i]][w]);
 
             }
         }
         else
         {
-            this.collectionOrdered.push(new_stack[stack_keys[i]]);
+            this.collectionOrdered.push(new_collection[collection_keys[i]]);
 
         }
     }
@@ -80,13 +80,13 @@ mtFormInit.prototype.__makeAlternate = function()
     if(this.isAlternate === true)
     {
         var new_result = [];
-        var new_stacks = this.alternateContent;
-        if (typeof new_stacks !== "object")
+        var new_collections = this.alternateContent;
+        if (typeof new_collections !== "object")
         {
             for (var i = 0; i < this.collectionOrdered.length; i++)
             {
                 new_result.push(this.collectionOrdered[i]);
-                new_result.push(new_stacks);
+                new_result.push(new_collections);
             }
         }
     }

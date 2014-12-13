@@ -2,7 +2,9 @@
  General methods and properties used across all the other methods
  **/
 
-mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage){
+mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
+    parseValues = (typeof  parseValues === 'undefined' || typeof  parseValues === null)
+        ? false : parseValues;
     scope_of_usage = (typeof  scope_of_usage === 'undefined' || typeof  scope_of_usage === null)
         ? "global" : scope_of_usage;
     if(typeof args !== 'object')
@@ -17,6 +19,8 @@ mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage){
         {
             var attrsStr = " "; // declared with a space at the beginning
             this.forEach(args, function(element, key, isFirst, isLast){
+                if(parseValues == true)
+                    element = this.parsePossiblePh(element);
                 attrsStr += " " + key+'='+"'" + element + "' ";
                 if(isLast == true) attrsStr += " ";
             });
@@ -109,38 +113,57 @@ mtFormInit.prototype.setPh = function(key, value)
 }
 
 
-mtFormInit.prototype.addStackSequential = function(componentType, componentIndex)
+mtFormInit.prototype.addCollectionSequential = function(componentType, componentIndex)
 {
-    this.stackSequential.push({ type : componentType, index : componentIndex });
+    this.collectionSequential.push({ type : componentType, index : componentIndex });
 }
 
-mtFormInit.prototype.stackSequentialLastIndex = function(componentType)
+mtFormInit.prototype.collectionSequentialLastIndex = function(componentType)
 {
-    if(typeof this.stacks[componentType] === 'object')
+    if(typeof this.collections[componentType] === 'object')
     {
-        return ( (this.stacks[componentType].length) != 0)
-            ? this.stacks[componentType].length-1 : 0;
+        return ( (this.collections[componentType].length) != 0)
+            ? this.collections[componentType].length-1 : 0;
     }
 }
 
 /**
  * Traverses through all generated components, not by their type (since components are originally treated
  * by their types),
- * @param stackOriginal
- * @param stackSequential
+ * @param collectionOriginal
+ * @param collectionSequential
  * @returns {Array}
  */
-mtFormInit.prototype.stackIterationByStackSequential = function(stackOriginal, stackSequential){
-    var new_stack = [];
-    for(var i = 0; i < stackSequential.length; i++)
+mtFormInit.prototype.collectionIterationByCollectionSequential = function(collectionOriginal, collectionSequential){
+    var new_collection = [];
+    for(var i = 0; i < collectionSequential.length; i++)
     {
-       // console.log(stackSequential[i]);
-        var component = stackOriginal[stackSequential[i].type][stackSequential[i].index];
-        new_stack.push(component);
+       // console.log(collectionSequential[i]);
+        var component = collectionOriginal[collectionSequential[i].type][collectionSequential[i].index];
+        new_collection.push(component);
     }
-    return new_stack;
+    return new_collection;
 }
 
-mtFormInit.prototype.__getComponentsFromStack = function(componentType){
-    return this.stacks[componentType];
+mtFormInit.prototype.LastComponent = function()
+{
+    var last_collection_info = this.componentLastInfo;
+    return this.collections[last_collection_info.type][last_collection_info.index];
+}
+
+mtFormInit.prototype.FirstNode = function()
+{
+    var last_collection_info = this.collectionSequential[0];
+    return this.collections[last_collection_info.type][last_collection_info.index];
+}
+
+mtFormInit.prototype.NthNode = function(index)
+{
+    var last_collection_info = this.collectionSequential[index];
+    return this.collections[last_collection_info.type][last_collection_info.index];
+}
+
+
+mtFormInit.prototype.__getComponentsFromCollection = function(componentType){
+    return this.collections[componentType];
 };

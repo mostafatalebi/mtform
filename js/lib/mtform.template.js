@@ -29,31 +29,31 @@ mtFormInit.prototype.__cleanPlaceholder = function(input)
 {
     var result = input;
     var keys = Object.keys(this.placeholders);
-    var stack_keys = Object.keys(result);
+    var collection_keys = Object.keys(result);
     // checks to see if the input is object at all
     if(typeof result === 'object')
     {
-        // loops through the main stack
-        for(var w = 0; w < stack_keys.length; w++)
+        // loops through the main collection
+        for(var w = 0; w < collection_keys.length; w++)
         {
-            // checks to see if stack's component type has any element
-            if(typeof result[stack_keys[w]] === 'object' && result[stack_keys[w]].length > 0)
+            // checks to see if collection's component type has any element
+            if(typeof result[collection_keys[w]] === 'object' && result[collection_keys[w]].length > 0)
             {
                 // loops through the component's type of any component added
-                for(var t = 0; t < result[stack_keys[w]].length; t++)
+                for(var t = 0; t < result[collection_keys[w]].length; t++)
                 {
                     // for each individual added component, it iterates over the defined
                     // placeholders and erase them if any exists in the component
                     // But, first we have to check if it is one single component or a
                     // set of components.
-                    if( typeof result[stack_keys[w]][t] === 'object')
+                    if( typeof result[collection_keys[w]][t] === 'object')
                     {
-                        for(var q = 0; q < result[stack_keys[w]][t].length; q++)
+                        for(var q = 0; q < result[collection_keys[w]][t].length; q++)
                         {
                             // we loop over the set of components (such as radios or checkboxes)
                             for (var i = 0; i < keys.length; i++)
                             {
-                                result[stack_keys[w]][t][q] = result[stack_keys[w]][t][q].replace(this.placeholders[keys[i]], "");
+                                result[collection_keys[w]][t][q] = result[collection_keys[w]][t][q].replace(this.placeholders[keys[i]], "");
                             }
                         }
                     }
@@ -61,7 +61,7 @@ mtFormInit.prototype.__cleanPlaceholder = function(input)
                     {
                         for(var i = 0; i < keys.length; i++)
                         {
-                            result[stack_keys[w]][t] = result[stack_keys[w]][t].replace(this.placeholders[keys[i]], "");
+                            result[collection_keys[w]][t] = result[collection_keys[w]][t].replace(this.placeholders[keys[i]], "");
                         }
                     }
                 }
@@ -114,15 +114,23 @@ mtFormInit.prototype.parser = function(str, placeholders, values)
     }
     return result;
 }
+
 mtFormInit.prototype.setTemplate = function(html){
     this.templateImmediate = html;
 }
+
 mtFormInit.prototype.parseTemplate = function(){
     if(typeof this.inputs === 'object' && this.inputs.length != 0)
     { // parse inputs
         this.inputs = this.__parseTemplate("component");
     }
 }
+
+mtFormInit.prototype.parsePossiblePh = function()
+{
+    var placeholders_helpers = this.placeholders_helpers;
+}
+
 mtFormInit.prototype.getAllTemplates = function(){
     return this.templatesFormComponents;
 };
