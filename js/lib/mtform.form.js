@@ -39,6 +39,10 @@ mtFormInit.prototype.Radios = function(args){
     return this.create("radio", args.attrs, args);
 };
 
+mtFormInit.prototype.List = function(args){
+    return this.create("radio", args.attrs, args);
+};
+
 /**
  * Creates a label for @__lastComponent. It is different form Laebl() function in that
  * it comes after the component's specific function. Input().AttachLabel()

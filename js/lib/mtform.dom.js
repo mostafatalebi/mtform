@@ -245,9 +245,21 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
     var templatePossibleIterator = 0;
     var radiosTpl = "";
 
+    // we check if the user has passed any value as the default value, if NO,
+    // then we set the first item as checked.
+    if(radiosArgs.default === "" || typeof radiosArgs.default === 'undefined'
+        || radiosArgs.default === null) radiosArgs.default = radiosArgs.values[0];
+
+    // Our loop criterion is .values property. Because for radio buttons, value
+    // is the most necessarily unique attribute.
     for(var i = 0; i < radiosArgs.values.length; i++)
     {
-        var radio_value = "value='"+radiosArgs.values[i]+"'";
+        // we check if the current component should be checked or not, if yes,
+        // then we set the corresponding value.
+        var is_checked = "";
+        if(radiosArgs.values[i] == radiosArgs.default)  is_checked = " CHECKED ";
+
+        var radio_value = "value='"+radiosArgs.values[i]+"'"+is_checked;
         // we check to see if the user has passed an array of templates for each radio, since
         // we like to support template for each individual component generated within the form
         if(typeof radiosTplMain === 'object')
