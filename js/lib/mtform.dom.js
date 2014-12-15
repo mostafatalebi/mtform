@@ -304,11 +304,13 @@ mtFormInit.prototype.addSelect = function(attrs, options){
 
     for(var i = 0; i < options.values.length; i++)
     {
+        var option_template = this.getTpl("option");
+
         var unique_values = "value='"+options.values[i]+"' ";
         unique_values += "id='"+options.id[i]+"' ";
         // we check to see if the user has passed an array of templates for each option, since
         // we like to support template for each individual component generated within the form
-        if(typeof selectTplMain === 'object')
+        if(typeof option_template === 'object')
         {
             selectTpl  = selectTplMain[templatePossibleIterator];
             // here we check to see if the current iteration for templates (in case it is array)

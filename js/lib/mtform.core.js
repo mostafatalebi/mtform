@@ -44,7 +44,7 @@ function mtFormInit(container){
         "submit" : [],
         "button" : [],
         "textarea" : [],
-        "option" : [],
+        "select" : [],
     };
 
     this.collectionParsed = {};

@@ -9,6 +9,7 @@ mtFormInit.prototype.templatesFormComponents = {
     submit : "<input type='submit' :rules  :attrs />",
     button : "<textarea :rules  :attrs >:value</textarea>",
     select : "<select :rules  :attrs  :unique_values>:options</select>",
+    option : "<option  :unique_values>:innerValue</option>",
 }
 
 // ===================
