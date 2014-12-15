@@ -153,6 +153,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addButton(arguments);
     else if (component_type == 'radio')
         inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
+    else if (component_type == 'select')
+        inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
 
 
     // we check the last component's index in the stack. We just want to have a
@@ -275,4 +277,47 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
     return radios;
 };
 
+mtFormInit.prototype.addSelect = function(attrs, options){
+    var value = "";
+    value = (typeof options == 'string' || typeof options.value === "undefined" || typeof options.value === "null")
+        ? "value='"+options+"'" : "value='"+options.value+"'";
+
+    var select = [];
+    var selectTplMain = this.getTpl("select");
+
+    // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
+    // value if the user passer lower number of templates than number of select.
+    var templatePossibleIterator = 0;
+    var selectTpl = "";
+
+    for(var i = 0; i < options.values.length; i++)
+    {
+        var unique_values = "value='"+options.values[i]+"' ";
+        unique_values += "id='"+options.id[i]+"' ";
+        // we check to see if the user has passed an array of templates for each option, since
+        // we like to support template for each individual component generated within the form
+        if(typeof selectTplMain === 'object')
+        {
+            selectTpl  = selectTplMain[templatePossibleIterator];
+            // here we check to see if the current iteration for templates (in case it is array)
+            // is smaller than i and equals the length of the templates array, if true, then we
+            // set it back to zero for the iteration to work. Doing this, we guarantee the coverage
+            // of the templates for all the components. e.g. the user can pass an array of two-templates
+            // for 6 select, which allows it to have an alternate template pattern for that set of
+            // select.
+            if( templatePossibleIterator === selectTplMain.length ) templatePossibleIterator = 0;
+        }
+        else
+        {
+            selectTpl = selectTplMain;
+        }
+
+        // we then parse them individually
+        select[i] = this.parser(selectTpl, [":attrs", ":unique_values"], [attrs, unique_values]);
+    }
+
+    this.__setLastComponentType("select");
+    this.__addComponentInstance(select, "select");
+    return select;
+};
 
