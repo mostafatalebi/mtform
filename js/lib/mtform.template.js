@@ -7,7 +7,8 @@ mtFormInit.prototype.templatesFormComponents = {
     radio : "<input type='radio' :values :rules  :attrs />",
     checkbox : "<input type='checkbox' :rules  :attrs />",
     submit : "<input type='submit' :rules  :attrs />",
-    button : "<button :rules  :attrs >:innerValue</button>",
+    button : "<textarea :rules  :attrs >:value</textarea>",
+    select : "<select :rules  :attrs  :unique_values>:options</select>",
 }
 
 // ===================
