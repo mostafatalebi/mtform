@@ -164,24 +164,44 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 // TEMPLATE PROCESSING
 // ===================
 
-
+/**
+ * Returns an unprocess, unordered collection of all components.
+ * @returns collection
+ * @constructor
+ */
 mtFormInit.prototype.AllComponents = function(){
     return this.collections;
 }
 
+/**
+ * Sets the component for the last created component.
+ * @param html @__htmlContent
+ * @returns {mtFormInit} @__mtformObject
+ * @constructor
+ */
 mtFormInit.prototype.Template = function(html){
     this.setTemplate(html);
     this.parseTemplate("component");
     return this;
 }
 
-mtFormInit.prototype.setDefaultTemplate = function(htmlContent, componentType){
-    this.templatesFormComponents[componentType] = htmlContent;
+/**
+ * Sets a default component to be used for all components.
+ * @param html @__htmlContent
+ * @param componentType @__componentTypes
+ * @returns {mtFormInit} @__mtformObject
+ */
+mtFormInit.prototype.setDefaultTemplate = function(html, componentType){
+    this.templatesFormComponents[componentType] = html;
     return this;
 }
 
 
-
+/**
+ * Adds a <br /> tag after each component.
+ * @returns {mtFormInit}
+ * @constructor
+ */
 mtFormInit.prototype.BreakBetween = function(){
     this.Alternate("<br />");
     return this;
