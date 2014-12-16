@@ -154,7 +154,7 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     else if (component_type == 'radio')
         inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'select')
-        inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
+        inp = this.addSelect(args, secondaryArgs); // note that we have passed unparsed args
 
 
     // we check the last component's index in the stack. We just want to have a
@@ -294,7 +294,7 @@ mtFormInit.prototype.addSelect = function(attrs, options){
     {
         var unique_values = "value='"+options.values[i]+"' ";
         unique_values += "id='"+options.id[i]+"' ";
-        // we check to see if the user has passed an array of templates for each option, since
+        // we check to see if the user has passed an array  of templates for each option, since
         // we like to support template for each individual component generated within the form
         if(typeof selectTplMain === 'object')
         {

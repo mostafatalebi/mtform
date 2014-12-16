@@ -40,7 +40,7 @@ mtFormInit.prototype.Radios = function(args){
 };
 
 mtFormInit.prototype.Select = function(args){
-    return this.create("radio", args.attrs, args);
+    return this.create("select", args.attrs, args);
 };
 
 /**

@@ -9,7 +9,7 @@ window.onload = function(){
 
     MTFormer.Input().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
-        Label({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
+        AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
             name : 'students',
             values : ["female", "male", "old", "young"], // can accept a function too
