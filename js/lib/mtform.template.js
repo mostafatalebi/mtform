@@ -1,4 +1,9 @@
 /** Template Properties **/
+// This template collection feeds the components'
+// default templates. It increases the flexibility and
+// allows for a more robust collection.
+// All of them can accept a callback function, with the following parameters:
+// callback(lastCreatedItemType, lastCreatedItemIndex, placeholders, values);
 mtFormInit.prototype.templatesFormComponents = {
     input : "<input type='text' :rules  :attrs />",
     password : "<input type='password' :attrs />",
@@ -8,8 +13,8 @@ mtFormInit.prototype.templatesFormComponents = {
     checkbox : "<input type='checkbox' :rules  :attrs />",
     submit : "<input type='submit' :rules  :attrs />",
     button : "<textarea :rules  :attrs >:value</textarea>",
-    select : "<select :rules  :attrs  :unique_values>:options</select>",
-    option : "<option  :unique_values>:innerValue</option>",
+    select : "<select :rules  :attrs >:options</select>",
+    option : "<option  :uniqueValue >:innerValue</option>",
 }
 
 // ===================
@@ -107,14 +112,30 @@ mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
 mtFormInit.prototype.getTpl = function(key){
     return this.templatesFormComponents[key];
 }
-mtFormInit.prototype.parser = function(str, placeholders, values)
+mtFormInit.prototype.parser = function(template, placeholders, values)
 {
-    var result = "";
-    for(var i = 0; i < placeholders.length; i++)
+    // we check to see if the template is a callback function, we execute the callback, get
+    // the result of it, and go for the parsing.
+    if(typeof template === 'function')
     {
-        result = str.replace(placeholders[i], values[i]);
+        var new_template = template(this.componentLastInfo.type, this.componentLastInfo.index, placeholders, values);
+        // now loop through and parse the template
+        for(var i = 0; i < placeholders.length; i++)
+        {
+            new_template = new_template.replace(placeholders[i], values[i]);
+        }
+        return new_template;
     }
-    return result;
+    else
+    {
+        // now loop through and parse the template
+        for(var i = 0; i < placeholders.length; i++)
+        {
+            template = template.replace(placeholders[i], values[i]);
+        }
+        return template;
+    }
+
 }
 
 mtFormInit.prototype.setTemplate = function(html){
