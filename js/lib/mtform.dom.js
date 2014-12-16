@@ -10,36 +10,36 @@ mtFormInit.prototype.__injectHtml = function()
     // let's see what it will do, currently no decision on it
 }
 
-mtFormInit.prototype.__addHtmls = function(component_last_stack_properties, insertion_type, array_skip)
+mtFormInit.prototype.__addHtmls = function(component_last_collection_properties, insertion_type, array_skip)
 {
     if(insertion_type == 'after')
     {
-        if(typeof this.stacks[component_last_stack_properties.type][component_last_stack_properties.index] !== "object")
+        if(typeof this.collections[component_last_collection_properties.type][component_last_collection_properties.index] !== "object")
         {
-            this.stacks[component_last_stack_properties.type][component_last_stack_properties.index] =
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index] + this.htmlObject.after;
+            this.collections[component_last_collection_properties.type][component_last_collection_properties.index] =
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index] + this.htmlObject.after;
         }
         else // if it is object
         {
             if(array_skip == false)
             {
-                for(var i = 0; i < this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length; i++)
+                for(var i = 0; i < this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length; i++)
                 {
-                    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][i] =
-                        this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][i] + this.htmlObject.after;
+                    this.collections[component_last_collection_properties.type][component_last_collection_properties.index][i] =
+                        this.collections[component_last_collection_properties.type][component_last_collection_properties.index][i] + this.htmlObject.after;
                 }
             }
             else
             {
                 // since array_skip is true, we just assign the HTMLs before and after the collection. To do this,
                 // we prepend it to the first element and append it to the last element.
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][0] =
-                    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][0] + this.htmlObject.after;
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index][0] =
+                    this.collections[component_last_collection_properties.type][component_last_collection_properties.index][0] + this.htmlObject.after;
 
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
-                    [this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length-1] =
-                    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
-                        [this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length-1] + this.htmlObject.after;
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
+                    [this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length-1] =
+                    this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
+                        [this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length-1] + this.htmlObject.after;
 
             }
 
@@ -48,32 +48,32 @@ mtFormInit.prototype.__addHtmls = function(component_last_stack_properties, inse
     }
     else if(insertion_type == 'before')
     {
-        if(typeof this.stacks[component_last_stack_properties.type][component_last_stack_properties.index] !== "object")
+        if(typeof this.collections[component_last_collection_properties.type][component_last_collection_properties.index] !== "object")
         {
-            this.stacks[component_last_stack_properties.type][component_last_stack_properties.index] = this.htmlObject.before +
-            this.stacks[component_last_stack_properties.type][component_last_stack_properties.index];
+            this.collections[component_last_collection_properties.type][component_last_collection_properties.index] = this.htmlObject.before +
+            this.collections[component_last_collection_properties.type][component_last_collection_properties.index];
         }
         else // if it is object
         {
             if(array_skip == false)
             {
-                for(var i = 0; i < this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length; i++)
+                for(var i = 0; i < this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length; i++)
                 {
-                    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][i] = this.htmlObject.before +
-                    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][i];
+                    this.collections[component_last_collection_properties.type][component_last_collection_properties.index][i] = this.htmlObject.before +
+                    this.collections[component_last_collection_properties.type][component_last_collection_properties.index][i];
                 }
             }
             else
             {
                 // since array_skip is true, we just assign the HTMLs before and after the collection. To do this,
                 // we prepend it to the first element and append it to the last element.
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][0] = this.htmlObject.before +
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index][0];
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index][0] = this.htmlObject.before +
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index][0];
 
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
-                    [this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length-1] = this.htmlObject.before +
-                this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
-                    [this.stacks[component_last_stack_properties.type][component_last_stack_properties.index].length-1];
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
+                    [this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length-1] = this.htmlObject.before +
+                this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
+                    [this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length-1];
 
             }
 
@@ -84,18 +84,18 @@ mtFormInit.prototype.__addHtmls = function(component_last_stack_properties, inse
 
 /**
  * Creates a label for the last created form component.
- * @param component_last_stack_properties an object containing the info about the last created
+ * @param component_last_collection_properties an object containing the info about the last created
  *          component
  * @param labelValue the title of the label
  * @param args an object accepting key-value pairs for attributes.
  * @private
  */
-mtFormInit.prototype.__label = function(component_last_stack_properties, labelValue, args)
+mtFormInit.prototype.__label = function(component_last_collection_properties, labelValue, args)
 {
     var label = this.createElement("label", labelValue, args);
-    this.stacks[component_last_stack_properties.type][component_last_stack_properties.index]
+    this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
         =
-        label+this.stacks[component_last_stack_properties.type][component_last_stack_properties.index];
+        label+this.collections[component_last_collection_properties.type][component_last_collection_properties.index];
 }
 
 // =======================
@@ -157,17 +157,17 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addSelect(args, secondaryArgs); // note that we have passed unparsed args
 
 
-    // we check the last component's index in the stack. We just want to have a
+    // we check the last component's index in the collection. We just want to have a
     // sequence of pointers in order to parse one real string objects during the whole process. As our components
     // are grouped respective to their type,  the user expects the generation of the components
     // to be in order of their call. Thus, we have to keep the order in which they are called.
-    var component_last_stack_properties = { type : component_type , index : this.stackSequentialLastIndex(component_type) };
-    this.addStackSequential( component_last_stack_properties.type, component_last_stack_properties.index );
+    var component_last_collection_properties = { type : component_type , index : this.collectionSequentialLastIndex(component_type) };
+    this.addCollectionSequential( component_last_collection_properties.type, component_last_collection_properties.index );
 
 
     // we keep track of the last generated component's type and index.
     this.lastQueried = component_type;
-    this.componentLastInfo = component_last_stack_properties;
+    this.componentLastInfo = component_last_collection_properties;
     return this;
 }
 
@@ -247,9 +247,21 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
     var templatePossibleIterator = 0;
     var radiosTpl = "";
 
+    // we check if the user has passed any value as the default value, if NO,
+    // then we set the first item as checked.
+    if(radiosArgs.default === "" || typeof radiosArgs.default === 'undefined'
+        || radiosArgs.default === null) radiosArgs.default = radiosArgs.values[0];
+
+    // Our loop criterion is .values property. Because for radio buttons, value
+    // is the most necessarily unique attribute.
     for(var i = 0; i < radiosArgs.values.length; i++)
     {
-        var radio_value = "value='"+radiosArgs.values[i]+"'";
+        // we check if the current component should be checked or not, if yes,
+        // then we set the corresponding value.
+        var is_checked = "";
+        if(radiosArgs.values[i] == radiosArgs.default)  is_checked = " CHECKED ";
+
+        var radio_value = "value='"+radiosArgs.values[i]+"'"+is_checked;
         // we check to see if the user has passed an array of templates for each radio, since
         // we like to support template for each individual component generated within the form
         if(typeof radiosTplMain === 'object')
@@ -292,11 +304,13 @@ mtFormInit.prototype.addSelect = function(attrs, options){
 
     for(var i = 0; i < options.values.length; i++)
     {
+        var option_template = this.getTpl("option");
+
         var unique_values = "value='"+options.values[i]+"' ";
         unique_values += "id='"+options.id[i]+"' ";
         // we check to see if the user has passed an array  of templates for each option, since
         // we like to support template for each individual component generated within the form
-        if(typeof selectTplMain === 'object')
+        if(typeof option_template === 'object')
         {
             selectTpl  = selectTplMain[templatePossibleIterator];
             // here we check to see if the current iteration for templates (in case it is array)

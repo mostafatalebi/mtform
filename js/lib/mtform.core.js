@@ -32,7 +32,7 @@ function mtFormInit(container){
     this.contentAfter = "";
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
-    this.stacks = {
+    this.collections = {
         "form" : [],
         "input" : [],
         "password" : [],
@@ -44,10 +44,10 @@ function mtFormInit(container){
         "submit" : [],
         "button" : [],
         "textarea" : [],
-        "option" : [],
+        "select" : [],
     };
 
-    this.stackParsed = {};
+    this.collectionParsed = {};
 
 
     this.htmlObject = {
@@ -57,11 +57,11 @@ function mtFormInit(container){
 
     this.isHtml = false;
 
-    // this stack accepts an object on each push(). this
+    // this collection accepts an object on each push(). this
     // object holds two properties. One is .type and another is
     // .index, which when combioned, points exactly to the
-    // component place in this.stacks array.
-    this.stackSequential = [];
+    // component place in this.collections array.
+    this.collectionSequential = [];
 
     // Array of parsed, ordered components without any association of types
     this.collectionOrdered = [];
@@ -146,13 +146,13 @@ mtFormInit.prototype.setContainer = function(element){
 
 /**
  * This functions adds the most recent [created] components into its related
- * stack for later use.
+ * collection for later use.
  * @param component the component which is created
- * @param componentStack the stack onto which the component should be pushed
+ * @param componentCollection the collection onto which the component should be pushed
  * @private
  */
-mtFormInit.prototype.__addComponentInstance = function(component, componentStack){
-    this.stacks[componentStack].push(component);
+mtFormInit.prototype.__addComponentInstance = function(component, componentCollection){
+    this.collections[componentCollection].push(component);
     // returns nothing, since this is a system function
 }
 
