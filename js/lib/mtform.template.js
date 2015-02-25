@@ -5,6 +5,7 @@
 // All of them can accept a callback function, with the following parameters:
 // callback(lastCreatedItemType, lastCreatedItemIndex, placeholders, values);
 mtFormInit.prototype.templatesFormComponents = {
+    form : "<form :attrs >:form</form>",
     input : "<input type='text' :rules  :attrs />",
     password : "<input type='password' :attrs />",
     hidden : "<input type='hidden' :rules  :attrs />",
@@ -14,7 +15,7 @@ mtFormInit.prototype.templatesFormComponents = {
     submit : "<input type='submit' :rules  :attrs />",
     button : "<textarea :rules  :attrs >:value</textarea>",
     select : "<select :rules  :attrs >:options</select>",
-    option : "<option  :uniqueValue >:innerValue</option>",
+    option : "<option  :uniqueValue :attrs />:innerValue</option>",
 }
 
 // ===================

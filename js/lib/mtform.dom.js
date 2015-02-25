@@ -125,7 +125,7 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     var arguments = "";
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
-    if(typeof args !== 'object' && typeof args !== 'string')
+    if(this.is_empty(args))
         args = "";
     else if (typeof args === 'object')
         arguments = this.argsToAttrs(args);
@@ -152,9 +152,11 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     else if (component_type == 'button')
         inp = this.addButton(arguments);
     else if (component_type == 'radio')
-        inp = this.addRadios(args, secondaryArgs); // note that we have passed unparsed args
+        inp = this.addRadios(arguments, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'select')
-        inp = this.addSelect(args, secondaryArgs); // note that we have passed unparsed args
+        inp = this.addSelect(arguments, secondaryArgs); // note that we have passed unparsed args
+    else if (component_type == 'form')
+        inp = this.addForm(arguments  , secondaryArgs);
 
 
     // we check the last component's index in the collection. We just want to have a
@@ -235,6 +237,8 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
 };
 
 mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
+    __("This si afdsfdsfdskjfhgsdakfhgvk,sfhgkhkdjdsjb");
+    __(attrs);
     var value = "";
     value = (typeof radiosArgs == 'string' || typeof radiosArgs.value === "undefined" || typeof radiosArgs.value === "null")
         ? "value='"+radiosArgs+"'" : "value='"+radiosArgs.value+"'";
@@ -259,9 +263,21 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
         // we check if the current component should be checked or not, if yes,
         // then we set the corresponding value.
         var is_checked = "";
+        var id_values = "";
         if(radiosArgs.values[i] == radiosArgs.default)  is_checked = " CHECKED ";
 
-        var radio_value = "value='"+radiosArgs.values[i]+"'"+is_checked;
+        if(this.is_function(radiosArgs.ids))
+        {
+            id_values = " id='"+radiosArgs.ids(radiosArgs.values[i])+"' ";
+        }
+        else if(this.is_object(radiosArgs.ids))
+        {
+            if(i <= radiosArgs.ids.length)
+                    id_values = " id='"+radiosArgs.ids[i]+"' ";
+        }
+
+        var radio_value = "value='"+radiosArgs.values[i]+"' "+is_checked;
+        radio_value += id_values;
         // we check to see if the user has passed an array of templates for each radio, since
         // we like to support template for each individual component generated within the form
         if(typeof radiosTplMain === 'object')
@@ -305,9 +321,35 @@ mtFormInit.prototype.addSelect = function(attrs, options){
     var option_template = this.getTpl("option");
     for(var i = 0; i < options.values.length; i++)
     {
-        var unique_values = "value='"+options.values[i]+"' ";
-        unique_values += "id='"+options.ids[i]+"' ";
-        var innerValue = options.labels[i];
+        var unique_values = "";
+        var id_values = "";
+        var value_raw = options.values[i];
+        var innerValue = "";
+        unique_values = " value='"+options.values[i]+"' ";
+
+        if(this.is_function(options.ids))
+        {
+            id_values = " id='"+options.ids(value_raw)+"' ";
+        }
+        else if(this.is_object(options.ids))
+        {
+            if(i <= options.ids.length)
+                    d_values = " id='"+options.ids[i]+"' ";
+        }
+
+        if(this.is_function(options.labels))
+        {
+            innerValue = options.labels(value_raw);
+        }
+        else if(this.is_object(options.labels))
+        {
+            if(i <= options.labels.length)
+                innerValue = options.labels[i];
+        }
+
+        unique_values += id_values; // appending the ids value to the unique value
+
+
         // we check to see if the user has passed an array  of templates for each option, since
         // we like to support template for each individual component generated within the form
         if(typeof option_template === 'object')
@@ -326,9 +368,12 @@ mtFormInit.prototype.addSelect = function(attrs, options){
         {
             optionTpl = option_template;
         }
-
+        var current_option_attr;
+        if(options.optionAttrUseOneSet === true) current_option_attr = options.optionAttr[0];
+        else current_option_attr = options.optionAttr[i];;
         // we then parse them individually
-        option.push(this.parser(optionTpl, [":attrs", ":uniqueValue", ":innerValue"], [attrs, unique_values, innerValue]));
+        option.push(this.parser(optionTpl, [":attrs", ":uniqueValue", ":innerValue"],
+            [this.argsToAttrs(current_option_attr), unique_values, innerValue]));
     }
 
     option = option.join("");
@@ -338,3 +383,9 @@ mtFormInit.prototype.addSelect = function(attrs, options){
     return selectTplMain;
 };
 
+mtFormInit.prototype.addForm = function(attrs){
+    var form_tpl = this.getTpl("form");
+    attrs = this.argsToAttrs(attrs);
+    form_tpl = this.parser(form_tpl, [":attrs"], [attrs]);
+    this.forms.push(form_tpl);
+};

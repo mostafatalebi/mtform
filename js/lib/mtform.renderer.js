@@ -18,9 +18,7 @@ mtFormInit.prototype.generate = function(){
     // if it is set, then applies it
     // this.__makeAlternate();
 
-    var new_collection = this.collectionIterationByCollectionSequential(this.collectionParsed, this.collectionSequential);
-    __(this.collections);
-    __(new_collection);
+    var new_collection = this.collectionIterateSequentially(this.collectionParsed, this.collectionSequential);
     var html_result = "";
 
     var collection_keys = Object.keys(new_collection);
@@ -34,11 +32,9 @@ mtFormInit.prototype.generate = function(){
 
         if(typeof new_collection[collection_keys[i]] === 'object')
         {
-
             for(var w = 0; w < new_collection[collection_keys[i]].length; w++)
             {
                 this.collectionOrdered.push(new_collection[collection_keys[i]][w]);
-
             }
         }
         else
@@ -48,12 +44,21 @@ mtFormInit.prototype.generate = function(){
         }
     }
 
+
+
     // Since makeAlternate works with one-dimension linear collection of components,
     // we have to call it right after flattening the multi-dimensional collection
     this.__makeAlternate();
 
 
-    this.htmls = this.collectionOrdered.join("");
+    var collection_to_html = this.collectionOrdered.join("");
+
+    // if user has specified any form, then the current generated HTML would be
+    // injected into the form. Else, it would ignore and let the script does its
+    // job.
+    collection_to_html = this.__assignToForm(collection_to_html);
+
+    this.htmls = collection_to_html;
 };
 
 
@@ -72,8 +77,26 @@ mtFormInit.prototype.generateJSON = function(){
 };
 
 
+mtFormInit.prototype.__assignToForm = function(formContent){
+    var form_html;
+    var form_length = this.forms.length;
+    if(form_length > 0 )
+    {
+        for(var i = 0; i < form_length; i++)
+        {
+            form_html = this.parser(this.forms[i], [":form"], [formContent]);
+            return form_html;
+        }
 
-
+    }
+    else
+    {
+        // if the user has not defined any forms, then we
+        // return the same content passed to the function
+        // for a seamless flow to happen
+        return formContent;
+    }
+}
 
 mtFormInit.prototype.__makeAlternate = function()
 {
@@ -81,7 +104,8 @@ mtFormInit.prototype.__makeAlternate = function()
     {
         var new_result = [];
         var new_collections = this.alternateContent;
-        if (typeof new_collections !== "object")
+
+        if (this.is_normal(new_collections))
         {
             for (var i = 0; i < this.collectionOrdered.length; i++)
             {
@@ -89,7 +113,27 @@ mtFormInit.prototype.__makeAlternate = function()
                 new_result.push(new_collections);
             }
         }
+        else if (this.is_object(new_collections))
+        {
+            var nestedIterator = 0;
+            for (var i = 0; i < this.collectionOrdered.length; i++)
+            {
+                new_result.push(this.collectionOrdered[i]);
+                new_result.push(new_collections[nestedIterator]);
+                if( nestedIterator == new_collections.length-1 ) nestedIterator = 0;
+                else nestedIterator++;
+            }
+        }
+        else if (this.is_function(new_collections))
+        {
+            for (var i = 0; i < this.collectionOrdered.length; i++)
+            {
+                new_result.push(this.collectionOrdered[i]);
+                new_result.push(new_collections(this.collectionOrdered[i], this.collectionOrdered[i+1]));
+            }
+        }
     }
+
     this.collectionOrdered = new_result;
 }
 

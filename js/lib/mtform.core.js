@@ -33,7 +33,6 @@ function mtFormInit(container){
     this.mainNamespace = "mtform";
     this.namespaceDelimiter = "@";
     this.collections = {
-        "form" : [],
         "input" : [],
         "password" : [],
         "hidden" : [],
@@ -47,6 +46,10 @@ function mtFormInit(container){
         "select" : [],
     };
 
+    this.forms = [];
+
+    this.formInjection = true;
+
     this.collectionParsed = {};
 
 
@@ -59,7 +62,7 @@ function mtFormInit(container){
 
     // this collection accepts an object on each push(). this
     // object holds two properties. One is .type and another is
-    // .index, which when combioned, points exactly to the
+    // .index, which when combined, points exactly to the
     // component place in this.collections array.
     this.collectionSequential = [];
 
@@ -68,7 +71,7 @@ function mtFormInit(container){
 
 
     // each component has a fixed "unchangeable" attribute called
-    // data-mtformid which stores a unique id of each component.
+    // data-mtformid which stores a unique id for each component.
 
     // this array-attribute holds events for each component at occurrence of which the
     // validation for that certain component is carried out. This is optional, since
@@ -93,6 +96,7 @@ function mtFormInit(container){
         innerValue : ":innerValue",
     };
 
+    this.componentLastIterated = "";
 
 
 
@@ -103,9 +107,6 @@ function mtFormInit(container){
 
     // string. since it will be immediately used for the last inserted element(s)
     this.templateImmediate = "";
-
-    // the type of the last component generated
-    this.lastComponentType = "";
 
     this.componentLastInfo = {
         index : 0,

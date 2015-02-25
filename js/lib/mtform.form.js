@@ -110,6 +110,20 @@ mtFormInit.prototype.Select = function(args){
     return this.create("select", args.attrs, args);
 };
 
+mtFormInit.prototype.Form = function(args){
+    this.addForm(args);
+    return this;
+};
+
+mtFormInit.prototype.FormWithFile = function(args){
+    if(!this.is_object(args))
+    { args = { "enctype" : "multipart/form-data"}; }
+    else
+    { args.concat({ "enctype" : "multipart/form-data"}); }
+    this.addForm(args);
+    return this;
+};
+
 /**
  * Creates a label for @__lastComponent. It is different form Laebl() function in that
  * it comes after the component's specific function. Input().AttachLabel()
@@ -213,9 +227,9 @@ mtFormInit.prototype.BreakBetween = function(){
  * @returns {mtFormInit} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Alternate = function(html, from_zero){
+mtFormInit.prototype.Alternate = function(alternateInput, from_zero){
     this.isAlternate = true;
-    this.alternateContent = html;
+    this.alternateContent = alternateInput;
     return this;
 }
 

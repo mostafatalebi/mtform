@@ -7,21 +7,26 @@ mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
         ? false : parseValues;
     scope_of_usage = (typeof  scope_of_usage === 'undefined' || typeof  scope_of_usage === null)
         ? "global" : scope_of_usage;
+    var attrsStr = " "; // declared with a space at the beginning
     if(typeof args !== 'object')
-        console.error("You have not passed an object as args. Function: argsToAttrs()");
+        // this eliminates undefined="" result in the case that args is undefined
+        return " ";
+
     else
     {
         if(args.length == 0)
         {
-            return false;
+            return "";
         }
         else
         {
-            var attrsStr = " "; // declared with a space at the beginning
+
             this.forEach(args, function(element, key, isFirst, isLast){
                 if(parseValues == true)
                     element = this.parsePossiblePh(element);
-                attrsStr += " " + key+'='+"'" + element + "' ";
+                if((typeof key != 'undefined' && typeof key !== null) &&
+                    (typeof element != 'undefined' && typeof element !== null))
+                        attrsStr += " " + key+'='+"'" + element + "' ";
                 if(isLast == true) attrsStr += " ";
             });
             if(scope_of_usage == "global") this.attrs = attrsStr;
@@ -79,8 +84,9 @@ mtFormInit.prototype.forEach = function(obj, callback)
             currentElement = obj[objectKeys[i]];
             currentKey = objectKeys[i];
         }
-
-        callback(currentElement, currentKey, isFirstLoop, isLastLoop);
+        if(typeof currentElement !== 'undefined' ||
+            typeof currentElement !== null)
+                callback(currentElement, currentKey, isFirstLoop, isLastLoop);
 
         if(this.isArrayOrObject(currentElement) !== false)
         {
@@ -129,12 +135,12 @@ mtFormInit.prototype.collectionSequentialLastIndex = function(componentType)
 
 /**
  * Traverses through all generated components, not by their type (since components are originally treated
- * by their types),
+ * by their types), but by the order of their appearance in the call-sequences.
  * @param collectionOriginal
  * @param collectionSequential
  * @returns {Array}
  */
-mtFormInit.prototype.collectionIterationByCollectionSequential = function(collectionOriginal, collectionSequential){
+mtFormInit.prototype.collectionIterateSequentially = function(collectionOriginal, collectionSequential){
     var new_collection = [];
     for(var i = 0; i < collectionSequential.length; i++)
     {
@@ -167,3 +173,27 @@ mtFormInit.prototype.NthNode = function(index)
 mtFormInit.prototype.__getComponentsFromCollection = function(componentType){
     return this.collections[componentType];
 };
+
+mtFormInit.prototype.is_function = function(input) {
+    return (typeof input === 'function') ? true : false;
+}
+
+mtFormInit.prototype.is_object = function(input) {
+    return (typeof input === 'object') ? true : false;
+}
+
+mtFormInit.prototype.is_object = function(input) {
+    return (typeof input === 'object') ? true : false;
+}
+
+mtFormInit.prototype.is_string = function(input) {
+    return (typeof input === 'string') ? true : false;
+}
+
+mtFormInit.prototype.is_empty = function(input) {
+    return (typeof input === 'undefined' || typeof input === null) ? true : false;
+}
+
+mtFormInit.prototype.is_normal = function(input) {
+    return (typeof input !== 'function' && typeof input !== 'object') ? true : false;
+}
