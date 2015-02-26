@@ -2,13 +2,15 @@
 window.onload = function(){
     var ele = document.getElementsByTagName("body")[0];
 
-     var MtForm = new mtFormInit(document.getElementById("form-cont"));
 
-    var MTFormer = MtForm.setDefaultTemplate("<div id='someID'><input type='text' :attrs" +
+
+    var MTFormer = $Mtf.setDefaultTemplate("<div id='someID'><input type='text' :attrs" +
     " :rules /></div>", "input");
 
 
-    MTFormer.Input().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
+
+
+    MTFormer.Input().File().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
         AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
@@ -43,11 +45,13 @@ window.onload = function(){
             }
         }).FormWithFile().MakeAppend().JSON().printJSON();
 
-        var formSecond = new mtFormInit();
+       MTFormer.Ajaxer("http://google.com", 855);
+
+      /*  var formSecond = new mtFormInit();
 
         formSecond.setContainer(document.getElementsByTagName("body")[0]).Form({ id : 'form'}).MakeAppend();
 
-        MTFormer.Make(document.getElementById("form"));
+        MTFormer.Make(document.getElementById("form"));*/
 
 
 };

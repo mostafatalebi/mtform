@@ -35,6 +35,7 @@ function mtFormInit(container){
     this.collections = {
         "input" : [],
         "password" : [],
+        "file" : [],
         "hidden" : [],
         "radio" : [],
         "checkbox" : [],

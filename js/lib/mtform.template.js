@@ -8,6 +8,7 @@ mtFormInit.prototype.templatesFormComponents = {
     form : "<form :attrs >:form</form>",
     input : "<input type='text' :rules  :attrs />",
     password : "<input type='password' :attrs />",
+    file : "<input type='file' :attrs />",
     hidden : "<input type='hidden' :rules  :attrs />",
     textarea : "<textarea :rules  :attrs >:innerValue</textarea>",
     radio : "<input type='radio' :values :rules  :attrs />",

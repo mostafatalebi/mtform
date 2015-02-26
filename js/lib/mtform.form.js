@@ -108,7 +108,11 @@ mtFormInit.prototype.Radios = function(args){
 
 mtFormInit.prototype.Select = function(args){
     return this.create("select", args.attrs, args);
-};
+}
+
+mtFormInit.prototype.File = function(args){
+    return this.create("file", args);
+};;
 
 mtFormInit.prototype.Form = function(args){
     this.addForm(args);

@@ -155,6 +155,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addRadios(arguments, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'select')
         inp = this.addSelect(arguments, secondaryArgs); // note that we have passed unparsed args
+    else if (component_type == 'file')
+        inp = this.addFile(arguments);
     else if (component_type == 'form')
         inp = this.addForm(arguments  , secondaryArgs);
 
@@ -199,6 +201,16 @@ mtFormInit.prototype.addPassword = function(attrs){
     var prs = this.parser(input, [":attrs"], [attrs]);
     this.__setLastComponentType("password");
     this.__addComponentInstance(prs, "password");
+    return prs;
+};
+
+mtFormInit.prototype.addFile = function(attrs){
+    if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
+        console.warn("File input already has a 'type' attribute. Cannot be changed.");
+    var input = this.getTpl("file");
+    var prs = this.parser(input, [":attrs"], [attrs]);
+    this.__setLastComponentType("file");
+    this.__addComponentInstance(prs, "file");
     return prs;
 };
 
