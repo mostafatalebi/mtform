@@ -6,32 +6,18 @@
  * Initializes mtFormInit
  * @param container an element to put the result in
  */
-function mtFormInit(container){
+function mtFormInit(container, coreModules){
     this.container =  container;
 
     // following properties are for the sake of method-chaining
     this.attrs = ""; // assigns the attributes translated from args to this var
     this.htmls = ""; // assigns the attributes translated from args to this var
-
-    this.inputs = []; // assigns the inputs to this var
-    this.selects = []; // assigns the inputs to this var
-    this.checkBoxes = []; // assigns the checkBoxes to this var
-    this.radios = []; // assigns the checkBoxes to this var
-    this.textareas = []; // assigns the textareas to this var
-    this.textareas = []; // assigns the textareas to this var
-    this.htmlResult = []; // assigns the HTML output to this var
-    this.htmlResultObj = []; // push comoponent each time to this array
+    this.coreModules = []; // it just an array of names to be used to see which
+                           // plugins have been loaded as core modules
     this.rules = []; // a list of rules for each element
     this.rulesAll = []; // a list of rules for each element
-    this.lastQueried = {}; // the last queried element
-    this.basePlaceholder = "@mtForm:attr@"; // used for placeholders inside components
     this.jsonResult; // the json-converted array of form components
-    this.islternate = false;
     this.alternateContent = "";
-    this.contentBefore = "";
-    this.contentAfter = "";
-    this.mainNamespace = "mtform";
-    this.namespaceDelimiter = "@";
     this.collections = {
         "input" : [],
         "password" : [],

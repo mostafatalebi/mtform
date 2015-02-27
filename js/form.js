@@ -4,13 +4,7 @@ window.onload = function(){
 
 
 
-    var MTFormer = $Mtf.setDefaultTemplate("<div id='someID'><input type='text' :attrs" +
-    " :rules /></div>", "input");
-
-
-
-
-    MTFormer.Input().File().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
+    $mtf.Input().File().Input().addRule("phone", "max(10)").Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
         AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
@@ -45,13 +39,6 @@ window.onload = function(){
             }
         }).FormWithFile().MakeAppend().JSON().printJSON();
 
-       MTFormer.Ajaxer("http://google.com", 855);
-
-      /*  var formSecond = new mtFormInit();
-
-        formSecond.setContainer(document.getElementsByTagName("body")[0]).Form({ id : 'form'}).MakeAppend();
-
-        MTFormer.Make(document.getElementById("form"));*/
 
 
 };
