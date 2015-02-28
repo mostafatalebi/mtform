@@ -31,6 +31,10 @@
             console.log(data);
         });
 
+        ajax.error(function(code, headers){
+            console.log("Headers: "+headers);
+        });
+
         ajax.send();
     }
 </script>
