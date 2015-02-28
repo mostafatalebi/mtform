@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="js/plugins/Valid/Valid.mtform.js" ></script>
+    <title>Javascript AJAX Request</title>
+</head>
+<body>
+
+<form id='f' action="" type="POST">
+    <input name="name" type="text"/>
+    <input name="email" type="text"/>
+
+    <input name="submit" value="Send" type="submit" type="text"/>
+</form>
+<div class="message" style="padding: 25px; color: #777;"></div>
+
+<script type="text/javascript">
+    window.onload = function(){
+        var form = document.getElementById("f");
+
+        var Valid = new MTF_Valid(form);
+
+        form.addEventListener("submit", function(event){
+                if( Valid.IsOK() )
+                {
+
+                }
+        });
+    }
+</script>
+</body>
+</html>
