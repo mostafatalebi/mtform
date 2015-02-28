@@ -9,6 +9,8 @@
 function mtFormInit(container, coreModules){
     this.container =  container;
 
+    // list of living module for the lifespan of the application
+    this.$lives = [];
     // following properties are for the sake of method-chaining
     this.attrs = ""; // assigns the attributes translated from args to this var
     this.htmls = ""; // assigns the attributes translated from args to this var
