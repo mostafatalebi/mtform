@@ -2,6 +2,8 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <script type="text/javascript" src="js/plugins/Valid/Valid.mtform.config.js" ></script>
+    <script type="text/javascript" src="js/plugins/Valid/Valid.mtform.rules.js" ></script>
     <script type="text/javascript" src="js/plugins/Valid/Valid.mtform.js" ></script>
     <title>Javascript AJAX Request</title>
 </head>
@@ -19,7 +21,9 @@
     window.onload = function(){
         var form = document.getElementById("f");
 
-        var Valid = new MTF_Valid(form);
+        var Valid = new MTF_Valid();
+
+
 
         form.addEventListener("submit", function(event){
                 if( Valid.IsOK() )
