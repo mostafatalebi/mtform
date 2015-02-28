@@ -90,7 +90,7 @@ mtFormInit.prototype.Button = function(args, innerValue){
  *                                                     specified. Since they basically must be unique.
  *              name :    [string|object - array]   if string, a name for the whole radio set, else, an array,
          *                                             it will be distributed within the radios. Hence, an array
-         *                                             of two elements for name, for an array of six elements for
+         *                                             of two elements for name, with an array of six elements for
          *                                             values, result in a three sets of radios, each having two
          *                                             elements.
  *              default : [string|object - array]   Sets the default value for the radios. If string, checks
@@ -106,19 +106,44 @@ mtFormInit.prototype.Radios = function(args){
     return this.create("radio", args.attrs, args);
 };
 
+/**
+ * Creates a select-menu. It uses a special attributes schema for generating options.
+ * @param args object list of attributes. That follows a special structure with several fixed keys. Very much
+ *                    similar to Radio()
+ * @returns {select}
+ * @constructor
+ */
 mtFormInit.prototype.Select = function(args){
     return this.create("select", args.attrs, args);
 }
 
+/**
+ * Creates an input file field.
+ * @param args object list of key=value pairs attributes of the tag
+ * @returns {file}
+ * @constructor
+ */
 mtFormInit.prototype.File = function(args){
     return this.create("file", args);
 };;
 
+/**
+ * Creates a simple form
+ * @param args object list of key=value pairs attributes of the tag
+ * @returns {mtFormInit}
+ * @constructor
+ */
 mtFormInit.prototype.Form = function(args){
     this.addForm(args);
     return this;
 };
 
+/**
+ * Creates a form with enctype set to "formdata/multipart"
+ * @param args object list of key=value pairs attributes of the tag
+ * @returns {mtFormInit}
+ * @constructor
+ */
 mtFormInit.prototype.FormWithFile = function(args){
     if(!this.is_object(args))
     { args = { "enctype" : "multipart/form-data"}; }
