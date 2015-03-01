@@ -4,7 +4,7 @@ window.onload = function(){
 
 
 
-    $mtf.Input().File().Input().VAdd("number", "true").VAdd("max", "15").VAdd("starts_with", "093").VAdd("ends_with", "00").addRule("required", "true").Hidden().addRule("email").Password().
+    $mtf.Input().File().Input().VAdd("number", "true").addRule("required", "true").Hidden().addRule("email").Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
         AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
@@ -37,8 +37,9 @@ window.onload = function(){
             {
                 return "<p style='color: green; font-weight: bold;'>---------------------------------</p>"
             }
-        }).FormWithFile().MakeAppend().JSON().printJSON();
+        }).FormWithFile({ id : 'main_form'}).VBind().MakeAppend();
 
+        $mtf.VWatch("main_form");
 
         console.log($mtf.$lives.Valid.rules);
 };
