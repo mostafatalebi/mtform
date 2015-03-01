@@ -30,3 +30,14 @@ $mtf.extends("VBind", function(){
 
     return $mtf;
 });
+
+$mtf.extends("VEventize", function(){
+    if( typeof $mtf.$lives.Valid !== "object" )
+    {
+        $mtf.$lives.Valid = new MTF_Valid();
+    }
+
+    $mtf.$lives.Valid.Eventize();
+
+    return $mtf;
+});

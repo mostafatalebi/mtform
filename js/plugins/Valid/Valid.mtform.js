@@ -23,25 +23,56 @@ var MTF_Valid = function(){
 
 }
 
+/**
+ * Checks to see what "event" has been defined for certain component
+ * @param tag_name the name of the tag for which an event is to be searched
+ * @returns {Window.$MTF_Valid_Config.ev_input_default|*}
+ */
 MTF_Valid.prototype.getEventDefault = function(tag_name){
     if(tag_name == 'input') return $MTF_Valid_Config.ev_input_default;
 }
 
+MTF_Valid.prototype.getRuleMethod = function(rule_name){
+    rule_index = $MTF_Valid_Rules_Names[rule_name].indexOf();
+    __("Rule Index: "+rule_index);
+    __("Rule Method: "+$MTF_Valid_Rules_Methods[rule_index]);
+    return $MTF_Valid_Rules_Methods[rule_index];
+}
+
+/**
+ * Binds all assigned rules to the components
+ * @constructor
+ */
 MTF_Valid.prototype.Bind = function(){
     this.__bind_rules();
 }
 
+/**
+ * Attach all necessary event listeners for the component values to be checked
+ * on the occurrence of that certain event.
+ * @param parent_container_id
+ * @constructor
+ */
 MTF_Valid.prototype.Eventize = function(parent_container_id){
     this.__add_event_listeners(parent_container_id);
 }
 
 
 /**######## PRIVATE FUNCTIONS #########**/
+
+/**
+ *
+ * @param element_index
+ * @param element_type
+ * @param rule_obj
+ * @private
+ */
 MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, rule_obj){
 
     if( this.rules.length > 0)
     {
-        for( var i = 0; i < this.rules.length; i++ )
+        for( var i = 0; i < this.rules.length; i++ ) // checks if this component has alreay
+        // being bound to a rule, if yes, then just add the rule than creating a collection anew
         {
             if( this.rules[i]['index'] == element_index && this.rules[i]['type'] == element_type )
             {
@@ -80,10 +111,27 @@ MTF_Valid.prototype.__add_event_listeners = function(form_id){
     for( var i = 0; i < form_components.length; i++ )
     {
         item = form_components[i];
+
         if($mtf.is_form_component(item))
         {
            var rules_array = this.__find_rules(item);
-           // item.addEventListener( this.getEventDefault(item.tagName.toLowerCase()), this.getRuleMethod() )
+
+            if( $mtf.isArrayOrObject(rules_array) !== false)
+            {
+                var length = $mtf.objectLength();
+                for(var w = 0; w < length; w++)
+                {
+                    __("Rule is: "+rules_array[i]);
+                }
+            }
+
+           /*
+           $mtf.forEach(rules_array, function(element){
+               __("Rule is: "  + rules_array);
+               item.addEventListener( this.getEventDefault(item.tagName.toLowerCase()), this.getRuleMethod(element) );
+           });
+           */
+
         }
     }
 }
@@ -122,7 +170,7 @@ MTF_Valid.prototype.__bind_rules = function(){
         // matches: "<input name='email' />" => "<input "
         var reg_rule = new RegExp("^(\<[a-zA-Z]*\s*)+(.*)");
         var component_split = reg_rule.exec(component);
-        component = component.replace(reg_rule, component_split[1] + rule_parsed + component_split[2]);
+        component = component.replace(reg_rule, component_split[1] + " " + rule_parsed + " " + component_split[2]);
         $mtf.collections[type][index] = component;
     }
 }
@@ -172,7 +220,8 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
 MTF_Valid.prototype.__find_rules = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
     var found_rules = {};
-    if( rule_attr != "" )
+
+    if( !$mtf.is_empty(rule_attr) && $mtf.objectLength(rule_attr) > 0 )
     {
         var rules = rule_attr.split( $MTF_Valid_Config.rules_attr_name );
 

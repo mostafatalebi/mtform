@@ -6,5 +6,6 @@ if( typeof window.$MTF_Valid_Rules !== "object" )
 
 window.$MTF_Valid_Rules_Names.push("number");
 window.$MTF_Valid_Rules_Methods.push(function(number){
+        alert("Blurred");
         return /^[0-9]*$/.test(number);
 });
