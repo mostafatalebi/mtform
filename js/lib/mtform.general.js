@@ -50,6 +50,7 @@ mtFormInit.prototype.isArrayOrObject = function(inp)
 
 mtFormInit.prototype.forEach = function(obj, callback)
 {
+    if( typeof obj !== 'object' ) return false; // Skipped.
     var len;
     var objectKeys;
     var i  = 0;
@@ -197,4 +198,8 @@ mtFormInit.prototype.is_normal = function(input) {
 mtFormInit.prototype.is_form_component = function(element){
     return (this.form_components_names.indexOf( element.tagName.toLowerCase() ) !== -1 )
             ? true : false;
+}
+
+mtFormInit.prototype.objectLength = function(input) {
+    return (this.isArrayOrObject(input) == 'array') ? input.length : Object.keys(input).length;
 }

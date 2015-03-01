@@ -41,6 +41,9 @@ window.onload = function(){
 
         $mtf.VWatch("main_form");
 
+
+        $mtf.VEventize("main_form");
+
         console.log($mtf.$lives.Valid.rules);
 };
 
