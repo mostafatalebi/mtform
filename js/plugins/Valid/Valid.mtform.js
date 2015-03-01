@@ -66,6 +66,12 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
 
 }
 
+/**
+ * Adds event listener for the form components for their values to be checked against
+ * their bound rules on the occurance of that certain event.
+ * @param form_id
+ * @private
+ */
 MTF_Valid.prototype.__add_event_listeners = function(form_id){
     var parent_cont = document.getElementById(form_id);
 
@@ -82,12 +88,24 @@ MTF_Valid.prototype.__add_event_listeners = function(form_id){
     }
 }
 
+/**
+ * Registers the rule to the main rules object with the target component's index and type
+ * retrieved from componentLastInfo API of the main object.
+ * @param ruleName {string} the name of the rule
+ * @param ruleValue {mixed} the value of the rule
+ * @private
+ */
 MTF_Valid.prototype.__assign_rule = function(ruleName, ruleValue){
     var last_comp = $mtf.componentLastInfo;
 
     this.__add_rule_to_stack(last_comp.index, last_comp.type, [ ruleName , ruleValue ] );
 }
 
+/**
+ * Based on the rules and its bound index and type, it search main collections and find the proper string for\
+ * the already-added form-component
+ * @private
+ */
 MTF_Valid.prototype.__bind_rules = function(){
 
     for( var i = 0; i < this.rules.length; i++ )
@@ -109,6 +127,12 @@ MTF_Valid.prototype.__bind_rules = function(){
     }
 }
 
+/**
+ * parses the rules objects and makes them into a string. rule=value&next_rule=value&...
+ * @param rule_object an object of rule which has a specific scheme
+ * @returns {string}
+ * @private
+ */
 MTF_Valid.prototype.__rules_parsed = function(rule_object){
 
     var keys = Object.keys(rule_object);
@@ -129,10 +153,22 @@ MTF_Valid.prototype.__rules_parsed = function(rule_object){
     return rule_string;
 }
 
+/**
+ * Wraps in the rules string in an html attribute name. example: data-name="{rules}"
+ * @param rules {string} rules string
+ * @returns {string} a string with name of the attribute prepended and wrapped in the quotation
+ * @private
+ */
 MTF_Valid.prototype.__wrap_in_attr = function(rules){
     return $MTF_Valid_Config.rules_attr_name+ "='" + rules + "' ";
 }
 
+/**
+ * Searches the attributes @__elementJavascript and sees if it contains any rule
+ * @param element @__elementJavascript
+ * @returns {{}} an object of rules whose elements are an object of two keys: callback and value
+ * @private
+ */
 MTF_Valid.prototype.__find_rules = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
     var found_rules = {};
