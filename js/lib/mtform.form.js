@@ -148,7 +148,9 @@ mtFormInit.prototype.FormWithFile = function(args){
     if(!this.is_object(args))
     { args = { "enctype" : "multipart/form-data"}; }
     else
-    { args.concat({ "enctype" : "multipart/form-data"}); }
+    {
+        args["enctype"] = "multipart/form-data";
+    }
     this.addForm(args);
     return this;
 };
@@ -329,7 +331,7 @@ mtFormInit.prototype.JSON = function(element){
  * @returns {mtFormInit}
  */
 mtFormInit.prototype.print = function(){
-    console.log(this.htmls);
+
     return this;
 };
 

@@ -88,7 +88,9 @@ function mtFormInit(container, coreModules){
     this.componentLastIterated = "";
 
 
-
+    this.form_components_names = [
+        "input", "select", "textarea", "radio", "checkbox", "button", "submit",
+    ]
 
     // each entry into the array has to be
     // an object {} (containing type and htmlContent)

@@ -190,7 +190,7 @@ mtFormInit.prototype.addHidden = function(attrs){
     var prs = this.parser(input, [":attrs"], [attrs]);
     this.__setLastComponentType("hidden");
     this.__addComponentInstance(prs, "hidden");
-    __(prs);
+
     return prs;
 };
 
@@ -249,8 +249,8 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
 };
 
 mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
-    __("This si afdsfdsfdskjfhgsdakfhgvk,sfhgkhkdjdsjb");
-    __(attrs);
+
+
     var value = "";
     value = (typeof radiosArgs == 'string' || typeof radiosArgs.value === "undefined" || typeof radiosArgs.value === "null")
         ? "value='"+radiosArgs+"'" : "value='"+radiosArgs.value+"'";

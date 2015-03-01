@@ -182,10 +182,6 @@ mtFormInit.prototype.is_object = function(input) {
     return (typeof input === 'object') ? true : false;
 }
 
-mtFormInit.prototype.is_object = function(input) {
-    return (typeof input === 'object') ? true : false;
-}
-
 mtFormInit.prototype.is_string = function(input) {
     return (typeof input === 'string') ? true : false;
 }
@@ -196,4 +192,9 @@ mtFormInit.prototype.is_empty = function(input) {
 
 mtFormInit.prototype.is_normal = function(input) {
     return (typeof input !== 'function' && typeof input !== 'object') ? true : false;
+}
+
+mtFormInit.prototype.is_form_component = function(element){
+    return (this.form_components_names.indexOf( element.tagName.toLowerCase() ) !== -1 )
+            ? true : false;
 }
