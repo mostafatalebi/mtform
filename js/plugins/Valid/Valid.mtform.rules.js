@@ -1,11 +1,27 @@
-if( typeof window.$MTF_Valid_Rules !== "object" )
-{
-    window.$MTF_Valid_Rules_Names = [];
-    window.$MTF_Valid_Rules_Methods = [];
+MTF_VALID_RULES = {};
+
+
+MTF_VALID_RULES = {
+
+    /**
+     * @rule number
+     * @description checks to see if input is a number or not
+     * @param number input value
+     * @returns {boolean} true if number, and false if contains non-numeric values
+     */
+    "number" : {
+        main : function(component, event){
+            return /^[0-9]*$/.test(component.value);
+        },
+        success : function(component, msg_container, event) {
+            // you can leave it empty
+        },
+        error : function(component, msg_container, event){
+            alert("No, you value is not a number: "+component.value)
+        }
+    }
+
+
+
 }
 
-window.$MTF_Valid_Rules_Names.push("number");
-window.$MTF_Valid_Rules_Methods.push(function(number){
-        alert("Blurred");
-        return /^[0-9]*$/.test(number);
-});
