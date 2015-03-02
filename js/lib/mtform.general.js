@@ -201,5 +201,8 @@ mtFormInit.prototype.is_form_component = function(element){
 }
 
 mtFormInit.prototype.objectLength = function(input) {
-    return (this.isArrayOrObject(input) == 'array') ? input.length : Object.keys(input).length;
+    if(input)
+        return (this.isArrayOrObject(input) == 'array') ? input.length : Object.keys(input).length;
+    else
+        return false;
 }
