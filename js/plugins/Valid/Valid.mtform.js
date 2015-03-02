@@ -214,7 +214,7 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
 /**
  * Searches the attributes @__elementJavascript and sees if it contains any rule
  * @param element @__elementJavascript
- * @returns {{}} an object of rules whose elements are an object of two keys: callback and value
+ * @returns {{}} an object of rules whose elements are an object with two keys: callback and value
  * @private
  */
 MTF_Valid.prototype.__find_rules = function(element){
