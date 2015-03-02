@@ -1,4 +1,10 @@
 /**
+#####################
+##################### TO BE DEPRECATED AND REMOVED
+##################### REASON: AN EXTERNAL MODULE TAKES THE RESPONSIBILITY OF VALIDATION
+##################### IT IS HIGHLY CONVENIENT
+ **/
+/**
  Validation rules for all form components.
  **/
 

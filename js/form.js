@@ -4,7 +4,7 @@ window.onload = function(){
 
 
 
-    $mtf.Input().File().Input().VAdd("number", "true").addRule("required", "true").Hidden().addRule("email").Password().
+    $mtf.Input().File().Input().VAdd("number", "true", ['resize', 'keyup']).Hidden().Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
         AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
@@ -13,8 +13,8 @@ window.onload = function(){
             default : "",
             labels : ["Female", "Male", "Aged", "Young"], // can accepts a function too
             ids : ['first', 'second'],
-            attrs : {class : "good.bad"},
-        }).addRule("mobile", "10numbers").
+            attrs : {class : "good.bad"}
+        }).
             HtmlBefore("<div style='border: 1px red solid;'>This is added before the components.</div>", true).
         HtmlAfter("<p>This is added after an input</p>").
         Select({
@@ -40,7 +40,6 @@ window.onload = function(){
         }).FormWithFile({ id : 'main_form'}).VBind().MakeAppend();
 
         $mtf.VWatch("main_form");
-
 
         $mtf.VEventize("main_form");
 

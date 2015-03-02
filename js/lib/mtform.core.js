@@ -153,3 +153,4 @@ mtFormInit.prototype.__setLastComponentType = function(componentType){
     this.lastComponentType = componentType;
     // returns nothing, since this is a system function
 }
+

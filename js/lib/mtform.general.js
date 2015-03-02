@@ -206,3 +206,22 @@ mtFormInit.prototype.objectLength = function(input) {
     else
         return false;
 }
+
+mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
+{
+    var new_arr = [];
+    var arr_len = (arr1.length > arr2.length) ? arr1.length : arr2.length;
+
+    for(var i = 0; i < arr_len; i++)
+    {
+        if( i < arr1.length && new_arr.indexOf(arr1[i]) == -1 )
+        {
+            new_arr.push(arr1[i]);
+        }
+        if( i < arr2.length && new_arr.indexOf(arr2[i]) == -1 )
+        {
+            new_arr.push(arr2[i]);
+        }
+    }
+    return new_arr;
+}
