@@ -112,7 +112,7 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
                 this.rules[i]['rules'][rule_obj[0]] = rule_obj[1];
                 this.rules[i]['index'] = element_index;
                 this.rules[i]['type'] = element_type;
-                this.rules[i]['events'] = events;
+                this.rules[i]['events'] = this.rules[i]['events'].concat(events);
             }
         }
     }
