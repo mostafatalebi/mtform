@@ -4,7 +4,7 @@ window.onload = function(){
 
 
 
-    $mtf.Input().File().Input().VAdd("number", "true", ['keyup']).Hidden().Password().
+    $mtf.Input().File().Input().VAdd("number", "true", ['keyup']).VAdd("radio", "true", ['change']).Hidden().Password().
         addRule("mobile", "false").Textarea("I am mostafa").addRule("length", "250").
         AttachLabel({ name : "someSpecialName", "for" : "someTextareas"}, "Something").
         Radios({
@@ -26,7 +26,7 @@ window.onload = function(){
             attrs : {class : "some-classes"},
             optionAttr : [{ class : 'for-each-option'}, { class : 'something else', 'data-table' : true}, {"data-href" : 'somelink.com'} ],
             optionAttrUseOneSet : false,
-         }).VAdd("select", "change")
+         }).VAdd("select", "change").
         Submit({value : "Click Here", "data-id" : 28}).
         setContainer(ele).Alternate(function(currentItem, nextItem){
             if(currentItem.indexOf("radio") !== -1)
@@ -38,8 +38,6 @@ window.onload = function(){
                 return "<p style='color: green; font-weight: bold;'>---------------------------------</p>"
             }
         }).FormWithFile({ id : 'main_form'}).VBind().MakeAppend();
-
-        $mtf.VWatch("main_form");
 
         $mtf.VEventize("main_form");
 
