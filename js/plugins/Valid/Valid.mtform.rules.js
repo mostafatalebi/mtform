@@ -17,11 +17,25 @@ MTF_VALID_RULES = {
             // you can leave it empty
         },
         error : function(component, msg_container, event){
-            alert("No, you value is not a number: "+component.value)
+            alert("No, the value is not a number: "+component.value)
+        }
+    },
+
+    /**
+     * @rule radio
+     * @description checks to see if any of the radio inputs are check or not
+     */
+    "radio" : {
+        main : function(component, event){
+            if(component.value == 'female')
+            {
+                return false;
+            }
+        },
+        error : function(component){
+            alert("You are a female");
         }
     }
-
-
 
 }
 

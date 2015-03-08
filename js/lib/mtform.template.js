@@ -24,10 +24,12 @@ mtFormInit.prototype.templatesFormComponents = {
 // ===================
 
 /**
- * Receives an array object of generated form components, or one single form component (string)
+ * (Note: This function is going to be removed or left unused within the system. All validations
+ *  now are handled by a third party plugin called Valid)
+ * Receives an array-type object of generated form components, or one single form component (string)
  * and iterates over them and erase their remained
  * garbage placeholders. Since this function erases any remained placeholder, it should be used
- * only when no associated parsing would come after it. Otherwise, it will destroy the further
+ * only when no associated parsing will follow it. Otherwise, it will destroy the remained
  * process of parsing and make the application to stop parsing.
  *
  * @param mixed input the array object or a string

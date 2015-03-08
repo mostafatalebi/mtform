@@ -9,15 +9,16 @@
 function mtFormInit(container, coreModules){
     this.container =  container;
 
-    // list of living module for the lifespan of the application
+    // list of living module during the lifespan of the application
     this.$lives = [];
-    // following properties are for the sake of method-chaining
+
+
     this.attrs = ""; // assigns the attributes translated from args to this var
     this.htmls = ""; // assigns the attributes translated from args to this var
-    this.coreModules = []; // it just an array of names to be used to see which
+    this.coreModules = []; // it is just an array of names to be used to see which
                            // plugins have been loaded as core modules
-    this.rules = []; // a list of rules for each element
-    this.rulesAll = []; // a list of rules for each element
+    this.rules = []; // Note: @__remove(0.0.2)
+    this.rulesAll = []; // Note: @__remove(0.0.2)
     this.jsonResult; // the json-converted array of form components
     this.alternateContent = "";
     this.collections = {
@@ -27,7 +28,7 @@ function mtFormInit(container, coreModules){
         "hidden" : [],
         "radio" : [],
         "checkbox" : [],
-        "rule" : [], // global rules to be applied
+        "rule" : [], // Note: @__remove(0.0.2)
         "input" : [],
         "submit" : [],
         "button" : [],

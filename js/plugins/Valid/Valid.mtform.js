@@ -1,34 +1,38 @@
 
 
 /**
- * Checks to see what "event" has been defined for certain component
+ * Checks to see what "event" has been defined for a certain component type
  * @param tag_name the name of the tag for which an event is to be searched
- * @returns {Window.$MTF_Valid_Config.ev_input_default|*}
+ * @returns {object} an array of events
  */
 MTF_Valid.prototype.getEventDefault = function(tag_name){
     if(tag_name == 'input') return $MTF_Valid_Config.ev_input_default;
 }
 
-MTF_Valid.prototype.DefineRule = function(ruleName, ruleValue){
-    return this.__define_rule(ruleName, ruleValue);
+/**
+ * Allows custom rules to be defined. The defined rule will be added to the already
+ * defined default rules collection.
+ * @param ruleName the name of the rule
+ * @param ruleObject the object of the rule which follows this scheme: { main : function(){}, success : function(){} error : function(){} }
+ *        the callback receives these arguments: {element}element, {element}message_container, {event}event
+ * @returns {*}
+ * @constructor
+ */
+MTF_Valid.prototype.DefineRule = function(ruleName, ruleObject){
+    return this.__define_rule(ruleName, ruleObject);
 }
 
-
+/**
+ *
+ * @param rule_name
+ * @returns {*}
+ */
 MTF_Valid.prototype.getRuleMethod = function(rule_name){
     return this.rules_collection[rule_name];
 }
 
-MTF_Valid.prototype.eventCallbackHandler = function(initial_callback, error, success){
-    var s = initial_callback();
-    if( initial_callback() === false )
-    {
-        if(error) error();
-    }
-    else
-    {
-        if(success) success();
-    }
-}
+
+
 
 /**
  * Binds all assigned rules to the components
@@ -66,11 +70,41 @@ MTF_Valid.prototype.Eventize = function(parent_container_id){
  * @param rule_obj
  * @private
  */
+
+/**
+ * Handles event attachment to the component. It is a very important function which
+ * creates an anonymous function that manages the two other optional callback.
+ * If the initial_callback returns false, then the error callback is called,
+ * otherwise the success is called.
+ * @param initial_callback the main callaback for the event
+ * @param error {function} optional a callback to be called when initial_callback returns false
+ * @param success {function} optional a callback to be called when initial_callback returns true
+ */
+MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, success){
+    var s = initial_callback();
+    if( initial_callback() === false )
+    {
+        if(error) error();
+    }
+    else
+    {
+        if(success) success();
+    }
+}
+
+/**
+ * Adds the defined rule to the stack.
+ * @param element_index
+ * @param element_type
+ * @param rule_obj
+ * @param events
+ * @private
+ */
 MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, rule_obj, events){
 
     if( this.rules.length > 0)
     {
-        for( var i = 0; i < this.rules.length; i++ ) // checks if this component has alreay
+        for( var i = 0; i < this.rules.length; i++ ) // checks if this component has already
         // being bound to a rule, if yes, then just add the rule than creating a collection anew
         {
             if( this.rules[i]['index'] == element_index && this.rules[i]['type'] == element_type )
@@ -133,14 +167,14 @@ MTF_Valid.prototype.__add_event_listeners = function(form_id){
                     var events_optional = this.__get_optional_events(item);
                     if(events_optional)
                     {
-                        events = $mtf.joinArraysUnique(events, events_optional);
+                        events = events_optional;
                     }
-                    var eventCallbackHandler = this.eventCallbackHandler;
+                    var __eventCallbackHandler = this.__eventCallbackHandler;
                     for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
                     item.addEventListener( events[eventIncr], function(event){
                             var current_element = this;
                             var event_object = event;
-                            eventCallbackHandler(
+                            __eventCallbackHandler(
                             function(){
                                 return callback_function(current_element, event_object);
                             },
@@ -206,7 +240,14 @@ MTF_Valid.prototype.__bind_rules = function(){
     }
 }
 
-
+/**
+ * parses the event into a usable string.
+ * @param events_array the events array
+ * @param item_type @__elementLastType
+ * @param item_index @__elementLastIndex
+ * @returns {string}
+ * @private
+ */
 MTF_Valid.prototype.__events_parsed = function(events_array, item_type, item_index){
     item_type = this.__get_hash_value(item_type);
     if(!this.events_optional[item_type])
@@ -313,11 +354,17 @@ MTF_Valid.prototype.__get_optional_events = function(element){
  * @private
  */
 MTF_Valid.prototype.__define_rule = function(rule_name, value){
-    if(typeof $MTF_Valid_Rules !== 'object') $MTF_Valid_Rules = {};
+    if(!this.rules_collection) $MTF_Valid_Rules = {};
 
-    $MTF_Valid_Rules[rule_name] = value;
+    this.rules_collection[rule_name] = value;
 }
 
+/**
+ * Gets the name of input of the hash
+ * @param hash_value the hash value for which an input name is returned
+ * @returns {string} the name of input
+ * @private
+ */
 MTF_Valid.prototype.__get_hash_name = function(hash_value)
 {
     var len = Object.keys($MTF_Valid_Config.hash_table);
@@ -330,7 +377,14 @@ MTF_Valid.prototype.__get_hash_name = function(hash_value)
     }
 }
 
+/**
+ * Gets the hash value of an input name
+ * @param name the name of the input
+ * @returns {string} the hash value
+ * @private
+ */
 MTF_Valid.prototype.__get_hash_value = function(name)
 {
     return $MTF_Valid_Config.hash_table[name];
 }
+

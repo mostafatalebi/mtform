@@ -39,5 +39,7 @@ $mtf.extends("VEventize", function(){
 
     $mtf.$lives.Valid.Eventize();
 
+
+    // returns the current instance of @__mtformObject
     return $mtf;
 });
