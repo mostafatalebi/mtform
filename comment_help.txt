@@ -17,4 +17,17 @@ with a high maintainability.
 @__collectionOrdered : Collection of @__mtformComponentsByOrder
 @__mtformComponentsByType : components that are basically stored into their respective collection based on their type.
 @__mtformComponentsByOrder : objects that contain type and index. Type points to the respective type-based collection and index points to the place of that certain element.
+@__elementLastType : the type of last components added to the collection
+@__elementLastIndex : the index of last components added to the collection
+@__remove [version] : will be removed in the version %version%
 
+
+
+
+***
+    Possible Values
+***
+    CURRENT_VERSION // current version
+    ONE_MINOR_UP    // one minor version upper
+    ONE_MINOR_DOWN  // one minor version down
+    CURRENT_HASH_INSTANCE // the id of current instance (~session) of the mtForm
