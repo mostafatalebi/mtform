@@ -35,6 +35,16 @@ MTF_VALID_RULES = {
         error : function(component){
             alert("You are a female");
         }
+    },
+
+    "select" : {
+        main : function(elm, msg, container){
+            if(elm.value == "young")    return true;
+            else return false;
+        },
+        error : function(){
+            console.log("Select invalid.");
+        },
     }
 
 }
