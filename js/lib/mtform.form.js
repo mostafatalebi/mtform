@@ -15,7 +15,9 @@
  * @returns {form} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Form = function(args, formKey){
+mtFormInit.prototype.Form = function(name, args, formKey){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("form", args, formKey);
 };
 
@@ -25,7 +27,9 @@ mtFormInit.prototype.Form = function(args, formKey){
  * @returns {input} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Input = function(args){
+mtFormInit.prototype.Input = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("input", args);
 };
 
@@ -35,7 +39,9 @@ mtFormInit.prototype.Input = function(args){
  * @returns {hidden} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Hidden = function(args){
+mtFormInit.prototype.Hidden = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("hidden", args);
 };
 
@@ -45,7 +51,9 @@ mtFormInit.prototype.Hidden = function(args){
  * @returns {password} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Password = function(args){
+mtFormInit.prototype.Password = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("password", args);
 };
 
@@ -56,7 +64,9 @@ mtFormInit.prototype.Password = function(args){
  * @returns {textarea} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Textarea = function(args, innerValue){
+mtFormInit.prototype.Textarea = function(name, args, innerValue){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("textarea", args, innerValue);
 };
 
@@ -66,7 +76,9 @@ mtFormInit.prototype.Textarea = function(args, innerValue){
  * @returns {submit} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Submit = function(args){
+mtFormInit.prototype.Submit = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("submit", args);
 };
 
@@ -77,7 +89,9 @@ mtFormInit.prototype.Submit = function(args){
  * @returns {button} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Button = function(args, innerValue){
+mtFormInit.prototype.Button = function(name, args, innerValue){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("button", args, innerValue);
 };
 
@@ -102,7 +116,7 @@ mtFormInit.prototype.Button = function(args, innerValue){
  * @returns {radio} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Radios = function(args){
+mtFormInit.prototype.Radios = function( args){
     return this.create("radio", args.attrs, args);
 };
 
@@ -113,7 +127,7 @@ mtFormInit.prototype.Radios = function(args){
  * @returns {select}
  * @constructor
  */
-mtFormInit.prototype.Select = function(args){
+mtFormInit.prototype.Select = function( args){
     return this.create("select", args.attrs, args);
 }
 
@@ -123,9 +137,11 @@ mtFormInit.prototype.Select = function(args){
  * @returns {file}
  * @constructor
  */
-mtFormInit.prototype.File = function(args){
+mtFormInit.prototype.File = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     return this.create("file", args);
-};;
+};
 
 /**
  * Creates a simple form
@@ -133,7 +149,9 @@ mtFormInit.prototype.File = function(args){
  * @returns {mtFormInit}
  * @constructor
  */
-mtFormInit.prototype.Form = function(args){
+mtFormInit.prototype.Form = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     this.addForm(args);
     return this;
 };
@@ -144,7 +162,9 @@ mtFormInit.prototype.Form = function(args){
  * @returns {mtFormInit}
  * @constructor
  */
-mtFormInit.prototype.FormWithFile = function(args){
+mtFormInit.prototype.FormWithFile = function(name, args){
+    if(typeof args !== 'object') args = {};
+    args.name = name;
     if(!this.is_object(args))
     { args = { "enctype" : "multipart/form-data"}; }
     else
