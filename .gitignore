@@ -2,3 +2,6 @@
 .idea/*
 .idea/.*
 server.php
+ajax.html
+js/form.js
+index.html
