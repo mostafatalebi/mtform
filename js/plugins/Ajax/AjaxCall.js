@@ -56,6 +56,7 @@ var AjaxCall = function(config){
 
     // creating the request object compatible with the browser
     this.request = this.__createRequestObject();
+    return this;
 }
 
 AjaxCall.prototype.setParams = function(params){
@@ -159,7 +160,6 @@ AjaxCall.prototype.__serializeData = function(data){
 
 AjaxCall.prototype.__understandData = function(data){
 
-    console.log(typeof this.params.dataProcess);
 
     if(typeof this.params.dataProcess === 'function')
     {
