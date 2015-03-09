@@ -225,3 +225,99 @@ mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
     }
     return new_arr;
 }
+
+/**
+ * This function handles the argument list of form-component-create functions in a very flexible and special
+ * way allowing different ways of passing arguments to the functions (e.g Input() ).
+ * The function accepts a name, a value and an object holding unlimited key&value pairs for tag's attributes.
+ * There is a last 'condition' param which specifies how to treat the arguments and specifically how to treat
+ * 'innerValue'; because innerValue behaves as 'value' attribute for most of tags, but for some tags such as
+ * textarea or button it acts as 'innerHTML'. The flexible part is that allows several types of argument-passing
+ * schemes. We set Input() as our example. Input('name', 'value', { 'data-href' : 'http://google.com'}) is the primary
+ * and most comprehensive way of calling that function. But arguments can be dropped for the interest of other arguments.
+ * The function can also be called like Input("name", { 'data-href' : 'http://google.com'}). Dropping value since it might
+ * not be needed. Or, it might be called Input( { 'data-href' : 'http://google.com'} ). Just passing attributes object.
+ * Indeed the only necessary param is args object, because 'name' and 'value' params are just shortcuts which gets merged
+ * eventually with args object, and if no args object is passed, the function declares one on the fly.
+ * @param name {string|object} the name of the form component to be created
+ * @param innerValue {string|object} the default value of the form component to be created
+ * @param args {object} an object holding key&value pairs for attributes of the form component to be created
+ * @param condition a keyword specifying how to treat arguments. Default values: "value", "innerValue", "form"
+ * @returns {{args: {}, innerValue: string}} an object processing the final object to be passed to the mapper function.
+ */
+mtFormInit.prototype.handleCreateFunctionArguments = function( name, innerValue, args, condition ){
+    var final = { args : {}, innerValue : "" };
+
+    if( condition == 'innerValue' ) // means it is not a self-closing tag
+    {
+        if( typeof args !== 'object' && typeof args !== 'string' ) args = {}; // ensuring the type to be set to object
+        if( typeof name === "string" ) // name is not passed (?directly maybe)
+        {
+            if( typeof innerValue === 'string' )// user has passed function ( 'name', "" ) {}
+            {
+                if( typeof args === 'object' ) // user has passed function ( 'name', "value", {} ) {}
+                {
+                    final.args = args;
+                }
+
+                final.innerValue = innerValue;
+            }
+            else if( typeof innerValue === 'object' ) // user has passed function ( 'name', {} ) {}
+            {
+                final.args = innerValue;
+            }
+
+            final.args.name = name;
+        }
+        else if( typeof name === 'object' ) // user has passed function ( {} ) {}
+        {
+            final.args = name;
+        }
+    }
+    else if ( condition == 'value' ) // it is a self closing tag
+    {
+        if( typeof args !== 'object' && typeof args !== 'string' ) args = {}; // ensuring the type to be set to object
+        if( typeof name === "string" ) // name is not passed (?directly maybe)
+        {
+            if( typeof innerValue === 'string' )// user has passed function ( 'name', "" ) {}
+            {
+                if( typeof args === 'object' ) // user has passed function ( 'name', "value", {} ) {}
+                {
+                    final.args = args;
+                }
+
+                final.args.value = innerValue;
+            }
+            else if( typeof innerValue === 'object' ) // user has passed function ( 'name', {} ) {}
+            {
+                final.args = innerValue;
+            }
+
+            final.args.name = name;
+        }
+        else if( typeof name === 'object' ) // user has passed function ( {} ) {}
+        {
+            final.args = name;
+        }
+    }
+    else if( condition == 'form' )
+    {
+        if( typeof args !== 'object' && typeof args !== 'string' ) args = {}; // ensuring the type to be set to object
+        if( typeof name === "string" ) // name is not passed (?directly maybe)
+        {
+            if( typeof innerValue == 'object')
+            {
+                final.args = innerValue;
+            }
+
+            final.args.name = name;
+        }
+        else if( typeof name === 'object' ) // user has passed function ( {} ) {}
+        {
+            final.args = name;
+        }
+    }
+
+
+    return final;
+}
