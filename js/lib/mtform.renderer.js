@@ -132,9 +132,11 @@ mtFormInit.prototype.__makeAlternate = function()
                 new_result.push(new_collections(this.collectionOrdered[i], this.collectionOrdered[i+1]));
             }
         }
+
+        this.collectionOrdered = new_result;
     }
 
-    this.collectionOrdered = new_result;
+
 }
 
 /**
