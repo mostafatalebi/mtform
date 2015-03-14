@@ -20,7 +20,11 @@ var AjaxCall = function(config){
 
         // a callback to process the data before sending. Using this, the default serialization would
         // be disabled for the interest of the custom function the user uses.
-        dataProcess : (typeof config.dataProcess === null || typeof config.dataProcess === 'undefined') ? null : config.dataProcess(config.data),
+        dataProcess : (typeof config.dataProcess === null || typeof config.dataProcess === 'undefined' ) ? null : config.dataProcess(config.data),
+
+        // whether to set form Data or not, default is set to browser-support
+        formData : (typeof config.formData === null || typeof config.formData === 'undefined' ) ? true : config.formData,
+
 
         // Asynchronous or Synchronous
         async : (typeof config.async === null || typeof config.async === 'undefined') ? true : config.async,
@@ -42,7 +46,7 @@ var AjaxCall = function(config){
 
         // an object accepting the header name and value. Any value added to the object
         // would override the default '*-urlencoded' header.
-        headers : (typeof config.headers === null || typeof config.headers === 'undefined') ? {'Content-type' : "application/x-www-form-urlencoded"} : config.headers,
+        headers : (typeof config.headers === null || typeof config.headers === 'undefined') ? {} : config.headers,
 
         // expectation from response headers
         responseHeaders : (typeof config.responseHeaders === null || typeof config.responseHeaders === 'undefined') ? null : config.responseHeaders,
@@ -51,7 +55,12 @@ var AjaxCall = function(config){
         responseType : (typeof config.responseType === null || typeof config.responseType === 'undefined') ? "text" : config.responseType,
 
         // caching behaviors. "no-cache" is the default value.
-        cache : (typeof config.cache === null || typeof config.cache === 'undefined') ? "no-cache" : config.cache
+        cache : (typeof config.cache === null || typeof config.cache === 'undefined') ? "no-cache" : config.cache,
+
+        // this option sets the AJAX calls to be sent by the custom library itself. NOTE(Paradox): this config is not used within
+        // this library, but it is an option which could be set by user to force the wraper of this library to
+        // rely on the library and does not use jQuery which is used by the wrapper is a priority over this library
+        forceDomesticLibrary : (typeof config.forceDomesticLibrary === null || typeof config.forceDomesticLibrary === 'undefined') ? false : config.cache
     }
 
     // creating the request object compatible with the browser
@@ -65,13 +74,23 @@ AjaxCall.prototype.setParams = function(params){
 }
 
 AjaxCall.prototype.send = function(){
-    var data = this.__understandData(this.params.data);
+    var data;
+    if( window.FormData || this.params.formData !== false )
+    {
+        data = this.__understandData(this.params.data);
+    }
+    else
+    {
+        data = this.params.data;
+    }
+
     var request = this.request;
     // open the request
     request.open(this.params.type, this.params.url, this.params.async);
 
     // set the headers
     this.__setHeaders(this.params.headers);
+
 
     // set the responseType
     if(typeof this.params.responseType !== null || typeof this.params.responseType !== 'undefined')
@@ -84,7 +103,7 @@ AjaxCall.prototype.send = function(){
         current_ajax_instance.__responseCallback(request, request.readyState, request.status);
     }
 
-    request.send(data);
+    request.send( data );
     return this;
 }
 
@@ -160,7 +179,6 @@ AjaxCall.prototype.__serializeData = function(data){
 
 AjaxCall.prototype.__understandData = function(data){
 
-
     if(typeof this.params.dataProcess === 'function')
     {
         return this.params.dataProcess(data);
@@ -182,10 +200,33 @@ AjaxCall.prototype.__processResponse = function(){
 AjaxCall.prototype.__setHeaders = function(headers){
 
     var obj_length = Object.keys(headers);
-    for( var i = 0; i < obj_length.length; i++)
+
+    // this block of IF-Condition means that if no headers
+    // has been passed and also FormData is not supported by the browser, then send the
+    // data using the regular processing which requires setting a custom header
+    if( !window.FormData || this.params.formData === false )
     {
-        this.request.setRequestHeader(obj_length[i], headers[obj_length[i]]);
+        if( obj_length.length === 0 )
+        {
+            this.request.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+        }
+        else // else we let the headers to whatsoever it is passed
+        {
+            for( var i = 0; i < obj_length.length; i++)
+            {
+                this.request.setRequestHeader(obj_length[i], headers[obj_length[i]]);
+            }
+        }
     }
+    else
+    {
+        for( var i = 0; i < obj_length.length; i++)
+        {
+            this.request.setRequestHeader(obj_length[i], headers[obj_length[i]]);
+        }
+    }
+
+
 }
 
 AjaxCall.prototype.__responseCallback = function(request, readyState, status){

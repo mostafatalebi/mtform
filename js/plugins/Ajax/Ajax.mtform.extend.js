@@ -1,4 +1,4 @@
-$mtf.extends("Ajax", function(config, event_name, form_id, element_trigger_selector){
+$mtf.extends("Ajax", function(config, event_name, form_selector, element_trigger_selector){
 
     //var FormElement = new FormElement($mtf.getContainer())
     //var form_value = FormElement.getComponentsByAttribute("value");
@@ -7,7 +7,7 @@ $mtf.extends("Ajax", function(config, event_name, form_id, element_trigger_selec
     var triggers = document.querySelectorAll( element_trigger_selector );
 
     // create a new instance of our domestic AJAX Library
-    var Ajax = new MT_Ajax( document.getElementById(form_id) );
+    var Ajax = new MT_Ajax( form_selector );
 
     // check to see if the result of querySelector is healthy
     if(triggers.length)
