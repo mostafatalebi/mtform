@@ -212,6 +212,12 @@ mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
     var new_arr = [];
     var arr_len = (arr1.length > arr2.length) ? arr1.length : arr2.length;
 
+    // ensure that loop operation is not futile
+    if ( (typeof arr1 !== 'object' || typeof arr2 !== 'object') || (arr1.length === 0 || arr2.length === 0) )
+    {
+        return ( (typeof arr1 === 'object' && arr1.length !== 0 ) ) ? arr1 : arr2;
+    }
+
     for(var i = 0; i < arr_len; i++)
     {
         if( i < arr1.length && new_arr.indexOf(arr1[i]) == -1 )
@@ -225,6 +231,47 @@ mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
     }
     return new_arr;
 }
+
+
+mtFormInit.prototype.joinObjects = function(obj1, obj2)
+{
+    var new_arr = {};
+    var obj1_keys = Object.keys(obj1);
+    var obj2_keys = Object.keys(obj2);
+
+    var obj_len = 0;
+
+    if(obj1_keys.length > obj2_keys.length)
+    {
+        obj_len = obj1_keys.length;
+    }
+    else
+    {
+        obj_len = obj2_keys.length;
+    }
+
+    // ensure that loop operation is not futile
+    if ( (typeof obj1 !== 'object' || typeof obj2 !== 'object') || (obj1.length === 0 || obj2.length === 0) )
+    {
+        return ( (typeof obj1 === 'object' && obj1.length !== 0 ) ) ? obj1 : obj2;
+    }
+
+    for(var i = 0; i < obj_len; i++)
+    {
+        if( i < obj1_keys.length )
+        {
+            new_arr[obj1_keys[i]] = obj1[obj1_keys[i]];
+        }
+        if( i < obj2_keys.length )
+        {
+            new_arr[obj2_keys[i]] = obj2[obj2_keys[i]];
+        }
+    }
+
+
+    return new_arr;
+}
+
 
 /**
  * This function handles the argument list of form-component-create functions in a very flexible and special
@@ -318,6 +365,28 @@ mtFormInit.prototype.handleCreateFunctionArguments = function( name, innerValue,
         }
     }
 
+
+    return final;
+}
+
+mtFormInit.prototype.handleCreateRadioArguments = function( name, args ) {
+    var final = { attrs : {}, args : "" };
+    if( typeof args !== 'object' ) args = {}; // ensuring the type to be set to object
+    if( typeof name === "string" )
+    {
+        if( typeof args === 'object' ) // user has passed function ( 'name', {} ) {}
+        {
+            final.attrs = args.attrs;
+            final.args = args;
+        }
+
+        final.args["attrs"]['name'] = name;
+    }
+    else if( typeof name === 'object' ) // user has passed function ( {} ) {}
+    {
+        final.attrs = name.attrs;
+        final.args = name;
+    }
 
     return final;
 }

@@ -39,12 +39,14 @@ MT_Ajax.prototype.SendAjax = function(form, config){
         }
         else
         {
-            config.data = $mtf.joinArraysUnique( config.data, form_data );
+            config.data = $mtf.joinObjects( config.data, form_data );
         }
 
     }
     else
     {
+        // needed since we have to reset AJAX after it is sent.
+        config['old_data'] = (config['data']) ? config['data'] : {};
         config['data'] = form_data;
     }
 
@@ -62,5 +64,6 @@ MT_Ajax.prototype.SendAjax = function(form, config){
         ajax.send();
     }
 
+    config['data'] = config['old_data'];
     return this;
 }
