@@ -7,7 +7,7 @@ mtFormInit.prototype.config = function(){
     this.guid = true;
 
     // allows importing of JSON string as forms representation
-    //this.allowImport = true; CURRENTLY NOT SUPPORTED
+    this.allowImport = true;
 
     // allows exporting of the JSON result of the generated form
     //this.allowExport = true; CURRENTLY NOT SUPPORTED
