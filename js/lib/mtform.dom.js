@@ -389,7 +389,7 @@ mtFormInit.prototype.addSelect = function(attrs, options){
     }
 
     option = option.join("");
-    selectTplMain = this.parser(selectTplMain, [":options"], [option])
+    selectTplMain = this.parser(selectTplMain, [":options", ":attrs"], [option, attrs])
     this.__setLastComponentType("select");
     this.__addComponentInstance(selectTplMain, "select");
     return selectTplMain;

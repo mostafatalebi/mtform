@@ -97,16 +97,16 @@ mtFormInit.prototype.Button = function(name, innerValue, args){
 
 /**
  * Creates a radio-set. It uses a special attributes schema for generating radios.
+ * @param name {string|object} if string, then it is set as the name for the components
+ *        created by this set. if an object, then it is assumed to be args argument,
+ *        which makes the engine the skip the next @param which is args.
  * @param args The attributes for radios are different that the other components.
  *          The attributes should contain the following elements:
  *          {
  *              values :  [object - array]          an array of values based on which the number of radios are
  *                                                     specified. Since they basically must be unique.
- *              name :    [string|object - array]   if string, a name for the whole radio set, else, an array,
-         *                                             it will be distributed within the radios. Hence, an array
-         *                                             of two elements for name, with an array of six elements for
-         *                                             values, result in a three sets of radios, each having two
-         *                                             elements.
+         *
+         *
  *              default : [string|object - array]   Sets the default value for the radios. If string, checks
          *                                             against all the components' values. It is logical and standard
          *                                             for it to be an array of same size as names.
@@ -116,9 +116,10 @@ mtFormInit.prototype.Button = function(name, innerValue, args){
  * @returns {radio} @__mtformObject
  * @constructor
  */
-mtFormInit.prototype.Radios = function( args){
-
-    return this.create("radio", args.attrs, args);
+mtFormInit.prototype.Radios = function( name, args ){
+    var args_temp;
+    args_temp = this.handleCreateRadioArguments(name, args);
+    return this.create("radio", args_temp.attrs, args_temp.args);
 };
 
 /**
@@ -128,8 +129,10 @@ mtFormInit.prototype.Radios = function( args){
  * @returns {select}
  * @constructor
  */
-mtFormInit.prototype.Select = function( args){
-    return this.create("select", args.attrs, args);
+mtFormInit.prototype.Select = function( name, args){
+    var args_temp;
+    args_temp = this.handleCreateRadioArguments(name, args);
+    return this.create("select", args_temp.attrs, args_temp.args);
 }
 
 /**
