@@ -141,7 +141,7 @@ mtFormInit.prototype.setContainer = function(element){
 // ===================
 
 /**
- * This functions adds the most recent [created] components into its related
+ * Adds the most recent [created] components into its related
  * collection for later use.
  * @param component the component which is created
  * @param componentCollection the collection onto which the component should be pushed
