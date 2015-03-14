@@ -8,32 +8,25 @@
  * @param form_id the id of the form or the form element itself
  * @constructor
  */
-var MTF_FormElement = function(form_id){
-    if( typeof form_id === 'object' )
-    {
-        this.form = form_id;
-    }
-    else
-    {
-        this.form = document.getElementById(form_id);
-    }
-
+var MTF_FormElement = function(form_selector) {
+    this.form = document.querySelector(form_selector);
 }
 
 
-MTF_FormElement.prototype.getComponents = function(){
+MTF_FormElement.prototype.getComponents = function() {
     return this.form.elements;
 }
 
-MTF_FormElement.prototype.getComponentsByAttribute = function(attr_name, element_exclusion_by_name, callback){
+MTF_FormElement.prototype.getComponentsByAttribute = function( attr_name, element_exclusion_by_name, callback ){
     var form_data;
-    if(window.FormData === 'undefined')
+    if( typeof window.FormData === 'undefined' )
     {
-        form_data = new FormData(this.form);
+        form_data = new FormData( this.form );
+
     }
     else
     {
-        form_elms = this.getComponents();
+        var form_elms = this.getComponents();
         form_data = {};
         var obj_keys = [];
         obj_keys = Object.keys(form_elms);
@@ -43,25 +36,25 @@ MTF_FormElement.prototype.getComponentsByAttribute = function(attr_name, element
         {
             for( var i = 0; i < obj_keys.length; i++ )
             {
-                var element_name = form_elms[obj_keys[i]].name;
-                if( element_exclusion_by_name.indexOf(element_name) )
-                {
-                    if(callback)
+                    var element_name = form_elms[obj_keys[i]].name;
+                    if( element_exclusion_by_name.indexOf(element_name) )
                     {
-                        form_data[element_name] = callback(form_elms[obj_keys[i]]);
-                    }
-                    else
-                    {
-                        if( attr_name == "value" )
+                        if(callback)
                         {
-                            form_data[element_name] = form_elms[obj_keys[i]].value;
+                            form_data[element_name] = callback(form_elms[obj_keys[i]]);
                         }
                         else
                         {
-                            form_data[element_name] = form_elms[obj_keys[i]].getAttribute(attr_name);
+                            if( attr_name == "value" )
+                            {
+                                form_data[element_name] = form_elms[obj_keys[i]].value;
+                            }
+                            else
+                            {
+                                form_data[element_name] = form_elms[obj_keys[i]].getAttribute(attr_name);
+                            }
                         }
                     }
-                }
             }
         }
         else
@@ -90,7 +83,7 @@ MTF_FormElement.prototype.getComponentsByAttribute = function(attr_name, element
         }
     }
 
-
+    form_data;
     return form_data;
 }
 
