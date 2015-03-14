@@ -6,16 +6,16 @@
 // callback(lastCreatedItemType, lastCreatedItemIndex, placeholders, values);
 mtFormInit.prototype.templatesFormComponents = {
     form : "<form :attrs >:form</form>",
-    input : "<input type='text' :rules  :attrs />",
+    input : "<input type='text'   :attrs />",
     password : "<input type='password' :attrs />",
     file : "<input type='file' :attrs />",
-    hidden : "<input type='hidden' :rules  :attrs />",
-    textarea : "<textarea :rules  :attrs >:innerValue</textarea>",
-    radio : "<input type='radio' :values :rules  :attrs />",
-    checkbox : "<input type='checkbox' :rules  :attrs />",
-    submit : "<input type='submit' :rules  :attrs />",
-    button : "<textarea :rules  :attrs >:value</textarea>",
-    select : "<select :rules  :attrs >:options</select>",
+    hidden : "<input type='hidden'   :attrs />",
+    textarea : "<textarea   :attrs >:innerValue</textarea>",
+    radio : "<input type='radio' :values  :attrs />",
+    checkbox : "<input type='checkbox'   :attrs />",
+    submit : "<input type='submit'   :attrs />",
+    button : "<textarea   :attrs >:value</textarea>",
+    select : "<select  :attrs >:options</select>",
     option : "<option  :uniqueValue :attrs />:innerValue</option>",
 }
 

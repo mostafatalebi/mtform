@@ -78,7 +78,7 @@ mtFormInit.prototype.Textarea = function(name, innerValue, args){
  */
 mtFormInit.prototype.Submit = function(name, value, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
+    args_temp = this.handleCreateFunctionArguments(name, value, args, 'value');
     return this.create("submit", args_temp.args);
 };
 

@@ -321,3 +321,16 @@ mtFormInit.prototype.handleCreateFunctionArguments = function( name, innerValue,
 
     return final;
 }
+
+
+mtFormInit.prototype.objectJoinWithFormData = function( object, formData ) {
+    var obj_keys = Object.keys( object );
+    for(var i = 0; i < obj_keys.length; i++ )
+    {
+        __( obj_keys[i] );
+        __( object[ obj_keys[i] ] );
+        formData.append( obj_keys[i], object[ obj_keys[i] ]);
+    }
+
+    return formData;
+}
