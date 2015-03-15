@@ -20,15 +20,30 @@ mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
         }
         else
         {
+            var obj_len = Object.keys(args);
+            for( var i = 0; i < obj_len.length; i++ )
+            {
+                var element = args[obj_len[i]];
+                var key = obj_len[i];
+                var isLast = false;
+                if( i == obj_len.length) isLast = true;
+                if(parseValues == true)
+                    element = this.parsePossiblePh(element);
+                if((typeof key != 'undefined' && typeof key !== null) &&
+                    (typeof element != 'undefined' && typeof element !== null))
+                    attrsStr += " " + key+'='+"'" + element + "' ";
+                if(isLast == true) attrsStr += " ";
+            }
 
-            this.forEach(args, function(element, key, isFirst, isLast){
+            /*this.forEach(args, function(element, key, isFirst, isLast){
                 if(parseValues == true)
                     element = this.parsePossiblePh(element);
                 if((typeof key != 'undefined' && typeof key !== null) &&
                     (typeof element != 'undefined' && typeof element !== null))
                         attrsStr += " " + key+'='+"'" + element + "' ";
                 if(isLast == true) attrsStr += " ";
-            });
+            });*/
+
             if(scope_of_usage == "global") this.attrs = attrsStr;
             return attrsStr;
         }
@@ -200,6 +215,11 @@ mtFormInit.prototype.is_form_component = function(element){
             ? true : false;
 }
 
+/**
+ * returns the length of the passed object
+ * @param input {object} an object whose length is to be returned.
+ * @returns {boolean|integer}
+ */
 mtFormInit.prototype.objectLength = function(input) {
     if(input)
         return (this.isArrayOrObject(input) == 'array') ? input.length : Object.keys(input).length;
@@ -207,6 +227,13 @@ mtFormInit.prototype.objectLength = function(input) {
         return false;
 }
 
+/**
+ * Joins two arrays but does not keep duplicated keys and only keeps one of them. The one which is
+ * kept belongs to the arr1
+ * @param arr1 first array
+ * @param arr2 second array
+ * @returns {*} a new array as joined version of arr1 and arr2
+ */
 mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
 {
     var new_arr = [];
@@ -232,7 +259,12 @@ mtFormInit.prototype.joinArraysUnique = function(arr1, arr2)
     return new_arr;
 }
 
-
+/**
+ * Joins two objects and returns a new joined object.
+ * @param obj1 first object
+ * @param obj2 second object
+ * @returns {*} new object as joined version of object1 and object2
+ */
 mtFormInit.prototype.joinObjects = function(obj1, obj2)
 {
     var new_arr = {};
