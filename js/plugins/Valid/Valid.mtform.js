@@ -60,6 +60,9 @@ MTF_Valid.prototype.Eventize = function(parent_container_id){
     this.__add_event_listeners(parent_container_id);
 }
 
+MTF_Valid.prototype.addTemplate = function(tmp_name, tmp_value){
+    this.templates[tmp_name] = tmp_value;
+}
 
 /**######## PRIVATE FUNCTIONS #########**/
 
