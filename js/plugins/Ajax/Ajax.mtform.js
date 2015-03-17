@@ -1,9 +1,43 @@
-var MT_Ajax = function(form_selector, config){
+var MT_Ajax = function(form_selector, config, elements_trigger){
 
-    // list of excluded components' names from being sent via AJAX
+    /**
+     * By default all components are scanned. If there is a component whose value should be
+     * ignored, it's name must be included here.
+     * @type {Array}
+     */
     this.excludedByName = [];
+
+    /**
+     * An object containing the configurations of the AJAXCall library. If jQuery is included and
+     * it is set to be used, this object would be passed on to the jQuery, which means lexically it
+     * is a replication of jQuery configuration
+     * @type {Object}
+     */
     this.config = config;
+
+    // a version of configurations which is processed by SendAjax and its associated functions
+    this.configProcessed = config;
+
+    /**
+     * A CSS selector to help us select the proper form which is used as AJAX container of
+     * components
+     */
     this.form = form_selector;
+
+
+    /**
+     * This array is pushed with an item every time When() gets called. It helps us
+     * keep trace of events and also utilize this list for export&import functionalities
+     * @type {Array}
+     */
+    this.events = [];
+
+
+    /**
+     * This is merely used for export&import functionalities and is not operationally used as of v0.0.1
+     * @type {String}
+     */
+    this.triggers_selector = elements_trigger;
 };
 
 // accepts both name or array
@@ -65,5 +99,8 @@ MT_Ajax.prototype.SendAjax = function(form, config){
     }
 
     config['data'] = config['old_data'];
+
+    // saving a copy of the processed configurations.
+    this.configProcessed = config;
     return this;
 }
