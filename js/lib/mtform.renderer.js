@@ -160,3 +160,15 @@ mtFormInit.prototype.wrapInHtml = function(openTag, closeTag){
     }
     return this;
 };
+
+
+mtFormInit.prototype.Export = function( inclusion, exclusion ){
+    var export_result = {};
+    for( var i = 0; i < this.exports.length; i++ )
+    {
+        var callback = this.exports[i]['callback'];
+        export_result[this.exports[i].name] = callback();
+    }
+    return export_result;
+};
+

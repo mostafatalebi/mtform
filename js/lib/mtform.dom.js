@@ -114,7 +114,36 @@ mtFormInit.prototype.createElement = function(name, args, content)
 
 }
 
+mtFormInit.prototype.createCustom = function(component_type, value, args){
+    var arguments = "";
+    // we make sure if no param is passed, to re-declare it
+    // as a object so to avoid future undefined errors
+    if(this.is_empty(args))
+        args = "";
+    else if (typeof args === 'object')
+        args = this.argsToAttrs(args);
 
+
+    var inp;
+
+    var component_type = component_type.trim().toLowerCase();
+
+    inp = this.addCustom(value , args);
+
+
+    // we check the last component's index in the collection. We just want to have a
+    // sequence of pointers in order to parse one real string objects during the whole process. As our components
+    // are grouped respective to their type,  the user expects the generation of the components
+    // to be in order of their call. Thus, we have to keep the order in which they are called.
+    var component_last_collection_properties = { type : component_type , index : this.collectionSequentialLastIndex(component_type) };
+    this.addCollectionSequential( component_last_collection_properties.type, component_last_collection_properties.index );
+
+
+    // we keep track of the last generated component's type and index.
+    this.lastQueried = component_type;
+    this.componentLastInfo = component_last_collection_properties;
+    return this;
+}
 /**
  * Create a form element from a set of pre-defined elements (covering all form elements)
  * @param element string name of the form element: "input" "textarea" etc.
@@ -159,6 +188,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addFile(arguments);
     else if (component_type == 'form')
         inp = this.addForm(arguments  , secondaryArgs);
+    else if (component_type == 'custom')
+        inp = this.addCustom(arguments  , secondaryArgs);
 
 
     // we check the last component's index in the collection. We just want to have a
@@ -400,4 +431,17 @@ mtFormInit.prototype.addForm = function(attrs){
     attrs = this.argsToAttrs(attrs);
     form_tpl = this.parser(form_tpl, [":attrs"], [attrs]);
     this.forms.push(form_tpl);
+};
+
+mtFormInit.prototype.addCustom = function(value, attrs){
+    var prs = value;
+
+    if(attrs)
+    {
+         prs = this.parser(value, [":attrs"], [attrs]);
+    }
+
+    this.__setLastComponentType("custom");
+    this.__addComponentInstance(prs, "custom");
+    return prs;
 };

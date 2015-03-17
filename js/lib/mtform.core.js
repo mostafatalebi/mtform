@@ -12,29 +12,17 @@ function mtFormInit(container, coreModules){
     // list of living module during the lifespan of the application
     this.$lives = [];
 
+    this.collections =              MTF_Collection;
+    this.form_components_names =    MTF_COMPONENTS;
+    this.placeholders =             MTF_PLACEHOLDERS;
 
     this.attrs = ""; // assigns the attributes translated from args to this var
     this.htmls = ""; // assigns the attributes translated from args to this var
-    this.coreModules = []; // it is just an array of names to be used to see which
-                           // plugins have been loaded as core modules
+
     this.rules = []; // Note: @__remove(0.0.2)
     this.rulesAll = []; // Note: @__remove(0.0.2)
     this.jsonResult; // the json-converted array of form components
     this.alternateContent = "";
-    this.collections = {
-        "input" : [],
-        "password" : [],
-        "file" : [],
-        "hidden" : [],
-        "radio" : [],
-        "checkbox" : [],
-        "rule" : [], // Note: @__remove(0.0.2)
-        "input" : [],
-        "submit" : [],
-        "button" : [],
-        "textarea" : [],
-        "select" : [],
-    };
 
     this.forms = [];
 
@@ -59,39 +47,7 @@ function mtFormInit(container, coreModules){
     // Array of parsed, ordered components without any association of types
     this.collectionOrdered = [];
 
-
-    // each component has a fixed "unchangeable" attribute called
-    // data-mtformid which stores a unique id for each component.
-
-    // this array-attribute holds events for each component at occurrence of which the
-    // validation for that certain component is carried out. This is optional, since
-    // all components are validated by default on "submit" event.
-    this.validationEvents = {
-        change : [],
-        blur : [],
-        submit : [],
-        custom : [], // each entry must be an object containing a function and a unique id corresponding
-        // to a specific component
-    }
-
-    this.placeholders = {
-        rules : ":rules",
-        component : ":component",
-        before : ":before",
-        after : ":after",
-        message : ":message",
-        label : ":label",
-        attrs : ":attrs",
-        value : ":value",
-        innerValue : ":innerValue",
-    };
-
     this.componentLastIterated = "";
-
-
-    this.form_components_names = [
-        "input", "select", "textarea", "radio", "checkbox", "button", "submit",
-    ]
 
     // each entry into the array has to be
     // an object {} (containing type and htmlContent)
@@ -105,6 +61,35 @@ function mtFormInit(container, coreModules){
         type : ""
     }
 
+    /**
+     * A list of export functions to be called when Export is called
+     * @type {Array}
+     */
+    this.exports = [];
+
+    /**
+     * A list of import functions to be called when Import is called
+     * @type {Array}
+     */
+    this.imports = [];
+
+    /**
+     * A list of reset functions to be called when Reset is called
+     * @type {Array}
+     */
+    this.resets = [];
+
+    /**
+     * A list of all plugins
+     * @type {Array}
+     */
+    this.plugins = [];
+
+    /**
+     * Stores various instances of $mtf which are not living anymore and are rendered to the page.
+     * @type {Array}
+     */
+    this.store = [];
 };
 
 /**
@@ -133,6 +118,28 @@ mtFormInit.prototype.setContainer = function(element){
     return this;
 }
 
+/**
+ *
+ * @param keep_old_stuff
+ * @constructor
+ */
+mtFormInit.prototype.Reset = function(keep_old_stuff){
+
+    if( keep_old_stuff )
+    {
+        this.__transferToStore();
+    }
+    else
+    {
+        this.collection = MTF_Collection;
+        this.collectionSequential = [];
+        this.collectionOrdered = [];
+        this.forms = [];
+    }
+
+    return this;
+}
+
 
 
 
@@ -158,3 +165,20 @@ mtFormInit.prototype.__setLastComponentType = function(componentType){
     // returns nothing, since this is a system function
 }
 
+
+mtFormInit.prototype.__transferToStore = function(){
+
+    this.store.push(
+        {
+            collection : this.collection,
+            collectionSequential : this.collectionSequential,
+            collectionOrdered : this.collectionOrdered,
+            forms : this.forms
+        }
+    );
+
+    this.collection = MTF_Collection;
+    this.collectionSequential = [];
+    this.collectionOrdered = [];
+    this.forms = [];
+}

@@ -30,7 +30,7 @@ mtFormInit.prototype.Form = function(name, value, args){
 mtFormInit.prototype.Input = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create("input", args);
+    return this.create( "input", args_temp.args );
 };
 
 /**
@@ -42,7 +42,7 @@ mtFormInit.prototype.Input = function(name, value, args){
 mtFormInit.prototype.Hidden = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create("hidden", args);
+    return this.create( "hidden", args_temp.args );
 };
 
 /**

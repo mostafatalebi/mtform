@@ -14,9 +14,9 @@ mtFormInit.prototype.templatesFormComponents = {
     radio : "<input type='radio' :values  :attrs />",
     checkbox : "<input type='checkbox'   :attrs />",
     submit : "<input type='submit'   :attrs />",
-    button : "<textarea   :attrs >:value</textarea>",
+    button : "<button   :attrs >:value</button>",
     select : "<select  :attrs >:options</select>",
-    option : "<option  :uniqueValue :attrs />:innerValue</option>",
+    option : "<option  :uniqueValue :attrs />:innerValue</option>"
 }
 
 // ===================
@@ -116,6 +116,15 @@ mtFormInit.prototype.__parseTemplate = function(placeholder, replaceValue)
 mtFormInit.prototype.getTpl = function(key){
     return this.templatesFormComponents[key];
 }
+
+/**
+ * Parses the template string|callback. It accepts an array of placeholders and values as well.
+ * @param the string|callback of the template
+ * @param placeholders an array of placeholders to be searched inside the template.
+ * @param values an array of values to replace the placeholders. This array must be the same size of
+ *               placeholders
+ * @returns {string} a fully qualified template string
+ */
 mtFormInit.prototype.parser = function(template, placeholders, values)
 {
     // we check to see if the template is a callback function, we execute the callback, get
@@ -142,10 +151,17 @@ mtFormInit.prototype.parser = function(template, placeholders, values)
 
 }
 
+/**
+ * A template to be used for the next generated form component.
+ * @param html
+ */
 mtFormInit.prototype.setTemplate = function(html){
     this.templateImmediate = html;
 }
 
+/**
+ *
+ */
 mtFormInit.prototype.parseTemplate = function(){
     if(typeof this.inputs === 'object' && this.inputs.length != 0)
     { // parse inputs
@@ -153,6 +169,9 @@ mtFormInit.prototype.parseTemplate = function(){
     }
 }
 
+/**
+ *
+ */
 mtFormInit.prototype.parsePossiblePh = function()
 {
     var placeholders_helpers = this.placeholders_helpers;
