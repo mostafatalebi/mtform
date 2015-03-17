@@ -6,8 +6,8 @@
  * Initializes mtFormInit
  * @param container an element to put the result in
  */
-function mtFormInit(container, coreModules){
-    this.container =  container;
+function mtFormInit(container){
+    this.container =  document.querySelectorAll(container)[0];
 
     // list of living module during the lifespan of the application
     this.$lives = [];
@@ -113,8 +113,8 @@ mtFormInit.prototype.getContainer = function(){
  * @param element the new container. A javascript element
  * @returns {mtFormInit} the mtFormInit
  */
-mtFormInit.prototype.setContainer = function(element){
-    this.container = element;
+mtFormInit.prototype.setContainer = function(selector){
+    this.container =  document.querySelectorAll(container)[0];
     return this;
 }
 
