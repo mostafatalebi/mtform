@@ -6,9 +6,14 @@ if(typeof window.MTF_Valid_Config !== 'object')
 {
     window.$MTF_Valid_Config = {
 
+        // whether to add messages templates for rules or not
+        allow_template : true,
+
         //### GENERAL ###//
         rules_attr_name : "data-valid", // a name for data-* attribute
         rules_each_separator : "&amp;",
+        message_attr_name : "data-msgparentid",
+        input_message_attr_name : "data-msgcontainerid",
         events_optional_attr : 'data-validev',
 
         //### EVENT MANAGEMENT ###//
@@ -41,6 +46,21 @@ if(typeof window.MTF_Valid_Config !== 'object')
 
         },
 
+        type_events : {
+            input : ['blur'],
+            email : ['blur'],
+            number : ['blur'],
+            password : ['blur'],
+            radio : ['blur'],
+            checkbox : ['blur'],
+            textarea : ['blur'],
+            form : ['blur'],
+            button : ['blur'],
+            submit : ['blur'],
+            hidden : ['blur'],
+            select : ['blur']
+        },
+
         hash_table : {
             "input" : "140f8a1",
             "password" : "4fe98a",
@@ -53,6 +73,22 @@ if(typeof window.MTF_Valid_Config !== 'object')
             "button" : "3fa4054f214",
             "textarea" : "f0f80be6e30c",
             "select" : "6e051f395b61",
+        },
+
+        tag_names : {
+            input : "input",
+            email : "input",
+            number : "input",
+            password : "input",
+            radio : "input",
+            checkbox : "input",
+            textarea : "textarea",
+            form : "form",
+            button : "button",
+            submit : "input",
+            hidden : "hidden",
+            select : "select",
+
         }
     };
 }

@@ -1,7 +1,5 @@
 var MTF_Valid = function(){
 
-
-    __(MTF_VALID_RULES);
     // The rules which are defined and can be assigned to various components.
     // @extra MTF_VALID_RULES is a globally used variable for defined rules
     // Note: it is not a globally defined variable (window.var), it is just
@@ -10,6 +8,10 @@ var MTF_Valid = function(){
 
     // this option holds any event passed in the time of VAdd function call.
     this.events_optional = {};
+
+    this.templates = MT_VALID_TEMPLATES;
+
+    this.last_message_id = "";
 
 
     /**
@@ -29,6 +31,14 @@ var MTF_Valid = function(){
      * @type {{}}
      */
     this.rules = [];
+
+    /**
+     * An array which holds sets of object containing the name of the event and the
+     * index&type of the element to which they must be bound.
+     * @type {Array}
+     */
+    this.events = [];
+
 
     // rules which are no longer used. Since they are already assigned to
     // their respective components.

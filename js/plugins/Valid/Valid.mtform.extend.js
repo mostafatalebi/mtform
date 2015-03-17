@@ -5,13 +5,13 @@
  * @param rule_value {callback} the value of rule in case it needs any
  * @param events {object.array} [optional] an array of events names
  */
-$mtf.extends("VAdd", function(rule_name, rule_value, events){
+$mtf.extends("VAdd", function(rule_name, rule_value, events, use_template){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
     }
 
-    $mtf.$lives.Valid.AddRule(rule_name, rule_value, events);
+    $mtf.$lives.Valid.AddRule(rule_name, rule_value, events, use_template);
 
     return $mtf;
 });
@@ -52,3 +52,23 @@ $mtf.extends("VBind", function(){
     return $mtf;
 });
 
+
+
+$mtf.defineExport("ValidExport", function(){
+    var data = {};
+    data.rules = $mtf.$lives.Valid.rules;
+
+    return data;
+});
+
+
+$mtf.defineImport("ValidImport", function(rule_name, rule_value, events, use_template){
+    if( typeof $mtf.$lives.Valid !== "object" )
+    {
+        $mtf.$lives.Valid = new MTF_Valid();
+    }
+
+    $mtf.$lives.Valid.AddRule(rule_name, rule_value, events, use_template);
+
+    return $mtf;
+});

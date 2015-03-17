@@ -32,14 +32,49 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
 }
 
 
-
-
 /**
- * Binds all assigned rules to the components
+ * Registers the rule to the @__lastComponent
+ * @param rule_name  {string} the name of the rule which is already defined somewhere
+ * @param rule_value {*} the value of the rule. Note: for many rules this param is not required,
+ *                   the mere declaration of the name of the rule means it works, but for
+ *                   some rules such as max_length or min_length this is required as to
+ *                   designate to which value the input's value must be compared.
+ * @param events     {object} custom events which are used to trigger the rule
+ * @param use_template {boolean} [optional] if set to false, the rule does not generate
+ *                    a message template.
  * @constructor
  */
-MTF_Valid.prototype.AddRule = function(rule_name, rule_value, events){
+MTF_Valid.prototype.AddRule = function(rule_name, rule_value, events, use_template){
+    this.last_message_id = this.__generate_random_id($mtf.componentLastInfo);
+
+    // we have to predict how arguments are passed over to the function __assign_rule
+    if( typeof rule_value === 'object' )
+    {
+        // here we let the the function to accept three parameters than four, skipping
+        // rule_value in most of the cases. Hence, we have to simulate as if four params
+        // have been passed. A couple of exchanges is enough to achieve this.
+        if( typeof events !== 'boolean' )
+        {
+            events = rule_value;
+            rule_value = "";
+        }
+        else
+        {
+            var temp_val = events;
+            events = rule_value;
+            rule_value = "";
+            use_template = temp_val;
+        }
+    }
+
     this.__assign_rule(rule_name, rule_value, events);
+
+    // if user has not passed any value to use_template, we delegate the decision for
+    // per-rule and global configurations.
+    if ( use_template !== false )
+    {
+        this.__insertMessageContainer(rule_name);
+    }
 }
 
 /**
@@ -64,6 +99,14 @@ MTF_Valid.prototype.addTemplate = function(tmp_name, tmp_value){
     this.templates[tmp_name] = tmp_value;
 }
 
+MTF_Valid.prototype.getTemplate = function(tmp_name, tmp_value){
+    return this.templates[tmp_name];
+}
+
+MTF_Valid.prototype.editTemplate = function(tmp_name, tmp_value){
+    this.templates[tmp_name] = tmp_value;
+}
+
 /**######## PRIVATE FUNCTIONS #########**/
 
 /**
@@ -84,7 +127,7 @@ MTF_Valid.prototype.addTemplate = function(tmp_name, tmp_value){
  * @param success {function} optional a callback to be called when initial_callback returns true
  */
 MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, success){
-    var s = initial_callback();
+
     if( initial_callback() === false )
     {
         if(error) error();
@@ -105,7 +148,13 @@ MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, s
  */
 MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, rule_obj, events){
 
-    if( this.rules.length > 0)
+    var rule_object;
+    var events_all = $MTF_Valid_Config.type_events[ element_type ];
+    if( events )
+        events_all = events_all.concat(events);
+
+    // @todo Must be checked and probably the if condition must be removed
+    if( /*this.rules.length > 0*/ 1 == 5 )
     {
         for( var i = 0; i < this.rules.length; i++ ) // checks if this component has already
         // being bound to a rule, if yes, then just add the rule than creating a collection anew
@@ -116,6 +165,21 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
                 this.rules[i]['index'] = element_index;
                 this.rules[i]['type'] = element_type;
                 this.rules[i]['events'] = this.rules[i]['events'].concat(events);
+                this.rules[i]['message_id'] = this.last_message_id;
+                rule_object = this.rules[i];
+            }
+            else
+            {
+                var rule_new = {};
+                rule_new[rule_obj[0]] = rule_obj[1];
+                rule_object = {
+                    index : element_index,
+                    type : element_type,
+                    rules : rule_new,
+                    events : events,
+                    'message_id' : this.last_message_id
+                };
+                this.rules.push(rule_object);
             }
         }
     }
@@ -123,16 +187,17 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
     {
         var rule_new = {};
         rule_new[rule_obj[0]] = rule_obj[1];
-        this.rules.push({
+        rule_object = {
             index : element_index,
             type : element_type,
             rules : rule_new,
-            events : events
-        });
-
-        var x = this.rules;
+            events : events_all,
+            'message_id' : this.last_message_id
+        };
+        this.rules.push(rule_object);
     }
 
+    this.rules_obsolete.push( rule_object );
 }
 
 /**
@@ -162,7 +227,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_id){
                     var callback_function = rules_array[keys[w]]['callback'];
                     var callback_success_function = rules_array[keys[w]]['success'];
                     var callback_error_function = rules_array[keys[w]]['error'];
-
+                    var rule_value = rules_array[keys[w]]['value'];
 
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
@@ -173,19 +238,22 @@ MTF_Valid.prototype.__add_event_listeners = function(form_id){
                         events = events_optional;
                     }
                     var __eventCallbackHandler = this.__eventCallbackHandler;
+
+                    var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
+
                     for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
                     item.addEventListener( events[eventIncr], function(event){
                             var current_element = this;
                             var event_object = event;
                             __eventCallbackHandler(
                             function(){
-                                return callback_function(current_element, event_object);
+                                return callback_function(current_element, rule_value, msg_container, event_object);
                             },
                             function(){
-                                return callback_error_function(current_element, event_object)
+                                return callback_error_function(current_element, rule_value, msg_container, event_object)
                             },
                             function(){
-                                return callback_success_function(current_element, event_object)
+                                return callback_success_function(current_element, rule_value, msg_container, event_object)
                             }
                             );
 
@@ -214,7 +282,8 @@ MTF_Valid.prototype.__assign_rule = function(ruleName, ruleValue, events){
 
 /**
  * Based on the rules and its bound index and type, it search main collections and find the proper string for\
- * the already-added form-component
+ * the already-added form-component and merge the rule attribute to them using regular expression.
+ * Note: in this stage, no form component has been created and everything is just yet string
  * @private
  */
 MTF_Valid.prototype.__bind_rules = function(){
@@ -231,14 +300,36 @@ MTF_Valid.prototype.__bind_rules = function(){
 
         var type = this.rules[i]['type'];
         var index = this.rules[i]['index'];
+        var msg_container = this.rules[i]['message_id'];
 
         var component = $mtf.collections[type][index];
-
+        var msg_container = $MTF_Valid_Config.input_message_attr_name + "='" + msg_container + "'";
         // this rules select <tagName as well as the following spaces, for an input,
         // matches: "<input name='email' />" => "<input "
-        var reg_rule = new RegExp("^(\<[a-zA-Z]*\s*)+(.*)");
-        var component_split = reg_rule.exec(component);
-        component = component.replace(reg_rule, component_split[1] + " " + events_parsed + " " + rule_parsed + " " + component_split[2]);
+        var reg_comp_type = this.__tagName(type);
+        var reg_rule = new RegExp("(\<" + reg_comp_type + "*\s*)+(.*)");
+
+        // ensuring that no undefined is returned. ONLY string must be allowed
+        if(typeof events_parsed !== 'string' ) events_parsed = "";
+        if(typeof rule_parsed !== 'string' ) rule_parsed = "";
+        if(typeof msg_container !== 'string' ) msg_container = "";
+
+
+        if( typeof component === 'object' )
+        {
+            // for aggregated collections such as radios or selects
+            for( var i = 0; i < component.length; i++ )
+            {
+                var component_split = reg_rule.exec(component[i]);
+                component[i] = component[i].replace(reg_rule, component_split[1] + " " + events_parsed + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+            }
+        }
+        else
+        {
+            var component_split = reg_rule.exec(component);
+            component = component.replace(reg_rule, component_split[1] + " " + events_parsed + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+        }
+
         $mtf.collections[type][index] = component;
     }
 }
@@ -280,6 +371,7 @@ MTF_Valid.prototype.__rules_parsed = function(rule_object){
     var sep = $MTF_Valid_Config.rules_each_separator;
     for( var i = 0; i < keys.length; i++ )
     {
+        if(typeof rule_object[keys[i]] !== 'string' ) rule_object[keys[i]] = 'true';
         if(i+1 == keys.length)
         {
             rule_string +=  keys[i] + "=" + rule_object[keys[i]];
@@ -330,7 +422,7 @@ MTF_Valid.prototype.__find_rules = function(element){
                 success : success_callback,
                 error : error_callback,
                 value : key_value[1],
-                events : events_collection,
+                events : events_collection
             };
         }
 
@@ -389,5 +481,59 @@ MTF_Valid.prototype.__get_hash_name = function(hash_value)
 MTF_Valid.prototype.__get_hash_value = function(name)
 {
     return $MTF_Valid_Config.hash_table[name];
+}
+
+MTF_Valid.prototype.__insertMessageContainer = function(rule_name){
+
+    var tpl =  this.__get_proper_template(rule_name);
+    var lastCmp = $mtf.componentLastInfo;
+    attr_name = $MTF_Valid_Config.message_attr_name;
+    var attributes = {};
+    attributes[attr_name] = this.last_message_id;
+    if( tpl )
+    {
+        $mtf.createCustom("custom", tpl, attributes );
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
+MTF_Valid.prototype.__get_proper_template = function(rule_name){
+
+    var tpl = "";
+    if ( this.rules_collection[rule_name].hasOwnProperty("template_allow") && this.rules_collection[rule_name].template_allow === true )
+    {
+        if (  this.rules_collection[rule_name]['templates'].hasOwnProperty("default")  )
+        {
+            template_default = (!this.rules_collection[rule_name].template_default)
+                ? "default" : this.rules_collection[rule_name].template_default;
+
+            tpl = this.rules_collection[rule_name].templates[ template_default ];
+        }
+        else
+        {
+            tpl = this.templates['default'];
+        }
+
+        return tpl;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+MTF_Valid.prototype.__tagName = function(input_type_string)
+{
+    return $MTF_Valid_Config.tag_names[input_type_string];
+}
+
+MTF_Valid.prototype.__generate_random_id = function(cmp_obj){
+    var hash = this.__get_hash_value(cmp_obj.type);
+    var id = "mtmsg"+hash+cmp_obj.index;
+    return id;
 }
 

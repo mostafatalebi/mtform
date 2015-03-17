@@ -14,11 +14,23 @@ MTF_VALID_RULES = {
             return /^[0-9]*$/.test(component.value);
         },
         success : function(component, msg_container, event) {
-            // you can leave it empty
+            msg_container.innerHTML = "ممنون از شما! ";
         },
         error : function(component, msg_container, event){
-            alert("No, the value is not a number: "+component.value)
-        }
+            msg_container.innerHTML = "لطفا یک عدد وارد نمایید. مقدار وارد شده کنونی: "+component.value;
+        },
+
+        // whether to insert HTML templates for the items to which this rule has been bound
+        template_allow : true,
+
+        // templates for different conditions of this rule, these are used only if
+        // templates_allow is set to true.
+        templates : {
+            default : "<div :attrs >Result is shown here: :message</div>",
+        },
+
+        // which template must be used as default template
+        template_default : "default"
     },
 
     /**
@@ -32,8 +44,8 @@ MTF_VALID_RULES = {
                 return false;
             }
         },
-        error : function(component){
-            alert("You are a female");
+        error : function(elm, value, msg, event){
+
         }
     },
 
