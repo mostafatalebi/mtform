@@ -9,7 +9,8 @@
 mtFormInit.prototype.extends = function( name, callback ){
     var new_plugin = { name : callback };
     this.plugins.push(new_plugin);
-    mtFormInit.prototype[name] = callback;
+    if( !this.hasOwnProperty(name) )
+        mtFormInit.prototype[name] = callback;
 }
 
 

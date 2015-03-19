@@ -6,8 +6,8 @@
  * Initializes mtFormInit
  * @param container an element to put the result in
  */
-function mtFormInit(container){
-    this.container =  document.querySelectorAll(container)[0];
+function mtFormInit(container_selector){
+    this.container;
 
     // list of living module during the lifespan of the application
     this.$lives = [];
@@ -90,6 +90,13 @@ function mtFormInit(container){
      * @type {Array}
      */
     this.store = [];
+
+
+    /**
+     * Set the container if any selector is passed.
+     */
+    if( typeof container_selector === 'string' )
+        this.container =  document.querySelector(container_selector);
 };
 
 /**
@@ -114,7 +121,7 @@ mtFormInit.prototype.getContainer = function(){
  * @returns {mtFormInit} the mtFormInit
  */
 mtFormInit.prototype.setContainer = function(selector){
-    this.container =  document.querySelectorAll(container)[0];
+    this.container =  document.querySelector(selector);
     return this;
 }
 

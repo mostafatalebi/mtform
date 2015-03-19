@@ -203,7 +203,6 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     // we keep track of the last generated component's type and index.
     this.lastQueried = component_type;
     this.componentLastInfo = component_last_collection_properties;
-    return this;
 }
 
 mtFormInit.prototype.addInput = function(attrs){

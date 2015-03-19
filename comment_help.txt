@@ -5,7 +5,7 @@ with a high maintainability.
 
 @__mtformObject : a reference to the currently instanced object of mtform
 @__lastComponent : last added component to the main collection
-@__attributes : an object, containing a set of key=value pairs as HTML attributes
+@__attributes : an object, containing a set of key=value pairs of HTML attributes
 @__innerValue : equalling Javascript .innerHTML, the value stored inside the tags <tag>innerValue</tag>
 @__template : the template
 @__htmlContent : html markup

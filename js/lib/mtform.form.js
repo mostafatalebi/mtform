@@ -8,53 +8,39 @@
 // ===================
 
 /**
- * Creates a form Element. <form>
- * @param args object @__attributes
- * @param formKey string the key(name) of the form used across the app. It is great for multi-forms
- *          app where the elements are destined to specific forms.
- * @returns {form} @__mtformObject
- * @constructor
- */
-mtFormInit.prototype.Form = function(name, value, args){
-    var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create("form", args, formKey);
-};
-
-/**
  * Creates a form input (default = text). <input />
  * @param args object @__attributes
- * @returns {input} @__mtformObject
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.Input = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create( "input", args_temp.args );
+    this.create( "input", args_temp.args );
+    return this;
 };
 
 /**
  * Creates a hidden form input. <input type='hidden' />
  * @param args @__attributes
- * @returns {hidden} @__mtformObject
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.Hidden = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create( "hidden", args_temp.args );
+    this.create( "hidden", args_temp.args );
+    return this;
 };
 
 /**
  * Creates an input password field. <input type='password' />
  * @param args @__attributes
  * @returns {password} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Password = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
-    return this.create("password", args_temp.args);
+    this.create("password", args_temp.args);
+    return this;
 };
 
 /**
@@ -62,24 +48,24 @@ mtFormInit.prototype.Password = function(name, value, args){
  * @param args @__attributes
  * @param innerValue the value which fills content of the element .innerHTML
  * @returns {textarea} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Textarea = function(name, innerValue, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, innerValue, args, 'innerValue');
-    return this.create("textarea", args_temp.args, args_temp.innerValue);
+    this.create("textarea", args_temp.args, args_temp.innerValue);
+    return this;
 };
 
 /**
  * Creates a submit button. <input type='submit' />
  * @param args @__attributes
  * @returns {submit} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Submit = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, value, args, 'value');
-    return this.create("submit", args_temp.args);
+    this.create("submit", args_temp.args);
+    return this;
 };
 
 /**
@@ -87,12 +73,12 @@ mtFormInit.prototype.Submit = function(name, value, args){
  * @param args @__attributes
  * @param innerValue the value which fills content of the element .innerHTML
  * @returns {button} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Button = function(name, innerValue, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, innerValue, 'innerValue');
-    return this.create("button", args, innerValue);
+    this.create("button", args, innerValue);
+    return this;
 };
 
 /**
@@ -114,12 +100,12 @@ mtFormInit.prototype.Button = function(name, innerValue, args){
  *              labels :  [object - array]          If set, then a label for each radio will be created.
  *          }
  * @returns {radio} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Radios = function( name, args ){
     var args_temp;
     args_temp = this.handleCreateRadioArguments(name, args);
-    return this.create("radio", args_temp.attrs, args_temp.args);
+    this.create("radio", args_temp.attrs, args_temp.args);
+    return this;
 };
 
 /**
@@ -127,31 +113,30 @@ mtFormInit.prototype.Radios = function( name, args ){
  * @param args object list of attributes. That follows a special structure with several fixed keys. Very much
  *                    similar to Radio()
  * @returns {select}
- * @constructor
  */
 mtFormInit.prototype.Select = function( name, args){
     var args_temp;
     args_temp = this.handleCreateRadioArguments(name, args);
-    return this.create("select", args_temp.attrs, args_temp.args);
+    this.create("select", args_temp.attrs, args_temp.args);
+    return this;
 }
 
 /**
  * Creates an input file field.
  * @param args object list of key=value pairs attributes of the tag
  * @returns {file}
- * @constructor
  */
 mtFormInit.prototype.File = function(name, value, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, value, 'innerValue');
-    return this.create("file", args_temp.args);
+    this.create("file", args_temp.args);
+    return this;
 };
 
 /**
  * Creates a simple form
  * @param args object list of key=value pairs attributes of the tag
- * @returns {mtFormInit}
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.Form = function(name, args){
     var args_temp;
@@ -163,8 +148,7 @@ mtFormInit.prototype.Form = function(name, args){
 /**
  * Creates a form with enctype set to "formdata/multipart"
  * @param args object list of key=value pairs attributes of the tag
- * @returns {mtFormInit}
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.FormWithFile = function(name, args){
     var args_temp;
@@ -177,12 +161,11 @@ mtFormInit.prototype.FormWithFile = function(name, args){
 };
 
 /**
- * Creates a label for @__lastComponent. It is different form Laebl() function in that
+ * Creates a label for @__lastComponent. It is different form label() function in that
  * it comes after the component's specific function. Input().AttachLabel()
  * @param args @__attributes
  * @param innerValue @__innerValue
- * @returns {mtFormInit} @__mtformObject
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.AttachLabel = function(args, innerValue)
 {
@@ -196,7 +179,6 @@ mtFormInit.prototype.AttachLabel = function(args, innerValue)
  * @param htmlContent @__htmlContent
  * @param array_skip if set to true, skips the array as one single collection
  * @returns {mtFormInit} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
 {
@@ -212,8 +194,7 @@ mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
  * Injects HTML before the @__lastComponent
  * @param htmlContent @__htmlContent
  * @param array_skip if set to true, skips the array as one single collection
- * @returns {mtFormInit} @__mtformObject
- * @constructor
+ * @returns {object} @__mtformObject
  */
 mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 {
@@ -232,7 +213,6 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
 /**
  * Returns an unprocess, unordered collection of all components.
  * @returns collection
- * @constructor
  */
 mtFormInit.prototype.AllComponents = function(){
     return this.collections;
@@ -242,7 +222,6 @@ mtFormInit.prototype.AllComponents = function(){
  * Sets the component for the last created component.
  * @param html @__htmlContent
  * @returns {mtFormInit} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Template = function(html){
     this.setTemplate(html);
@@ -265,7 +244,6 @@ mtFormInit.prototype.setDefaultTemplate = function(html, componentType){
 /**
  * Adds a <br /> tag after each component.
  * @returns {mtFormInit}
- * @constructor
  */
 mtFormInit.prototype.BreakBetween = function(){
     this.Alternate("<br />");
@@ -277,7 +255,6 @@ mtFormInit.prototype.BreakBetween = function(){
  * @param html @__htmlContent
  * @param from_zero
  * @returns {mtFormInit} @__mtformObject
- * @constructor
  */
 mtFormInit.prototype.Alternate = function(alternateInput, from_zero){
     this.isAlternate = true;
@@ -305,18 +282,17 @@ mtFormInit.prototype.Make = function(element){
 }
 
 /**
- * Appends @__htmlContent @__lastContainer
+ * Appends @__htmlContent to the @__lastContainer
  * @param element optional a DOM element, which overrides the last container Element
  */
 mtFormInit.prototype.MakeAppend = function(element){
     this.generate();
     var html = this.htmls;
     var containerContent = this.container.innerHTML;
-    if(typeof element === 'null' || typeof element === 'undefined')
-        this.container.innerHTML = containerContent+html;
+    if(typeof element === 'object')
+        element.innerHTML = element.innerHTML+html;
     else
-        element.innerHTML = containerContent+html;
-
+        this.container.innerHTML = containerContent+html;
     return this;
 }
 
