@@ -5,3 +5,6 @@ server.php
 ajax.html
 js/form.js
 index.html
+node_modules/*
+out/*
+production/*
