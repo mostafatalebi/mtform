@@ -1,23 +1,4 @@
-/** Template Properties **/
-// This template collection feeds the components'
-// default templates. It increases the flexibility and
-// allows for a more robust collection.
-// All of them can accept a callback function, with the following parameters:
-// callback(lastCreatedItemType, lastCreatedItemIndex, placeholders, values);
-mtFormInit.prototype.templatesFormComponents = {
-    form : "<form :attrs >:form</form>",
-    input : "<input type='text'   :attrs />",
-    password : "<input type='password' :attrs />",
-    file : "<input type='file' :attrs />",
-    hidden : "<input type='hidden'   :attrs />",
-    textarea : "<textarea   :attrs >:innerValue</textarea>",
-    radio : "<input type='radio' :values  :attrs />",
-    checkbox : "<input type='checkbox'   :attrs />",
-    submit : "<input type='submit'   :attrs />",
-    button : "<button   :attrs >:value</button>",
-    select : "<select  :attrs >:options</select>",
-    option : "<option  :uniqueValue :attrs />:innerValue</option>"
-}
+
 
 // ===================
 // PRIVATE FUNCTIONS

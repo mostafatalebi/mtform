@@ -1,3 +1,17 @@
+/**
+ * Sets an AJAX request to be sent when the given element's specified attached events are
+ * triggered. The XMLHttpRequest is supplied with a configuration object. If jQuery is
+ * defined in the page, then jQuery is used. if in the config noJquery is set to true, then
+ * the script ignores jQquery and uses its own engine
+ * @param config {object} configuration object for AJAX
+ * @param event_name {String} the name of the event on the occurrence of which ajax is sent
+ * @param form_selector {String} a CSS selector which selects which form's data is going to be sent
+ * @param elements_trigger_selector {String} a collective CSS selector, the result match of which
+ *                                           is used as trigger to send the AJAX request. More than
+ *                                           one element can be used. It is usually used with one
+ *                                           submit button selector such as #submit or input[type='submit']
+ * @return {Object} @__mtformObject
+ */
 $mtf.extends("Ajax", function(config, event_name, form_selector, element_trigger_selector){
 
 

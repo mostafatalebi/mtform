@@ -4,7 +4,7 @@
  * It adds a new module to the system. Throws an error if the plugin with the same name
  * is already registered. The registered plugin has access to all core properties and methods.
  * @param name string the name of the plugin
- * @param callback a functionality of the plugin.
+ * @param callback functionality of the plugin
  */
 mtFormInit.prototype.extends = function( name, callback ){
     var new_plugin = { name : callback };
@@ -30,4 +30,8 @@ mtFormInit.prototype.defineImport = function( name, importFunction ){
 mtFormInit.prototype.defineReset = function( name, resetFunction ){
     var new_plugin = { name : resetFunction };
     this.resets.push(new_plugin);
+}
+
+mtFormInit.prototype.pluginLoaded = function( name ){
+    return $mtf.$lives.hasOwnProperty( name );
 }

@@ -75,7 +75,7 @@ AjaxCall.prototype.setParams = function(params){
 
 AjaxCall.prototype.send = function(){
     var data;
-    if( window.FormData || this.params.formData !== false )
+    if( !window.FormData || this.params.formData === false )
     {
         data = this.__understandData(this.params.data);
     }

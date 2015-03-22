@@ -14,7 +14,7 @@ $mtf.extends("VAdd", function(rule_name, rule_value, events, use_template){
     $mtf.$lives.Valid.AddRule(rule_name, rule_value, events, use_template);
 
     return $mtf;
-});
+}, true);
 
 
 /**
