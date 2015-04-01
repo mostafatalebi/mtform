@@ -91,6 +91,15 @@ function mtFormInit(container_selector){
      */
     this.store = [];
 
+    /**
+     * A list of attributes which are assigned as default to each generated components
+     * @type {Object}
+     */
+    this.defaults = {
+        input : {
+            class : "input-control"
+        }
+    };
 
     /**
      * Set the container if any selector is passed.

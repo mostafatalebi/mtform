@@ -1,4 +1,4 @@
-/**
+    /**
  General methods and properties used across all the other methods
  **/
 
@@ -371,6 +371,7 @@ mtFormInit.prototype.handleCreateFunctionArguments = function( name, innerValue,
             {
                 final.args = innerValue;
             }
+
 
             final.args.name = name;
         }

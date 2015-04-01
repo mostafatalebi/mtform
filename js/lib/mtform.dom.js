@@ -152,12 +152,37 @@ mtFormInit.prototype.createCustom = function(component_type, value, args){
  */
 mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     var arguments = "";
+
+
+
+
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
     if(this.is_empty(args))
         args = "";
     else if (typeof args === 'object')
+    {
+        // merge default attributes value
+        if( this.defaults.hasOwnProperty(component_type) )
+        {
+            var default_attrs = Object.keys( this.defaults[component_type] );
+
+            if( default_attrs.length != 0 )
+            {
+                for(var i = 0; i < default_attrs.length; i++ )
+                {
+                    if(args[default_attrs[i]])
+                        args[default_attrs[i]] +=  " " + this.defaults[component_type][default_attrs[i]];
+                    else
+                        args[default_attrs[i]] =  this.defaults[component_type][default_attrs[i]];
+                }
+
+            }
+        }
+
         arguments = this.argsToAttrs(args);
+    }
+
     else if (typeof args === 'string')
         secondaryArgs = args;
     args = {};

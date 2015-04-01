@@ -14,7 +14,7 @@
  */
 mtFormInit.prototype.Input = function(name, value, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
+    args_temp = this.handleCreateFunctionArguments(name, value, args, 'value');
     this.create( "input", args_temp.args );
     return this;
 };
@@ -26,7 +26,7 @@ mtFormInit.prototype.Input = function(name, value, args){
  */
 mtFormInit.prototype.Hidden = function(name, value, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
+    args_temp = this.handleCreateFunctionArguments(name, value, args, 'value');
     this.create( "hidden", args_temp.args );
     return this;
 };
@@ -38,7 +38,7 @@ mtFormInit.prototype.Hidden = function(name, value, args){
  */
 mtFormInit.prototype.Password = function(name, value, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'value');
+    args_temp = this.handleCreateFunctionArguments(name, value, args, 'value');
     this.create("password", args_temp.args);
     return this;
 };
@@ -76,7 +76,7 @@ mtFormInit.prototype.Submit = function(name, value, args){
  */
 mtFormInit.prototype.Button = function(name, innerValue, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, innerValue, 'innerValue');
+    args_temp = this.handleCreateFunctionArguments(name, innerValue, args, 'innerValue');
     this.create("button", args, innerValue);
     return this;
 };
@@ -128,7 +128,7 @@ mtFormInit.prototype.Select = function( name, args){
  */
 mtFormInit.prototype.File = function(name, value, args){
     var args_temp;
-    args_temp = this.handleCreateFunctionArguments(name, args, value, 'innerValue');
+    args_temp = this.handleCreateFunctionArguments(name, value, args, 'innerValue');
     this.create("file", args_temp.args);
     return this;
 };

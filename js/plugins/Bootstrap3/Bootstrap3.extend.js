@@ -2,11 +2,11 @@ $mtf.extends( "Bootstrap3", function(){
     if( $mtf.pluginLoaded( "Theme" ) )
     {
         var templates =  {
-            form : "<form :attrs >:form</form>",
-            input : "<div class='input-group'>:component</div>",
-            password : "<div class='input-group'><input class='form-control' type='password' :attrs /></div>",
-            file : "<div class='input-group'><input class='form-control' type='file' :attrs /></div>",
-            hidden : "<input type='hidden'   :attrs />",
+            form : "",
+            input : "<div class='input-group'><input :attrs /></div>",
+            password : "<div class='input-group'>:component</div>",
+            file : "<div class='input-group'>:component</div>",
+            hidden : "",
             textarea : "<div class='input-group'><textarea class='form-control' :attrs >:innerValue</textarea></div>",
             radio : "<input type='radio' :values  :attrs />",
             checkbox : "<input type='checkbox'   :attrs />",
