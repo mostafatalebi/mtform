@@ -18,5 +18,6 @@ $mtf.extends( "Bootstrap3", function(){
 
         $mtf.$lives.Theme.addTheme( "Bootstrap3", templates );
         $mtf.$lives.Theme.setTheme( "Bootstrap3");
+        $mtf.$lives.Theme.setDefaultAttr("input", { class : "one-such-item"})
     }
 });

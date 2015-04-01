@@ -38,3 +38,10 @@ MT_Theme.prototype.addTheme = function(theme_name, templates_collection){
 MT_Theme.prototype.setTheme = function(theme_name){
     $mtf.templatesFormComponents = this.templates[ theme_name ];
 }
+
+MT_Theme.prototype.setDefaultAttr = function(component_type, args)
+{
+    var current_default = $mtf.defaults[component_type];
+    $mtf.defaults[component_type] = $mtf.joinObjects(current_default, args);
+    return true;
+}

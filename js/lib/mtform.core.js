@@ -97,7 +97,7 @@ function mtFormInit(container_selector){
      */
     this.defaults = {
         input : {
-            class : "input-control"
+            class : "item-label"
         }
     };
 
