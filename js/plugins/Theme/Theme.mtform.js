@@ -42,6 +42,13 @@ MT_Theme.prototype.setTheme = function(theme_name){
 MT_Theme.prototype.setDefaultAttr = function(component_type, args)
 {
     var current_default = $mtf.defaults[component_type];
-    $mtf.defaults[component_type] = $mtf.joinObjects(current_default, args);
+    if( current_default )
+    {
+        $mtf.defaults[component_type] = $mtf.joinObjects(current_default, args);
+    }
+    else
+    {
+        $mtf.defaults[component_type] = args;
+    }
     return true;
 }
