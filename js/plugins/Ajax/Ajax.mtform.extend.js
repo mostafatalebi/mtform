@@ -1,4 +1,17 @@
 /**
+ * @plugin Ajax
+ * @description Allows sending AJAX request.
+ * @author Mostafa Talebi
+ * @version 0.0.1
+ *
+ * @requires { "FormElement" }
+ */
+
+
+
+
+
+/**
  * Sets an AJAX request to be sent when the given element's specified attached events are
  * triggered. The XMLHttpRequest is supplied with a configuration object. If jQuery is
  * defined in the page, then jQuery is used. if in the config noJquery is set to true, then
@@ -44,28 +57,35 @@ $mtf.extends("Ajax", function(config, event_name, form_selector, element_trigger
     return $mtf;
 });
 
-$mtf.extends("AjaxOnClick", function(config, form_id, element_trigger_selector){
+$mtf.extends("AjaxOnClick", function(config, form_selector, element_trigger_selector){
 
     // this allows a set of elements to trigger AJAX request than one
     var triggers = document.querySelectorAll( element_trigger_selector );
 
     // create a new instance of our domestic AJAX Library
-    var Ajax = new MT_Ajax( document.getElementById(form_id), config, element_trigger_selector );
+    var Ajax = new MT_Ajax( form_selector, config, element_trigger_selector );
+
+    if( !$mtf.$lives.Ajax )
+    {
+        $mtf.$lives.Ajax = Ajax;
+    }
 
     // check to see if the result of querySelector is healthy
     if(triggers.length)
     {
         for(var i = 0; i < triggers.length; i++ )
         {
-            Ajax.When( "click", triggers[i] );
+            $mtf.$lives.Ajax.When( "click", triggers[i], config );
         }
     }
     else
     {
-        Ajax.When( "click", triggers );
+        $mtf.$lives.Ajax.When( "click", triggers, config );
     }
 
-    Ajax.SendAjax();
+    // Ajax.SendAjax();
+
+    return $mtf;
 
 });
 

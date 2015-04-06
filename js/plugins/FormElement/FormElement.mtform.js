@@ -19,7 +19,7 @@ MTF_FormElement.prototype.getComponents = function() {
 
 MTF_FormElement.prototype.getComponentsByAttribute = function( attr_name, element_exclusion_by_name, callback ){
     var form_data;
-    if( typeof window.FormData === 'undefined' )
+    if( typeof window.FormData !== 'undefined' )
     {
         form_data = new FormData( this.form );
 

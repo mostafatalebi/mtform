@@ -141,7 +141,7 @@ mtFormInit.prototype.File = function(name, value, args){
 mtFormInit.prototype.Form = function(name, args){
     var args_temp;
     args_temp = this.handleCreateFunctionArguments(name, args, "", 'form');
-    this.addForm(args);
+    this.addForm(args_temp.args);
     return this;
 };
 
@@ -274,10 +274,10 @@ mtFormInit.prototype.Alternate = function(alternateInput, from_zero){
 mtFormInit.prototype.Make = function(element){
     this.generate();
     var html = this.htmls;
-    if(typeof element === 'null' || typeof element === 'undefined')
-        this.container.innerHTML = html;
-    else
+    if(typeof element === 'object')
         element.innerHTML = html;
+    else
+        this.container.innerHTML = html;
     return this;
 }
 

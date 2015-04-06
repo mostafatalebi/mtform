@@ -220,10 +220,15 @@ AjaxCall.prototype.__setHeaders = function(headers){
     }
     else
     {
-        for( var i = 0; i < obj_length.length; i++)
+        //this.request.setRequestHeader('Content-Type', 'multipart/form-data');
+        if( obj_length.length > 0 )
         {
-            this.request.setRequestHeader(obj_length[i], headers[obj_length[i]]);
+            for( var i = 0; i < obj_length.length; i++)
+            {
+                this.request.setRequestHeader(obj_length[i], headers[obj_length[i]]);
+            }
         }
+
     }
 
 

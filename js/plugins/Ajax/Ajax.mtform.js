@@ -67,6 +67,7 @@ MT_Ajax.prototype.SendAjax = function(form, config){
     var ajax;
     if( typeof config.data === 'object' )
     {
+        var g = window.FormData;
         if ( window.FormData && config.formData )
         {
             config.data = $mtf.objectJoinWithFormData( config.data, form_data );
