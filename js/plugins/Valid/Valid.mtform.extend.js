@@ -25,13 +25,13 @@ $mtf.extends("VAdd", function(rule_name, rule_value, events, use_template){
  *              being searched for its children to
  *              to be applied the registered rules.
  */
-$mtf.extends("VEventize", function(container_id){
+$mtf.extends("VEventize", function(form_selector){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
     }
 
-    $mtf.$lives.Valid.Eventize(container_id);
+    $mtf.$lives.Valid.Eventize(form_selector);
 
     return $mtf;
 });

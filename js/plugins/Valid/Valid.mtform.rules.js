@@ -57,6 +57,36 @@ MTF_VALID_RULES = {
         error : function(){
             console.log("Select invalid.");
         },
+    },
+
+    "email" : {
+        main : function(component, event){
+            if(component.value !== "s")
+                return false;
+            else
+                return true;
+        },
+
+        error : function(elm, msg, event){
+            alert("Failed");
+        },
+
+        success : function(elm, msg, event){
+            alert("Success");
+        },
+
+
+        // whether to insert HTML templates for the items to which this rule has been bound
+        template_allow : false,
+
+        // templates for different conditions of this rule, these are used only if
+        // templates_allow is set to true.
+        templates : {
+            default : "<div :attrs >Result is shown here: :message</div>",
+        },
+
+        // which template must be used as default template
+        template_default : "default"
     }
 
 }

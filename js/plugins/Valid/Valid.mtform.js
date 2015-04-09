@@ -203,11 +203,11 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
 /**
  * Adds event listener for the form components for their values to be checked against
  * their bound rules on the occurance of that certain event.
- * @param form_id
+ * @param form_selector the CSS selector to select form which contains the components
  * @private
  */
-MTF_Valid.prototype.__add_event_listeners = function(form_id){
-    var parent_cont = document.getElementById(form_id);
+MTF_Valid.prototype.__add_event_listeners = function(form_selector){
+    var parent_cont = document.querySelector(form_selector);
 
     var form_components = parent_cont.children;
     var item;
@@ -371,14 +371,16 @@ MTF_Valid.prototype.__rules_parsed = function(rule_object){
     var sep = $MTF_Valid_Config.rules_each_separator;
     for( var i = 0; i < keys.length; i++ )
     {
-        if(typeof rule_object[keys[i]] !== 'string' ) rule_object[keys[i]] = 'true';
+        var rule_value;
+        rule_value = (typeof rule_object[keys[i]] !== 'string' && rule_object[keys[i]].length > 0)
+                    ? rule_object[keys[i]] : "true" ;
         if(i+1 == keys.length)
         {
-            rule_string +=  keys[i] + "=" + rule_object[keys[i]];
+            rule_string +=  keys[i] + "=" + rule_value;
         }
         else
         {
-            rule_string +=  keys[i] + "=" + rule_object[keys[i]] + sep;
+            rule_string +=  keys[i] + "=" + rule_value + sep;
         }
     }
 
@@ -523,6 +525,23 @@ MTF_Valid.prototype.__get_proper_template = function(rule_name){
     else
     {
         return false;
+    }
+}
+
+MTF_Valid.prototype.__forEachChildren = function(parent, callback)
+{
+    if( parent.children.length > 0 )
+    {
+        for ( var i = 0; i < parent.children.length; i++ )
+        {
+            if( parent.children[i].children.length > 0 )
+            {
+                this.__forEachChildren(parent.children[i], function(current_child, this_parent){
+                    callback(current_child, this_parent);
+                });
+            }
+            callback(parent.children[i], parent);
+        }
     }
 }
 
