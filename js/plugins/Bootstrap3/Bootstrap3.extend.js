@@ -21,12 +21,14 @@ $mtf.extends( "Bootstrap3", function(){
             submit : "<input type='submit'   :attrs />",
             button : "<button   :attrs >:value</button>",
             select : "<select  :attrs >:options</select>",
-            option : "<option  :uniqueValue :attrs />:innerValue</option>"
+            option : "<option  :uniqueValue :attrs />:innerValue</option>",
+            message : "<div :attrs >:message</div>"
         };
 
         $mtf.$lives.Theme.addTheme( "Bootstrap3", templates );
         $mtf.$lives.Theme.setTheme( "Bootstrap3");
         $mtf.$lives.Theme.setDefaultAttr("input", { class : "one-such-item"});
+        $mtf.$lives.Theme.setDefaultAttr("message", { class : "alert alert-danger" /*, style : "display: none;"*/});
         $mtf.$lives.Theme.setDefaultAttr("submit", { class : "btn btn-large btn-info"});
     }
 });
