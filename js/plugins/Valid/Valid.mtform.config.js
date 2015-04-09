@@ -18,17 +18,17 @@ if(typeof window.MTF_Valid_Config !== 'object')
 
         //### EVENT MANAGEMENT ###//
         // all values have to be in array
-        ev_input_default : ['blur'],
-        ev_textarea_default : ['blur'],
-        ev_radio_default : ['blur'],
-        ev_checkbox_default : ['blur'],
-        ev_select_default : ['blur'],
-        ev_input_default : ['blur'],
-        ev_misc_default : ['blur'],
+        ev_input_default : [],
+        ev_textarea_default : [],
+        ev_radio_default : [],
+        ev_checkbox_default : [],
+        ev_select_default : [],
+        ev_input_default : [],
+        ev_misc_default : [],
 
         // matches a group of components by their names
         ev_by_name : {
-            'sample-name' : [ 'blue', 'change']
+            'sample-name' : [ ]
         },
 
         // matches a group of components by their ids
@@ -47,18 +47,18 @@ if(typeof window.MTF_Valid_Config !== 'object')
         },
 
         type_events : {
-            input : ['blur'],
-            email : ['blur'],
-            number : ['blur'],
-            password : ['blur'],
-            radio : ['blur'],
-            checkbox : ['blur'],
-            textarea : ['blur'],
-            form : ['blur'],
-            button : ['blur'],
-            submit : ['blur'],
-            hidden : ['blur'],
-            select : ['blur']
+            input : [],
+            email : [],
+            number : [],
+            password : [],
+            radio : [],
+            checkbox : [],
+            textarea : [],
+            form : [],
+            button : [],
+            submit : [],
+            hidden : [],
+            select : []
         },
 
         hash_table : {

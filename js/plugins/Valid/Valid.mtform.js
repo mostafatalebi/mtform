@@ -208,16 +208,12 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
  */
 MTF_Valid.prototype.__add_event_listeners = function(form_selector){
     var parent_cont = document.querySelector(form_selector);
-
-    var form_components = parent_cont.children;
-    var item;
-    for( var i = 0; i < form_components.length; i++ )
-    {
-        item = form_components[i];
-
+    var mainFunction = this;
+    this.__forEachChildren(parent_cont, function(current_child, current_parent){
+        var item = current_child;
         if($mtf.is_form_component(item))
         {
-           var rules_array = this.__find_rules(item);
+            var rules_array = mainFunction.__find_rules(item);
 
             if(rules_array)
             {
@@ -231,40 +227,97 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
-                    var events  = this.getEventDefault(item.tagName.toLowerCase());
-                    var events_optional = this.__get_optional_events(item);
+                    var events  = mainFunction.getEventDefault(item.tagName.toLowerCase());
+                    var events_optional = mainFunction.__get_optional_events(item);
                     if(events_optional)
                     {
                         events = events_optional;
                     }
-                    var __eventCallbackHandler = this.__eventCallbackHandler;
+                    var __eventCallbackHandler = mainFunction.__eventCallbackHandler;
 
                     var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
 
                     for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
-                    item.addEventListener( events[eventIncr], function(event){
+                        item.addEventListener( events[eventIncr], function(event){
                             var current_element = this;
                             var event_object = event;
                             __eventCallbackHandler(
-                            function(){
-                                return callback_function(current_element, rule_value, msg_container, event_object);
-                            },
-                            function(){
-                                return callback_error_function(current_element, rule_value, msg_container, event_object)
-                            },
-                            function(){
-                                return callback_success_function(current_element, rule_value, msg_container, event_object)
-                            }
+                                function(){
+                                    return callback_function(current_element, rule_value, msg_container, event_object);
+                                },
+                                function(){
+                                    return callback_error_function(current_element, rule_value, msg_container, event_object)
+                                },
+                                function(){
+                                    return callback_success_function(current_element, rule_value, msg_container, event_object)
+                                }
                             );
 
-                    });
+                        });
 
                 }
             }
 
 
         }
-    }
+    });
+
+    //var form_components = parent_cont.children;
+    //var item;
+    //for( var i = 0; i < form_components.length; i++ )
+    //{
+    //    item = form_components[i];
+
+        //if($mtf.is_form_component(item))
+        //{
+        //   var rules_array = this.__find_rules(item);
+        //
+        //    if(rules_array)
+        //    {
+        //        var keys = Object.keys(rules_array);
+        //        for(var w = 0; w < keys.length; w++)
+        //        {
+        //            var callback_function = rules_array[keys[w]]['callback'];
+        //            var callback_success_function = rules_array[keys[w]]['success'];
+        //            var callback_error_function = rules_array[keys[w]]['error'];
+        //            var rule_value = rules_array[keys[w]]['value'];
+        //
+        //            // since events accepts an array of events, we loops through events as well, no matter
+        //            // if the user has passed one event or more.
+        //            var events  = this.getEventDefault(item.tagName.toLowerCase());
+        //            var events_optional = this.__get_optional_events(item);
+        //            if(events_optional)
+        //            {
+        //                events = events_optional;
+        //            }
+        //            var __eventCallbackHandler = this.__eventCallbackHandler;
+        //
+        //            var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
+        //
+        //            for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
+        //            item.addEventListener( events[eventIncr], function(event){
+        //                    var current_element = this;
+        //                    var event_object = event;
+        //                    __eventCallbackHandler(
+        //                    function(){
+        //                        return callback_function(current_element, rule_value, msg_container, event_object);
+        //                    },
+        //                    function(){
+        //                        return callback_error_function(current_element, rule_value, msg_container, event_object)
+        //                    },
+        //                    function(){
+        //                        return callback_success_function(current_element, rule_value, msg_container, event_object)
+        //                    }
+        //                    );
+        //
+        //            });
+        //
+        //        }
+        //    }
+        //
+        //
+        //}
+    //}
 }
 
 /**
@@ -485,20 +538,30 @@ MTF_Valid.prototype.__get_hash_value = function(name)
     return $MTF_Valid_Config.hash_table[name];
 }
 
-MTF_Valid.prototype.__insertMessageContainer = function(rule_name){
-
-    var tpl =  this.__get_proper_template(rule_name);
+MTF_Valid.prototype.__insertMessageContainer = function(rule_name, insertion_type){
+    insertion_type (insertion_type) ? insertion_type : "inject";
     var lastCmp = $mtf.componentLastInfo;
-    attr_name = $MTF_Valid_Config.message_attr_name;
-    var attributes = {};
-    attributes[attr_name] = this.last_message_id;
-    if( tpl )
+
+    if(insertion_type == 'inject')
     {
-        $mtf.createCustom("custom", tpl, attributes );
+        var reg_rule = new RegExp("(?:.*)(<input.*\/>)(?:.*)");
+
     }
-    else
+    else if(insertion_type == 'insertion' )
     {
-        return false;
+        var tpl =  this.__get_proper_template(rule_name);
+        attr_name = $MTF_Valid_Config.message_attr_name;
+        var attributes = {};
+        attributes[attr_name] = this.last_message_id;
+        if( tpl )
+        {
+            $mtf.createCustom("custom", tpl, attributes );
+        }
+        else
+        {
+            return false;
+        }
+
     }
 
 }
@@ -540,7 +603,11 @@ MTF_Valid.prototype.__forEachChildren = function(parent, callback)
                     callback(current_child, this_parent);
                 });
             }
-            callback(parent.children[i], parent);
+            else
+            {
+                callback(parent.children[i], parent);
+            }
+
         }
     }
 }

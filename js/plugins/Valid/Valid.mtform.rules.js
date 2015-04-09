@@ -77,12 +77,12 @@ MTF_VALID_RULES = {
 
 
         // whether to insert HTML templates for the items to which this rule has been bound
-        template_allow : false,
+        template_allow : true,
 
         // templates for different conditions of this rule, these are used only if
         // templates_allow is set to true.
         templates : {
-            default : "<div :attrs >Result is shown here: :message</div>",
+            default : "<span :attrs >Result is shown here: :message</span>",
         },
 
         // which template must be used as default template
