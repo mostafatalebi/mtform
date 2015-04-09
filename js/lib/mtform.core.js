@@ -125,7 +125,8 @@ function mtFormInit(container_selector){
         submit : "<input type='submit'   :attrs />",
         button : "<button   :attrs >:value</button>",
         select : "<select  :attrs >:options</select>",
-        option : "<option  :uniqueValue :attrs />:innerValue</option>"
+        option : "<option  :uniqueValue :attrs />:innerValue</option>",
+        message : "<div :attrs >:message</div>"
     }
 };
 

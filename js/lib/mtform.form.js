@@ -145,6 +145,7 @@ mtFormInit.prototype.Form = function(name, args){
     return this;
 };
 
+
 /**
  * Creates a form with enctype set to "formdata/multipart"
  * @param args object list of key=value pairs attributes of the tag
@@ -159,6 +160,19 @@ mtFormInit.prototype.FormWithFile = function(name, args){
     this.addForm(args_temp.args);
     return this;
 };
+
+mtFormInit.prototype.Msg = function(msg_string, args){
+    this.create("message", args, msg_string);
+    return this;
+};
+
+
+mtFormInit.prototype.Custom = function(markup, args){
+    this.addCustom(markup, args);
+    return this;
+};
+
+
 
 /**
  * Creates a label for @__lastComponent. It is different form label() function in that

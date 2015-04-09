@@ -211,6 +211,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addSelect(arguments, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'file')
         inp = this.addFile(arguments);
+    else if (component_type == 'message')
+        inp = this.addMessage(arguments, secondaryArgs);
     else if (component_type == 'form')
         inp = this.addForm(arguments  , secondaryArgs);
     else if (component_type == 'custom')
@@ -455,6 +457,17 @@ mtFormInit.prototype.addForm = function(attrs){
     attrs = this.argsToAttrs(attrs);
     form_tpl = this.parser(form_tpl, [":attrs"], [attrs]);
     this.forms.push(form_tpl);
+};
+
+mtFormInit.prototype.addMessage = function(attrs, msg_string){
+
+    msg_string = (typeof msg_string === "undefined" || typeof msg_string === "null")
+        ? "" : msg_string;
+    var message = this.getTpl("message");
+    var prs = this.parser(message, [":attrs", ":message"], [attrs, msg_string]);
+    this.__setLastComponentType("message");
+    this.__addComponentInstance(prs, "message");
+    return prs;
 };
 
 mtFormInit.prototype.addCustom = function(value, attrs){

@@ -14,7 +14,8 @@ var MTF_Collection = {
     "button" : [],
     "textarea" : [],
     "select" : [],
-    "custom" : []
+    "custom" : [],
+    "message" : [],
 };
 
 /**
@@ -39,7 +40,8 @@ var MTF_PLACEHOLDERS = {
     label : ":label",
     attrs : ":attrs",
     value : ":value",
-    innerValue : ":innerValue"
+    innerValue : ":innerValue",
+    message : ":message"
 };
 
 /**
