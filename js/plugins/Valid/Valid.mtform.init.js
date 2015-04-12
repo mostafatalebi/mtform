@@ -9,8 +9,37 @@ var MTF_Valid = function(){
     // this option holds any event passed in the time of VAdd function call.
     this.events_optional = {};
 
+
+
     this.templates = MT_VALID_TEMPLATES;
 
+    /**
+     * All components which are bound to a message-containers
+     * entry scheme is: type-index, for instance : input-5
+     * @type {Array}
+     */
+    this.message_to_components = [];
+
+    /**
+     * There are two types of message insertion. One is using injection-type (which is default),
+     * the other is insertion-type. Insertion type is a regular message container insertion and it
+     * uses regular $mtf component creation routine. But, injection type indeed edits $mtf collection
+     * and adds the message container right after form component. So, no matter how deep a form-component
+     * is nested in its template (for instance: <div><div><a><input type='text' /></a></div></div> ) it
+     * finds the proper input and injects the message container right after it. It allows a more dynamic
+     * handling of the message container.
+     * This array collection only holds the track of message containers of injection type. Because if containers
+     * are injected inside another already inserted component, then it could not be traced by default collections
+     * of $mtf, hence we have to devise our own tracking method
+     * @type {Array}
+     */
+    this.message_injection_container = [];
+
+
+    /**
+     * the last message container id. No matter if it is of injection-type or insertion-type
+     * @type {string}
+     */
     this.last_message_id = "";
 
 

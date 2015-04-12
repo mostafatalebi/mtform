@@ -42,11 +42,13 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
  * @param events     {object} custom events which are used to trigger the rule
  * @param use_template {boolean} [optional] if set to false, the rule does not generate
  *                    a message template.
+ * @param insertion_type whether to inject it right after the form component or insert it regularly into
+ *                        components collection.
  * @constructor
  */
-MTF_Valid.prototype.AddRule = function(rule_name, rule_value, events, use_template){
-    this.last_message_id = this.__generate_random_id($mtf.componentLastInfo);
+MTF_Valid.prototype.AddRule = function(rule_name, rule_value, events, use_template, insertion_type){
 
+    insertion_type = (insertion_type) ? insertion_type : "inject";
     // we have to predict how arguments are passed over to the function __assign_rule
     if( typeof rule_value === 'object' )
     {
@@ -67,14 +69,24 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, events, use_templa
         }
     }
 
-    this.__assign_rule(rule_name, rule_value, events);
 
     // if user has not passed any value to use_template, we delegate the decision for
     // per-rule and global configurations.
     if ( use_template !== false )
     {
-        this.__insertMessageContainer(rule_name);
+        // message containers, by default, are just added to each
+        // component once, but it is possible to allow several
+        // instances per component. The following code block checks to see
+        // whether to allow multiple insertion or else secure one-insertion
+        var last_comp = $mtf.componentLastInfo;
+        this.last_message_id = this.__generate_random_id($mtf.componentLastInfo);
+        this.message_to_components.push(last_comp.index + "-" + last_comp.type );
+        this.__insertMessageContainer(rule_name, insertion_type);
     }
+
+
+    this.__assign_rule(rule_name, rule_value, events);
+
 }
 
 /**
@@ -336,7 +348,7 @@ MTF_Valid.prototype.__assign_rule = function(ruleName, ruleValue, events){
 /**
  * Based on the rules and its bound index and type, it search main collections and find the proper string for\
  * the already-added form-component and merge the rule attribute to them using regular expression.
- * Note: in this stage, no form component has been created and everything is just yet string
+ * Note: in this stage, no form component has yet been created and all data are string.
  * @private
  */
 MTF_Valid.prototype.__bind_rules = function(){
@@ -384,6 +396,26 @@ MTF_Valid.prototype.__bind_rules = function(){
         }
 
         $mtf.collections[type][index] = component;
+
+        /* finalizing message container */
+        if( this.message_injection_container.length > 0 )
+        {
+            var reg_msg_rule = new RegExp("(?:.*)(<input.*\/>)(?:.*)");
+            for( var i = 0; i < this.message_injection_container.length; i++ )
+            {
+                var msg_info = this.message_injection_container[i];
+                var current_comp = $mtf.collections[msg_info.type][msg_info.index];
+                var form_comp_extracted = reg_msg_rule.exec(current_comp);
+                var tpl =  this.__get_proper_template(msg_info.ruleName);
+                var attributes = {};
+                var attr = $MTF_Valid_Config.message_attr_name + "='" + this.last_message_id + "'";
+                tpl = tpl.replace($mtf.ph("attrs"), attr);
+                tpl = form_comp_extracted[1] + tpl;
+                tpl = current_comp.replace(form_comp_extracted[1], tpl);
+                $mtf.collections[msg_info.type][msg_info.index] = tpl;
+            }
+        }
+
     }
 }
 
@@ -539,15 +571,16 @@ MTF_Valid.prototype.__get_hash_value = function(name)
 }
 
 MTF_Valid.prototype.__insertMessageContainer = function(rule_name, insertion_type){
-    insertion_type (insertion_type) ? insertion_type : "inject";
+    insertion_type = (insertion_type) ? insertion_type : "inject";
     var lastCmp = $mtf.componentLastInfo;
 
     if(insertion_type == 'inject')
     {
-        var reg_rule = new RegExp("(?:.*)(<input.*\/>)(?:.*)");
+        lastCmp.ruleName = rule_name;
 
+        this.message_injection_container.push(lastCmp);
     }
-    else if(insertion_type == 'insertion' )
+    else if(insertion_type == 'insert' )
     {
         var tpl =  this.__get_proper_template(rule_name);
         attr_name = $MTF_Valid_Config.message_attr_name;

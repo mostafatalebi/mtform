@@ -67,12 +67,12 @@ MTF_VALID_RULES = {
                 return true;
         },
 
-        error : function(elm, msg, event){
-            alert("Failed");
+        error : function(elm, event, msg){
+            msg.innerHTML = "There is an error.";
         },
 
-        success : function(elm, msg, event){
-            alert("Success");
+        success : function(elm, event, msg){
+            msg.innerHTML = "Thank you";
         },
 
 
