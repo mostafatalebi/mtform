@@ -207,6 +207,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
         inp = this.addButton(arguments);
     else if (component_type == 'radio')
         inp = this.addRadios(arguments, secondaryArgs); // note that we have passed unparsed args
+    else if (component_type == 'checkbox')
+        inp = this.addCheckboxes(arguments, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'select')
         inp = this.addSelect(arguments, secondaryArgs); // note that we have passed unparsed args
     else if (component_type == 'file')
@@ -305,6 +307,12 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
     return prs;
 };
 
+/**
+ * This function uses a very special object scheme to generate Radios.
+ * @param attrs
+ * @param radiosArgs
+ * @returns {Array}
+ */
 mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
 
 
@@ -327,6 +335,7 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
 
     // Our loop criterion is .values property. Because for radio buttons, value
     // is the most necessarily unique attribute.
+    var label_attrs = this.argsToAttrs(radiosArgs.labels_attrs);
     for(var i = 0; i < radiosArgs.values.length; i++)
     {
         // we check if the current component should be checked or not, if yes,
@@ -347,6 +356,13 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
 
         var radio_value = "value='"+radiosArgs.values[i]+"' "+is_checked;
         radio_value += id_values;
+
+
+        var label = null;
+        if (radiosArgs.labels && radiosArgs.labels[i] )
+        {
+            label = radiosArgs.labels[i];
+        }
         // we check to see if the user has passed an array of templates for each radio, since
         // we like to support template for each individual component generated within the form
         if(typeof radiosTplMain === 'object')
@@ -367,12 +383,90 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
         }
 
         // we then parse them individually
-        radios.push(this.parser(radiosTpl, [":attrs", ":values"], [attrs, radio_value]));
+        radios.push(this.parser(radiosTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, radio_value, label, label_attrs]));
     }
 
     this.__setLastComponentType("radio");
     this.__addComponentInstance(radios, "radio");
     return radios;
+};
+
+mtFormInit.prototype.addCheckboxes = function(attrs, checkboxesArgs){
+
+
+    var value = "";
+    value = (typeof checkboxesArgs == 'string' || typeof checkboxesArgs.value === "undefined" || typeof checkboxesArgs.value === "null")
+        ? "value='"+checkboxesArgs+"'" : "value='"+checkboxesArgs.value+"'";
+
+    var checkboxes = [];
+    var checkboxesTplMain = this.getTpl("checkbox");
+
+    // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
+    // value if the user passer lower number of templates than number of checkboxes.
+    var templatePossibleIterator = 0;
+    var checkboxesTpl = "";
+
+    // we check if the user has passed any value as the default value, if NO,
+    // then we set the first item as checked.
+    if(checkboxesArgs.default === "" || typeof checkboxesArgs.default === 'undefined'
+        || checkboxesArgs.default === null) checkboxesArgs.default = checkboxesArgs.values[0];
+
+    // Our loop criterion is .values property. Because for checkbox buttons, value
+    // is the most necessarily unique attribute.
+    var label_attrs = this.argsToAttrs(checkboxesArgs.labels_attrs);
+    for(var i = 0; i < checkboxesArgs.values.length; i++)
+    {
+        // we check if the current component should be checked or not, if yes,
+        // then we set the corresponding value.
+        var is_checked = "";
+        var id_values = "";
+        if(checkboxesArgs.values[i] == checkboxesArgs.default)  is_checked = " CHECKED ";
+
+        if(this.is_function(checkboxesArgs.ids))
+        {
+            id_values = " id='"+checkboxesArgs.ids(checkboxesArgs.values[i])+"' ";
+        }
+        else if(this.is_object(checkboxesArgs.ids))
+        {
+            if(i <= checkboxesArgs.ids.length)
+                id_values = " id='"+checkboxesArgs.ids[i]+"' ";
+        }
+
+        var checkbox_value = "value='"+checkboxesArgs.values[i]+"' "+is_checked;
+        checkbox_value += id_values;
+
+
+        var label = null;
+        if (checkboxesArgs.labels && checkboxesArgs.labels[i] )
+        {
+            label = checkboxesArgs.labels[i];
+        }
+        // we check to see if the user has passed an array of templates for each checkbox, since
+        // we like to support template for each individual component generated within the form
+        if(typeof checkboxesTplMain === 'object')
+        {
+            checkboxesTpl  = checkboxesTplMain[templatePossibleIterator];
+            // here we check to see if the current iteration for templates (in case it is array)
+            // is smaller than i and equals the length of the templates array, if true, then we
+            // set it back to zero for the iteration to work. Doing this, we guarantee the coverage
+            // of the templates for all the components. e.g. the user can pass an array of two-templates
+            // for 6 checkboxes, which allows him/her to have an alternate template pattern for that set of
+            // checkboxes.
+            templatePossibleIterator++;
+            if( templatePossibleIterator === checkboxesTplMain.length ) templatePossibleIterator = 0;
+        }
+        else
+        {
+            checkboxesTpl = checkboxesTplMain;
+        }
+
+        // we then parse them individually
+        checkboxes.push(this.parser(checkboxesTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, checkbox_value, label, label_attrs]));
+    }
+
+    this.__setLastComponentType("checkbox");
+    this.__addComponentInstance(checkboxes, "checkbox");
+    return checkboxes;
 };
 
 mtFormInit.prototype.addSelect = function(attrs, options){

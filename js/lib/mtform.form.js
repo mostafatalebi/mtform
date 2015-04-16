@@ -97,7 +97,10 @@ mtFormInit.prototype.Button = function(name, innerValue, args){
          *                                             against all the components' values. It is logical and standard
          *                                             for it to be an array of same size as names.
  *              attrs :   [object - object]         @__attributes
+ *
  *              labels :  [object - array]          If set, then a label for each radio will be created.
+ *              labels_attrs : [object]             an object of key&value pairs which is converted into HTML attributes
+ *                                                  of all labels
  *          }
  * @returns {radio} @__mtformObject
  */
@@ -107,6 +110,14 @@ mtFormInit.prototype.Radios = function( name, args ){
     this.create("radio", args_temp.attrs, args_temp.args);
     return this;
 };
+
+mtFormInit.prototype.Checkboxes = function( name, args ){
+    var args_temp;
+    args_temp = this.handleCreateRadioArguments(name, args);
+    this.create("checkbox", args_temp.attrs, args_temp.args);
+    return this;
+};
+
 
 /**
  * Creates a select-menu. It uses a special attributes schema for generating options.
