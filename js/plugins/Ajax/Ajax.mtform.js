@@ -87,7 +87,7 @@ MT_Ajax.prototype.SendAjax = function(form, config){
 
 
 
-    // we let Wonderful jQuery handles the AJAX request if the user has already included it, otherwise
+    // we let jQuery handles the AJAX request if the user has already included it, otherwise
     // we let our own AJAX engine to send the request
     if( typeof jQuery === 'object' || typeof jQuery === 'function' && config.forceDomesticLibrary === true )
     {

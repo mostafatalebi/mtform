@@ -409,11 +409,22 @@ mtFormInit.prototype.handleCreateRadioArguments = function( name, args ) {
     {
         if( typeof args === 'object' ) // user has passed function ( 'name', {} ) {}
         {
+            if(args.attrs)
+            {
+                args.attrs.name = name;
+            }
+            else
+            {
+                args.attrs = { "name" :  name };
+            }
             final.attrs = args.attrs;
             final.args = args;
         }
+        else
+        {
+            final.attrs['name'] = name;
+        }
 
-        final.args["attrs"]['name'] = name;
     }
     else if( typeof name === 'object' ) // user has passed function ( {} ) {}
     {
