@@ -125,7 +125,7 @@ mtFormInit.prototype.parser = function(template, placeholders, values)
         // now loop through and parse the template
         for(var i = 0; i < placeholders.length; i++)
         {
-            template = template.replace(placeholders[i], values[i]);
+            template = template.replace(placeholders[i],values[i]);
         }
         return template;
     }
