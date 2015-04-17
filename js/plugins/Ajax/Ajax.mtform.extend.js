@@ -27,6 +27,10 @@
  */
 $mtf.extends("Ajax", function(config, event_name, form_selector, element_trigger_selector){
 
+    if(!config.hasOwnProperty("formData"))
+    {
+        config["formData"] = true;
+    }
 
     // this allows a set of elements to trigger AJAX request than one
     var triggers = document.querySelectorAll( element_trigger_selector );

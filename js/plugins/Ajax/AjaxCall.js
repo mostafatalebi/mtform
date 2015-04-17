@@ -23,7 +23,7 @@ var AjaxCall = function(config){
         dataProcess : (typeof config.dataProcess === null || typeof config.dataProcess === 'undefined' ) ? null : config.dataProcess(config.data),
 
         // whether to set form Data or not, default is set to browser-support
-        formData : (typeof config.formData === null || typeof config.formData === 'undefined' ) ? true : config.formData,
+        formData : (typeof config.formData === null || typeof config.formData === 'undefined' ) ? false : config.formData,
 
 
         // Asynchronous or Synchronous
@@ -75,6 +75,7 @@ AjaxCall.prototype.setParams = function(params){
 
 AjaxCall.prototype.send = function(){
     var data;
+
     if( !window.FormData || this.params.formData === false )
     {
         data = this.__understandData(this.params.data);
