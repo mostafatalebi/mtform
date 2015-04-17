@@ -2,6 +2,9 @@
  General methods and properties used across all the other methods
  **/
 
+
+
+
 mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
     parseValues = (typeof  parseValues === 'undefined' || typeof  parseValues === null)
         ? false : parseValues;
@@ -447,3 +450,4 @@ mtFormInit.prototype.objectJoinWithFormData = function( object, formData ) {
 
     return formData;
 }
+

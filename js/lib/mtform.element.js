@@ -38,7 +38,10 @@ mtFormInit.prototype.E = function(element)
         },
 
         HTML : function(html){
-            $mtf.Element.innerHTML = html;
+            if(html)
+                $mtf.Element.innerHTML = html;
+            else
+                return $mtf.Element.innerHTML;
         }
     }
 }

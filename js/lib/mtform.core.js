@@ -9,6 +9,15 @@
 function mtFormInit(container_selector){
     this.container;
 
+    /**
+     * Default language. It allows all the plugins to be consistent with one another,
+     * disallowing having multiple languages. Languages have many uses such as labels,
+     * messages etc. The default plugin for validation called Valid does uses this
+     * property to check for current languages.
+     * @type {string}
+     */
+    this.lang = "en";
+
     // list of living module during the lifespan of the application
     this.$lives = [];
 
