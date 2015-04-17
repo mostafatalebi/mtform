@@ -6,6 +6,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
 {
     window.$MTF_Valid_Config = {
 
+
         // whether to add messages templates for rules or not
         allow_template : true,
 
@@ -26,26 +27,6 @@ if(typeof window.MTF_Valid_Config !== 'object')
         ev_input_default : [],
         ev_misc_default : [],
 
-        // matches a group of components by their names
-        ev_by_name : {
-            'sample-name' : [ ]
-        },
-
-        // matches a group of components by their ids
-        ev_by_id : {
-
-        },
-
-        // matches a group of components by their classNames
-        ev_by_class : {
-
-        },
-
-        // matches a group of components by their data-attrs
-        ev_by_data_attr : {
-
-        },
-
         type_events : {
             input : [],
             email : [],
@@ -62,17 +43,17 @@ if(typeof window.MTF_Valid_Config !== 'object')
         },
 
         hash_table : {
-            "input" : "140f8a1",
-            "password" : "4fe98a",
-            "file" : "1f864eb5",
-            "hidden" : "1a9b4254fsa1",
-            "radio" : "14a4fe98a74ea1",
+            "input" :    "140f8a1dafss",
+            "password" : "4fe98asdfdsf",
+            "file" :     "1f864eb5sdf",
+            "hidden" :   "1a9b4254fsa1",
+            "radio" :    "14a4fe98a74ea1",
             "checkbox" : "10e98a74eb54c1a1",
-            "rule" : "00ca050b2a",
-            "submit" : "57018896106",
-            "button" : "3fa4054f214",
+            "rule" :     "00ca050b2a",
+            "submit" :   "57018896106",
+            "button" :   "3fa4054f214",
             "textarea" : "f0f80be6e30c",
-            "select" : "6e051f395b61",
+            "select" :   "6e051f395b61"
         },
 
         tag_names : {
@@ -87,8 +68,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
             button : "button",
             submit : "input",
             hidden : "hidden",
-            select : "select",
-
+            select : "select"
         }
     };
 }

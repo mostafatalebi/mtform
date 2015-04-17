@@ -28,6 +28,8 @@ var MTF_Valid = function(){
      * is nested in its template (for instance: <div><div><a><input type='text' /></a></div></div> ) it
      * finds the proper input and injects the message container right after it. It allows a more dynamic
      * handling of the message container.
+     * Note: This is possible when MTF standard is practiced; which is to avoid placing two form components in the
+     * same template definition, otherwise, unexpected results are highly probable.
      * This array collection only holds the track of message containers of injection type. Because if containers
      * are injected inside another already inserted component, then it could not be traced by default collections
      * of $mtf, hence we have to devise our own tracking method

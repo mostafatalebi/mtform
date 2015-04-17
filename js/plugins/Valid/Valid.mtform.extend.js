@@ -5,13 +5,13 @@
  * @param rule_value {callback} the value of rule in case it needs any
  * @param events {object.array} [optional] an array of events names
  */
-$mtf.extends("VAdd", function(rule_name, rule_value, events, use_template){
+$mtf.extends("VAdd", function(rule_name, rule_value, use_template, messages_object, events, insertion_type){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
     }
 
-    $mtf.$lives.Valid.AddRule(rule_name, rule_value, events, use_template);
+    $mtf.$lives.Valid.AddRule(rule_name, rule_value, use_template, messages_object, events, insertion_type);
 
     return $mtf;
 }, true);
