@@ -38,11 +38,11 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         main : function(elm, rule_value, data){
-            var result = { status : false, data : "" };
-            result.status = /^[0-9]*$/.test($mtf.E(elm).Value());
+                var result = { status : false, data : "" };
+                result.status = /^[0-9]*$/.test($mtf.E(elm).Value());
 
 
-            return result;
+                return result;
         },
 
         /**

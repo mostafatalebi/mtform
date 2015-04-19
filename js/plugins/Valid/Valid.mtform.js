@@ -48,7 +48,7 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
  */
 MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
 
-    var use_template = true;
+    var template = true;
     var message_object = {};
     var events = [];
     var inline = true;
@@ -56,19 +56,25 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
     if( config.hasOwnProperty("message") ) message_object  = config.message;
     if( config.hasOwnProperty("events") ) events  = config.events;
     if( config.hasOwnProperty("type") ) inline  = config.inline;
+    if( config.hasOwnProperty("template") ) template  = config.template;
 
     // if user has not passed any value to use_template, we delegate the decision for
     // per-rule and global configurations.
-    if ( use_template !== false )
+    if ( template !== false )
     {
         // message containers, by default, are just added to each
         // component once, but it is possible to allow several
         // instances per component. The following code block checks to see
         // whether to allow multiple insertion or else secure one-insertion
         var last_comp = $mtf.componentLastInfo;
-        this.last_message_id = this.__generate_random_id($mtf.componentLastInfo);
-        this.message_to_components.push(last_comp.index + "-" + last_comp.type );
-        this.__insertMessageContainer(rule_name, inline);
+
+        if( this.__compNotSame(last_comp) )
+        {
+            this.last_message_id = this.__generate_random_id(last_comp);
+            this.message_to_components.push(last_comp.index + "-" + last_comp.type );
+            this.__insertMessageContainer(rule_name, inline);
+        }
+
     }
 
 
@@ -128,14 +134,19 @@ MTF_Valid.prototype.editTemplate = function(tmp_name, tmp_value){
 MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, success){
 
     var result = initial_callback();
-    if(  result.status === false )
-    {
-        if(error) error(result.data);
-    }
-    else
-    {
-        if(success) success(result.data);
-    }
+    //if($mtf.$lives.Valid.noProcessRunning(this.last_message_id))
+    //{
+        if(  result.status === false )
+        {
+            $mtf.$lives.Valid.addProcess(this.last_message_id);
+            if(error) error(result.data);
+        }
+        else
+        {
+            $mtf.$lives.Valid.freeProcess(this.last_message_id);
+            if(success) success(result.data);
+        }
+    //}
 }
 
 /**
@@ -613,4 +624,23 @@ MTF_Valid.prototype.__getMessages = function(rule_name){
     {
         return false;
     }
+}
+
+
+MTF_Valid.prototype.__compNotSame = function(lastCompObject){
+    return ( this.message_to_components.indexOf(lastCompObject.type + "-" + lastCompObject.index) !== -1 )
+            ? false : true;
+}
+
+
+MTF_Valid.prototype.noProcessRunning = function(message_id){
+    return (this.pid.indexOf(message_id) === -1 ) ? true : false;
+}
+
+MTF_Valid.prototype.addProcess = function(message_id){
+    this.pid.push(message_id);
+}
+
+MTF_Valid.prototype.freeProcess = function(message_id){
+    this.pid.pop(message_id);
 }
