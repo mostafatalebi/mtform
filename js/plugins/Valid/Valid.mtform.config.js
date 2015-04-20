@@ -12,7 +12,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
 
         //### GENERAL ###//
         rules_attr_name : "data-valid", // a name for data-* attribute
-        rules_each_separator : "&amp;",
+        rules_each_separator : '&',
         message_attr_name : "data-msgparentid",
         input_message_attr_name : "data-msgcontainerid",
         events_optional_attr : 'data-validev',

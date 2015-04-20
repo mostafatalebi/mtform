@@ -38,11 +38,12 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         main : function(elm, rule_value, data){
-                var result = { status : false, data : "" };
-                result.status = /^[0-9]*$/.test($mtf.E(elm).Value());
-
-
-                return result;
+                //var result = { status : false, data : "" };
+                //result.status = /^[0-9]*$/.test($mtf.E(elm).Value());
+                //
+                //
+                //return result;
+            __("This is NUMBER validation");
         },
 
         /**
@@ -185,7 +186,7 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         main : function(elm, rule_value, data){
-            var result = { status : false, data : "" };
+            /*var result = { status : false, data : "" };
             var url_str = "";
 
             if( typeof rule_value !== "string" )
@@ -228,7 +229,8 @@ MTF_VALID_RULES = {
                     }
             });
 
-            ajax.send();
+            ajax.send();*/
+            __("Test Something");
         },
 
         /**
@@ -318,16 +320,16 @@ MTF_VALID_RULES = {
          */
         messages : {
             main : {
-                en : "the validation is being progressed.",
+                en : "Ajax it away.",
                 fa : ""
             },
 
             error : {
-                en : "the validation encountered an error."
+                en : "Ajax not sent."
             },
 
             success : {
-                en : "the validation checks the value as healthy."
+                en : "Ajax Sent."
             }
         }
     },

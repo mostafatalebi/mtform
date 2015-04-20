@@ -140,11 +140,13 @@ MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, s
         {
             $mtf.$lives.Valid.addProcess(this.last_message_id);
             if(error) error(result.data);
+            return false;
         }
         else
         {
             $mtf.$lives.Valid.freeProcess(this.last_message_id);
             if(success) success(result.data);
+            return true;
         }
     //}
 }
@@ -164,8 +166,8 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
     if( events )
         events_all = events_all.concat(events);
 
-    // @todo Must be checked and probably the if condition must be removed
-    if( /*this.rules.length > 0*/ 1 == 5 )
+
+    if( this.rules.length > 0 )
     {
         for( var i = 0; i < this.rules.length; i++ ) // checks if this component has already
         // being bound to a rule, if yes, then just add the rule than creating a collection anew
@@ -225,7 +227,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
         if($mtf.is_form_component(item))
         {
             var rules_array = mainFunction.__find_rules(item);
-
+            var globalProcessController = [];
             if(rules_array)
             {
                 var keys = Object.keys(rules_array);
@@ -248,25 +250,104 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                     var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
 
-                    for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
-                        item.addEventListener( events[eventIncr], function(event){
+
+                    /**
+                     * This function creates a function-pack out of three methods of current rule. It paves the way for
+                     * variables assignment in a scope-friendly way.
+                     * @usage Allows us to delegate function execution to a later time if current rule returns false
+                     * @param event
+                     * @param item
+                     * @param rule_value
+                     * @param msg_container
+                     * @param messages_main
+                     * @param messages_error
+                     * @param messages_success
+                     * @returns {Function}
+                     */
+                    /*var createFunction = function(event, item, rule_value, cb_main, cb_error, db_success, msg_container, messages_main, messages_error, messages_success) {
+                        return function (event) {
+                            var current_element = item;
+                            var event_object = event;
+                            return $mtf.$lives.Valid.__eventCallbackHandler(
+                                function () {
+                                    return cb_main(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages_main,
+                                        "event": event_object
+                                    });
+                                },
+                                function () {
+                                    return cb_error(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages_error,
+                                        "event": event_object
+                                    })
+                                },
+                                function () {
+                                    return db_success(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages_success,
+                                        "event": event_object
+                                    })
+                                }
+                            );
+                        }
+                    };
+
+
+                    globalProcessController.push(
+                        createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
+                        messages.error[$mtf.lang], messages.success[$mtf.lang])
+                    );*/
+
+
+
+                    for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++) {
+
+                        item.addEventListener(events[eventIncr], function (event) {
                             var current_element = this;
                             var event_object = event;
                             __eventCallbackHandler(
-                                function( extra_data ){
-                                    return callback_function(current_element, rule_value, { "message_element" : msg_container,  "message_text" : messages.main[$mtf.lang], "event" : event_object, "data" : extra_data } );
+                                function (extra_data) {
+                                    return callback_function(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages.main[$mtf.lang],
+                                        "event": event_object,
+                                        "data": extra_data
+                                    });
                                 },
-                                function( extra_data ){
-                                    return callback_error_function(current_element, rule_value, { "message_element" : msg_container,  "message_text" : messages.error[$mtf.lang], "event" : event_object, "data" : extra_data })
+                                function (extra_data) {
+                                    return callback_error_function(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages.error[$mtf.lang],
+                                        "event": event_object,
+                                        "data": extra_data
+                                    })
                                 },
-                                function( extra_data ){
-                                    return callback_success_function(current_element, rule_value, { "message_element" : msg_container,  "message_text" : messages.success[$mtf.lang], "event" : event_object, "data" : extra_data })
+                                function (extra_data) {
+                                    return callback_success_function(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages.success[$mtf.lang],
+                                        "event": event_object,
+                                        "data": extra_data
+                                    })
                                 }
                             );
 
                         });
 
+                    }
+
                 }
+            //    var test = function(event){
+            //    for(var i = 0; i < globalProcessController.length; i++)
+            //    {
+            //        globalProcessController[i](event);
+            //        //if( result === false || result.status === false);
+            //        //break;
+            //    }
+            //};
+                //item.addEventListener("blur", test )
             }
 
 
@@ -434,11 +515,12 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
  */
 MTF_Valid.prototype.__find_rules = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
+    var rules = rule_attr.split( $MTF_Valid_Config.rules_each_separator );
     var found_rules = {};
 
     if( !$mtf.is_empty(rule_attr) && $mtf.objectLength(rule_attr) > 0 )
     {
-        var rules = rule_attr.split( $MTF_Valid_Config.rules_attr_name );
+
 
         for( var i = 0; i < rules.length; i++ )
         {
