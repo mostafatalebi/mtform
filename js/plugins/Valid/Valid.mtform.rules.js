@@ -4,6 +4,303 @@ MTF_VALID_RULES = {};
 MTF_VALID_RULES = {
 
     /**
+     * @rule email
+     * @description checks to see if input is a correctly formatter email or not
+     * @return {NULL}
+     * @requires_value NO
+     */
+    "email" : {
+
+        /**
+         * The name of the event to be attached to the input, this can be overridden at the time of
+         * adding rule to the input
+         */
+        events : ["blur"],
+
+
+        /**
+         * The main function which is executed to validate the input's value.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        main : function(elm, rule_value, data){
+            var result = { status : false, data : "" };
+            result.status = /^[a-zA-Z0-9_.-]+@+[a-zA-Z0-9-]+\.{1}[a-zA-Z0-9-]{2,20}(?:\.{1}[a-zA-Z0-9-]{2,20})?(?:\.{1}[a-zA-Z0-9-]{2,20})?$/.test($mtf.E(elm).Value());
+
+            if(data.hasOwnProperty("message_element"))
+            {
+                $mtf.E(data.message_element).HTML(data.message_text);
+            }
+
+            return result;
+
+        },
+
+        /**
+         * Is executed when the return value of the main() function is not false.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        success : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        /**
+         * Is executed when the return value of the main() function is false.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        error : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        /**
+         * Allows insertion of templates for this rule.
+         */
+        template_allow : true,
+
+        /**
+         * A template for each validation method. The used only if templates are allowed. Also it is
+         * possible to externally override it.
+         * @placeholder :attrs a global $mtf placeholder which is replaced by a list of attribute lists
+         * @placeholder :message a global $mtf placeholder which is replaced by a message string
+         */
+        templates : {
+            main : "<span :attrs></span>",
+            error : "<span :attrs ></span>",
+            success : "<span :attrs ></span>"
+        },
+
+        /**
+         * Sets which template to be used as default template. Default templates are
+         * hidden by default, though they might be visible by default and show some
+         * specific messages.
+         */
+        template_default : "main",
+
+        /**
+         * Allows default attribute list to be set for each message container.
+         */
+        templates_default : {
+            main : {
+                style : "display: none;"
+            }
+        },
+
+        /**
+         * message container. Messages for three different conditions of the validation.
+         * Each method's message container, accepts an object holding key&value pairs, with
+         * key representing the name of the language and value as the message in that language.
+         * Default is $mtf.lang.default .
+         */
+        messages : {
+            main : {
+                en : "Checking...",
+                fa : ""
+            },
+
+            error : {
+                en : "our Email address is not correct."
+            },
+
+            success : {
+                en : "Email's OK."
+            }
+        }
+    },
+
+
+    /**
+     * @rule max
+     * @description checks to see if the maximum length is violated
+     * @return {NULL}
+     * @requires_value NO
+     */
+    "max" : {
+
+        /**
+         * The name of the event to be attached to the input, this can be overridden at the time of
+         * adding rule to the input
+         */
+        events : ["blur"],
+
+
+        /**
+         * The main function which is executed to validate the input's value.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        main : function(elm, rule_value, data){
+            var result = { status : false, data : "" };
+            result.status = (elm.value.length < parseInt(rule_value)) ? true : false;
+
+            if(data.hasOwnProperty("message_element"))
+            {
+                $mtf.E(data.message_element).HTML(data.message_text);
+            }
+
+            return result;
+
+        },
+
+        /**
+         * Is executed when the return value of the main() function is not false.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        success : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        /**
+         * Is executed when the return value of the main() function is false.
+         * @param elm current {element} element whose value as been checked for validation
+         * @param rule_value {mixed} the value of the rule, if any.
+         * @param msg_container {element} the message container, if it is allowed
+         * @param data_object  {Object} It is an object containing the following keys:
+         *                     message_element {element} the message container element
+         *                     message_string {string} the message string based on the current
+         *                                             language
+         *                     event {event} current event's object
+         *                     extra_data {mixed} data that might be returned by main() function
+         *                     are accessible via this parameter
+         *                     would be checked.
+         * @returns {Boolean|Object} an object containing two value
+         *                   status {boolean} indicating the status of the validation
+         *                   data {mixed} an optional data to be returned
+         *                   Note: It is possible to just return false if there is no
+         *                   data to be returned
+         */
+        error : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        /**
+         * Allows insertion of templates for this rule.
+         */
+        template_allow : true,
+
+        /**
+         * A template for each validation method. The used only if templates are allowed. Also it is
+         * possible to externally override it.
+         * @placeholder :attrs a global $mtf placeholder which is replaced by a list of attribute lists
+         * @placeholder :message a global $mtf placeholder which is replaced by a message string
+         */
+        templates : {
+            main : "<span :attrs></span>",
+            error : "<span :attrs ></span>",
+            success : "<span :attrs ></span>"
+        },
+
+        /**
+         * Sets which template to be used as default template. Default templates are
+         * hidden by default, though they might be visible by default and show some
+         * specific messages.
+         */
+        template_default : "main",
+
+        /**
+         * Allows default attribute list to be set for each message container.
+         */
+        templates_default : {
+            main : {
+                style : "display: none;"
+            }
+        },
+
+        /**
+         * message container. Messages for three different conditions of the validation.
+         * Each method's message container, accepts an object holding key&value pairs, with
+         * key representing the name of the language and value as the message in that language.
+         * Default is $mtf.lang.default .
+         */
+        messages : {
+            main : {
+                en : "Checking...",
+                fa : ""
+            },
+
+            error : {
+                en : "Length Exceeded."
+            },
+
+            success : {
+                en : "String's length OK."
+            }
+        }
+    },
+
+    /**
      * @rule number
      * @description checks to see if input is a number or not
      * @return {NULL}
@@ -39,14 +336,12 @@ MTF_VALID_RULES = {
          */
         main : function(elm, rule_value, data){
                 var result = { status : false, data : "" };
-
-
                 result.status = /^[0-9]*$/.test($mtf.E(elm).Value());
-
-                __("This is NUMBER validation");
-
+                if(data.hasOwnProperty("message_element"))
+                {
+                    $mtf.E(data.message_element).HTML(data.message_text);
+                }
                 return result;
-
         },
 
         /**
@@ -189,7 +484,7 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         main : function(elm, rule_value, data){
-            /*var result = { status : false, data : "" };
+            var result = { status : false, data : "" };
             var url_str = "";
 
             if( typeof rule_value !== "string" )
@@ -232,8 +527,7 @@ MTF_VALID_RULES = {
                     }
             });
 
-            ajax.send();*/
-            __("Test Something");
+            ajax.send();
         },
 
         /**

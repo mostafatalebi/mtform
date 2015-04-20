@@ -224,10 +224,11 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
     var mainFunction = this;
     this.__forEachChildren(parent_cont, function(current_child, current_parent){
         var item = current_child;
+        var events = [];
         if($mtf.is_form_component(item))
         {
             var rules_array = mainFunction.__find_rules(item);
-            var globalProcessController = [];
+            var callbackProcessQueue = [];
             if(rules_array)
             {
                 var keys = Object.keys(rules_array);
@@ -240,7 +241,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     var messages = rules_array[keys[w]]['messages'];
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
-                    var events = rules_array[keys[w]]['events-default'];
+                    events = rules_array[keys[w]]['events-default'];
                     var events_optional = mainFunction.__get_optional_events(item);
                     if( events_optional && events_optional.length > 0 )
                     {
@@ -297,7 +298,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     };
 
 
-                    globalProcessController.push(
+                    callbackProcessQueue.push(
                         createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
                         messages.error[$mtf.lang], messages.success[$mtf.lang])
                     );
@@ -341,25 +342,30 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     }*/
 
                 }
-                var test = function(event){
-                    for(var i = 0; i < globalProcessController.length; i++)
-                    {
-                        var result = globalProcessController[i](event);
-                        console.log(result);
-                        if( result.hasOwnProperty("status") )
-                        {
-                            if(result.status !== true )
-                                break;
-                        }
-                        else
-                        {
-                            if( result !== true )
-                                break;
-                        }
-                    }
-                };
 
-                item.addEventListener("blur", test )
+                for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
+                {
+                    var mainCallbackAttacher = function(event){
+                        for(var i = 0; i < callbackProcessQueue.length; i++)
+                        {
+                            var result = callbackProcessQueue[i](event);
+                            console.log(result);
+                            if( result.hasOwnProperty("status") )
+                            {
+                                if(result.status !== true )
+                                    break;
+                            }
+                            else
+                            {
+                                if( result !== true )
+                                    break;
+                            }
+                        }
+                    };
+
+                    item.addEventListener("blur", mainCallbackAttacher )
+                }
+
             }
 
 

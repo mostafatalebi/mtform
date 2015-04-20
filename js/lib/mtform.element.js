@@ -43,5 +43,6 @@ mtFormInit.prototype.E = function(element)
             else
                 return $mtf.Element.innerHTML;
         }
+
     }
 }
