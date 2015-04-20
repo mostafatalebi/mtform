@@ -253,18 +253,20 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                     /**
                      * This function creates a function-pack out of three methods of current rule. It paves the way for
-                     * variables assignment in a scope-friendly way.
+                     * variables assignment in a scope-friendly way. Without such approach, it is not possible to keep
+                     * an array of functions with their own local variables's values the same as when they very assigned/declared
+                     * /created. We have to use the following motherFunction to create a function for us to be used later.
                      * @usage Allows us to delegate function execution to a later time if current rule returns false
-                     * @param event
-                     * @param item
-                     * @param rule_value
-                     * @param msg_container
-                     * @param messages_main
-                     * @param messages_error
-                     * @param messages_success
+                     * @param event the current event
+                     * @param item the current element
+                     * @param rule_value the current rule's value assigned in Form Creation
+                     * @param msg_container the message element
+                     * @param messages_main message string for mainCallback
+                     * @param messages_error message string for errorCallback
+                     * @param messages_success message string for successCallback
                      * @returns {Function}
                      */
-                    /*var createFunction = function(event, item, rule_value, cb_main, cb_error, db_success, msg_container, messages_main, messages_error, messages_success) {
+                    var createFunction = function(event, item, rule_value, cb_main, cb_error, db_success, msg_container, messages_main, messages_error, messages_success) {
                         return function (event) {
                             var current_element = item;
                             var event_object = event;
@@ -298,11 +300,11 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     globalProcessController.push(
                         createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
                         messages.error[$mtf.lang], messages.success[$mtf.lang])
-                    );*/
+                    );
 
 
 
-                    for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++) {
+                    /*for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++) {
 
                         item.addEventListener(events[eventIncr], function (event) {
                             var current_element = this;
@@ -336,18 +338,28 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                         });
 
-                    }
+                    }*/
 
                 }
-            //    var test = function(event){
-            //    for(var i = 0; i < globalProcessController.length; i++)
-            //    {
-            //        globalProcessController[i](event);
-            //        //if( result === false || result.status === false);
-            //        //break;
-            //    }
-            //};
-                //item.addEventListener("blur", test )
+                var test = function(event){
+                    for(var i = 0; i < globalProcessController.length; i++)
+                    {
+                        var result = globalProcessController[i](event);
+                        console.log(result);
+                        if( result.hasOwnProperty("status") )
+                        {
+                            if(result.status !== true )
+                                break;
+                        }
+                        else
+                        {
+                            if( result !== true )
+                                break;
+                        }
+                    }
+                };
+
+                item.addEventListener("blur", test )
             }
 
 
@@ -515,12 +527,12 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
  */
 MTF_Valid.prototype.__find_rules = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
-    var rules = rule_attr.split( $MTF_Valid_Config.rules_each_separator );
+
     var found_rules = {};
 
     if( !$mtf.is_empty(rule_attr) && $mtf.objectLength(rule_attr) > 0 )
     {
-
+        var rules = rule_attr.split( $MTF_Valid_Config.rules_each_separator );
 
         for( var i = 0; i < rules.length; i++ )
         {
