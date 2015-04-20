@@ -136,7 +136,7 @@ MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, s
     var result = initial_callback();
     //if($mtf.$lives.Valid.noProcessRunning(this.last_message_id))
     //{
-        if(  result.status === false )
+        if(  result.status !== true )
         {
             $mtf.$lives.Valid.addProcess(this.last_message_id);
             if(error) error(result.data);
@@ -343,13 +343,17 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                 }
 
+                /**
+                 * This loops through the events array and attach the proper callback to the
+                 * iterated event(though most of the time there is just one event).
+                 */
                 for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
                 {
                     var mainCallbackAttacher = function(event){
                         for(var i = 0; i < callbackProcessQueue.length; i++)
                         {
                             var result = callbackProcessQueue[i](event);
-                            console.log(result);
+
                             if( result.hasOwnProperty("status") )
                             {
                                 if(result.status !== true )
