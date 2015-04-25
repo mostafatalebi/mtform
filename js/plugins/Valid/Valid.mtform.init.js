@@ -1,12 +1,5 @@
 var MTF_Valid = function(){
 
-    /**
-     * Process ID of the current message-container. Because at the time, only one method can
-     * change the content of a message container. This allows a finer coordination between
-     * various rules.
-     * @type {Array}
-     */
-    this.pid = [];
     // The rules which are defined and can be assigned to various components.
     // @extra MTF_VALID_RULES is a globally used variable for defined rules
     // Note: it is not a globally defined variable (window.var), it is just

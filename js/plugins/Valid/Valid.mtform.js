@@ -48,6 +48,9 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
  */
 MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
 
+    /*
+    Setting the default values
+     */
     var template = true;
     var message_object = {};
     var events = [];
@@ -138,13 +141,13 @@ MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, s
     //{
         if(  result.status !== true )
         {
-            $mtf.$lives.Valid.addProcess(this.last_message_id);
+
             if(error) error(result.data);
             return false;
         }
         else
         {
-            $mtf.$lives.Valid.freeProcess(this.last_message_id);
+
             if(success) success(result.data);
             return true;
         }
@@ -267,7 +270,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                      * @param messages_success message string for successCallback
                      * @returns {Function}
                      */
-                    var createFunction = function(event, item, rule_value, cb_main, cb_error, db_success, msg_container, messages_main, messages_error, messages_success) {
+                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container, messages_main, messages_error, messages_success) {
                         return function (event) {
                             var current_element = item;
                             var event_object = event;
@@ -287,7 +290,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                                     })
                                 },
                                 function () {
-                                    return db_success(current_element, rule_value, {
+                                    return cb_success(current_element, rule_value, {
                                         "message_element": msg_container,
                                         "message_text": messages_success,
                                         "event": event_object
@@ -297,6 +300,8 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                         }
                     };
 
+                    // we have to initialize the event object to avoid undefined error
+                    var event = null;
 
                     callbackProcessQueue.push(
                         createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
@@ -304,42 +309,6 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     );
 
 
-
-                    /*for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++) {
-
-                        item.addEventListener(events[eventIncr], function (event) {
-                            var current_element = this;
-                            var event_object = event;
-                            __eventCallbackHandler(
-                                function (extra_data) {
-                                    return callback_function(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages.main[$mtf.lang],
-                                        "event": event_object,
-                                        "data": extra_data
-                                    });
-                                },
-                                function (extra_data) {
-                                    return callback_error_function(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages.error[$mtf.lang],
-                                        "event": event_object,
-                                        "data": extra_data
-                                    })
-                                },
-                                function (extra_data) {
-                                    return callback_success_function(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages.success[$mtf.lang],
-                                        "event": event_object,
-                                        "data": extra_data
-                                    })
-                                }
-                            );
-
-                        });
-
-                    }*/
 
                 }
 
@@ -367,7 +336,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                         }
                     };
 
-                    item.addEventListener("blur", mainCallbackAttacher )
+                    item.addEventListener( "blur", mainCallbackAttacher )
                 }
 
             }
@@ -732,19 +701,25 @@ MTF_Valid.prototype.__getMessages = function(rule_name){
 
 
 MTF_Valid.prototype.__compNotSame = function(lastCompObject){
-    return ( this.message_to_components.indexOf(lastCompObject.type + "-" + lastCompObject.index) !== -1 )
+    var g = (lastCompObject.type + "-" + lastCompObject.index);
+    return ( this.message_to_components.indexOf(lastCompObject.index + "-" + lastCompObject.type) !== -1 )
             ? false : true;
 }
 
 
-MTF_Valid.prototype.noProcessRunning = function(message_id){
-    return (this.pid.indexOf(message_id) === -1 ) ? true : false;
+
+MTF_Valid.prototype.editMessage = function(rule_name, type, message, language){
+    language = (language) ? language : $mtf.getLang();
+    this.rules_collection[rule_name].messages[type][language] = message;
 }
 
-MTF_Valid.prototype.addProcess = function(message_id){
-    this.pid.push(message_id);
+MTF_Valid.prototype.editMessageLanguages = function(rule_name, type, messages){
+    this.rules_collection[rule_name].messages[type] = messages;
 }
 
-MTF_Valid.prototype.freeProcess = function(message_id){
-    this.pid.pop(message_id);
+
+MTF_Valid.prototype.editAllMessages = function(rule_name, type, messages){
+    this.rules_collection[rule_name].messages[type] = messages;
 }
+
+

@@ -1,4 +1,9 @@
 /**
+ * Providing a pointer to the main MTF_Valid Object
+ */
+$mtf.$lives.Valid = new MTF_Valid();
+
+/**
  * @method VAdd
  * @description Registers a rule for the @__lastComponent and its events in case any passed
  * @param rule_name {string} the name of defined rule
@@ -57,7 +62,10 @@ $mtf.extends("VBind", function(){
 $mtf.defineExport("ValidExport", function(){
     var data = {};
     data.rules = $mtf.$lives.Valid.rules;
-
+    data.message_to_components = $mtf.$lives.Valid.message_to_components;
+    data.message_injection_container = $mtf.$lives.Valid.message_injection_container;
+    data.events = $mtf.$lives.Valid.events;
+    data.events_optional = $mtf.$lives.Valid.events_optional;
     return data;
 });
 
@@ -72,3 +80,5 @@ $mtf.defineImport("ValidImport", function(rule_name, rule_value, events, use_tem
 
     return $mtf;
 });
+
+
