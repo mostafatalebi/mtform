@@ -7,6 +7,8 @@
  * @param container an element to put the result in
  */
 function mtFormInit(container_selector){
+    version : "0.0.1"
+
     this.container;
 
     /**
@@ -187,7 +189,49 @@ mtFormInit.prototype.Reset = function(keep_old_stuff){
     return this;
 }
 
+mtFormInit.prototype.getVersion = function(){
+    return this.version;
+}
 
+mtFormInit.prototype.versionCompare = function(version_string, strict){
+    strict (strict) ? strict : false;
+    var core_version =  this.getVersion().split(".");
+    version_string = version_string.replace("*", "1000000");
+    if( version_string.indexOf(".") === -1)
+    {
+        return (parseInt(core_version[0]) > parseInt(version_string)) ? true : false;
+    }
+    else
+    {
+        version_string = version_string.split(".");
+        if(parseInt(core_version[0]) > parseInt(version_string[0]) )
+        {
+            if(parseInt(core_version[1]) > parseInt(version_string[1]) )
+            {
+                if(version_string.length > 2)
+                {
+                    if(parseInt(core_version[2]) > parseInt(version_string[2]) )
+                    {
+                        return true;
+                    }
+                    else
+                    {// MAJOR Version Incompatible
+                        return -1;
+                    }
+                }
+                return 1;
+            }
+            else
+            {// MINOR Version Incompatible
+                return -1;
+            }
+        }
+        else
+        {// MAJOR Version Incompatible
+            return -1;
+        }
+    }
+}
 
 
 // ===================
