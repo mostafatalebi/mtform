@@ -1,4 +1,16 @@
 /**
+ * @type Plugin
+ * @name: Valid
+ * @description: A plugin for form-validation rules and messages. It allows
+ * exporting and importing of the settings through $mtf global exporter and
+ * importer.
+ * @author Mostafa Talebi
+ * @requires No Packages
+ *
+ */
+
+
+/**
  * Providing a pointer to the main MTF_Valid Object
  */
 $mtf.$lives.Valid = new MTF_Valid();
@@ -58,7 +70,9 @@ $mtf.extends("VBind", function(){
 });
 
 
-
+/**
+ * Export Cooperator
+ */
 $mtf.defineExport("ValidExport", function(){
     var data = {};
     data.rules = $mtf.$lives.Valid.rules;
@@ -70,15 +84,16 @@ $mtf.defineExport("ValidExport", function(){
 });
 
 
-$mtf.defineImport("ValidImport", function(rule_name, rule_value, events, use_template){
-    if( typeof $mtf.$lives.Valid !== "object" )
-    {
-        $mtf.$lives.Valid = new MTF_Valid();
-    }
-
-    $mtf.$lives.Valid.AddRule(rule_name, rule_value, events, use_template);
-
-    return $mtf;
+/**
+ * Import Cooperator
+ */
+$mtf.defineImport("ValidImport", function(importData){
+    var data = {};
+    $mtf.$lives.Valid.rules = importData.rules;
+    $mtf.$lives.Valid.message_to_components = importData.message_to_components =
+    $mtf.$lives.Valid.message_injection_container = importData.message_injection_container;
+    $mtf.$lives.Valid.events = importData.events;
+    $mtf.$lives.Valid.events_optional = importData.events_optional;
 });
 
 
