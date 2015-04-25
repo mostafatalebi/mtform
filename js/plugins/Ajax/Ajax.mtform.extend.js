@@ -113,12 +113,22 @@ $mtf.extends("Post", function(url, extraConfig){
 })
 
 
-$mtf.defineExport("Ajax", function(){
+$mtf.defineExport("AjaxExport", function(){
     var data = {};
     data.config = $mtf.$lives.Ajax.config;
     data.form_selector = $mtf.$lives.Ajax.form;
     data.triggers_selector = $mtf.$lives.Ajax.triggers_selector;
     data.configProcessed = $mtf.$lives.Ajax.configProcessed;
+
+    return data;
+});
+
+$mtf.defineImport("AjaxImport", function(importData){
+    var data = {};
+    $mtf.$lives.Ajax.config = importData.config;
+    $mtf.$lives.Ajax.form = importData.form_selector;
+    $mtf.$lives.Ajax.triggers_selector = importData.triggers_selector;
+    $mtf.$lives.Ajax.configProcessed = importData.configProcessed;
 
     return data;
 });
