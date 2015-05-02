@@ -47,7 +47,7 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
  * @constructor
  */
 MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
-
+    config = (typeof config !== "object") ? {} : config;
     /*
     Setting the default values
      */
@@ -55,6 +55,7 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
     var message_object = {};
     var events = [];
     var inline = true;
+    var template_selector = null; // @todo must be fulfilled in coming days
 
     if( config.hasOwnProperty("message") ) message_object  = config.message;
     if( config.hasOwnProperty("events") ) events  = config.events;
@@ -63,7 +64,7 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
 
     // if user has not passed any value to use_template, we delegate the decision for
     // per-rule and global configurations.
-    if ( template !== false )
+    if ( template !== false && template_selector === null )
     {
         // message containers, by default, are just added to each
         // component once, but it is possible to allow several
@@ -78,6 +79,10 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
             this.__insertMessageContainer(rule_name, inline);
         }
 
+    }
+    else
+    {
+        this.last_message_id = this.getElementMessageId(template_selector);
     }
 
 
@@ -134,7 +139,7 @@ MTF_Valid.prototype.editTemplate = function(tmp_name, tmp_value){
  * @param error {function} optional a callback to be called when initial_callback returns false
  * @param success {function} optional a callback to be called when initial_callback returns true
  */
-MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, success){
+MTF_Valid.prototype.eventCallbackHandler = function(initial_callback, error, success){
 
     var result = initial_callback();
     //if($mtf.$lives.Valid.noProcessRunning(this.last_message_id))
@@ -152,6 +157,20 @@ MTF_Valid.prototype.__eventCallbackHandler = function(initial_callback, error, s
             return true;
         }
     //}
+}
+
+/**
+ * Executes a rule on an element. Not to be confused with event-binding, this just directly
+ * executes a rule on an element regardless of whether it is bound or not.
+ * Note: It just executes the "main" function of the rule and does not do
+ * anything with "error" and "success" callbacks.
+ * @param element {Element} on which this rule must be executed
+ * @param rule_name the name of the rule whose "main" function would be invoked
+ * @param rule_value the value of the rule (if any required)
+ * @returns {boolean}
+ */
+MTF_Valid.prototype.executeRule = function(element, rule_name, rule_value){
+    return (this.rules_collection[rule_name].main(element, rule_value)) ? true : false;
 }
 
 /**
@@ -250,7 +269,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     {
                         events = events_optional;
                     }
-                    var __eventCallbackHandler = mainFunction.__eventCallbackHandler;
+                    var eventCallbackHandler = mainFunction.eventCallbackHandler;
 
                     var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
 
@@ -274,7 +293,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                         return function (event) {
                             var current_element = item;
                             var event_object = event;
-                            return $mtf.$lives.Valid.__eventCallbackHandler(
+                            return $mtf.$lives.Valid.eventCallbackHandler(
                                 function () {
                                     return cb_main(current_element, rule_value, {
                                         "message_element": msg_container,
@@ -723,3 +742,6 @@ MTF_Valid.prototype.editAllMessages = function(rule_name, type, messages){
 }
 
 
+MTF_Valid.prototype.getElementMessageId = function(element_selector_or_object){
+    return $mtf.E(element_selector_or_object).Attr($MTF_Valid_Config.input_message_attr_name);
+}

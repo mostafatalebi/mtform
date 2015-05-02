@@ -42,6 +42,39 @@ mtFormInit.prototype.E = function(element)
                 $mtf.Element.innerHTML = html;
             else
                 return $mtf.Element.innerHTML;
+        },
+
+        /**
+         * Checks an element's type and then returns its content either by returning value attribute
+         * or innerHTML attribute.
+         * @param element {Element|String} Either a Javascript element or a CSS Selector. No collection
+         *                                 would be selected, only the first element is selected.
+         * @param no_innerHTML {Boolean} [optional] default=false if set, then textarea and button tags are also
+         *                                          treated like normal input and their value property would be
+         *                                          returned.
+         * @returns {*}
+         */
+        findAndGetContent : function(element, no_innerHTML){
+
+            var tag_name = element.tagName.toLowerCase();
+            element = ( typeof element === 'string' ) ? document.querySelector(element) : element;
+
+            if($mtf.form_components_names.indexOf() == tag_name )
+            {
+                if(tag_name == 'textarea' || tag_name == 'button')
+                {
+                    return element.innerHTML;
+                }
+                else
+                {
+                    return element.value;
+                }
+            }
+            else
+            {
+                return element.innerHTML;
+            }
+
         }
 
     }

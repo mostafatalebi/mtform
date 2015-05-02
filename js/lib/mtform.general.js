@@ -2,8 +2,15 @@
  General methods and properties used across all the other methods
  **/
 
-
-
+    /**
+     * Selects or returns the Element object
+     * @param element_selector_or_object
+     * @returns {HTMLElement}
+     */
+mtFormInit.prototype.select = function(element_selector_or_object){
+    return (typeof element_selector_or_object === 'string') ? document.querySelector(element_selector_or_object)
+        : element_selector_or_object;
+}
 
 mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
     parseValues = (typeof  parseValues === 'undefined' || typeof  parseValues === null)

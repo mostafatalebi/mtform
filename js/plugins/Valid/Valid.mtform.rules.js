@@ -151,6 +151,65 @@ MTF_VALID_RULES = {
         }
     },
 
+    /**
+     * @rule if-is
+     * @description checks for another input's value
+     * @return {NULL}
+     * @requires_value YES
+     *                 -value a value
+     *                 -element an element whose value is check against the 'value'
+     */
+    "if-is" : {
+        events : ["blur"],
+
+        main : function(elm, rule_value, data){
+            var result = { status : false, data : "" };
+            rule_value = $mtf.$lives.getValues(rule_value);
+            var elm_value = ($mtf.E(rule_value[0]).findAndGetContent())
+            if( rule_value[1]!= elm_value )
+            {
+                return result;
+            }
+
+        },
+
+        success : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        error : function(elm, rule_value, data){
+            $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        template_allow : true,
+
+        templates : {
+            main : "<span :attrs></span>",
+            error : "<span :attrs ></span>",
+            success : "<span :attrs ></span>"
+        },
+
+        template_default : "main",
+
+        templates_default : {
+            main : {
+                style : "display: none;"
+            }
+        },
+        messages : {
+            main : {
+                en : "",
+            },
+
+            error : {
+                en : ":field should not more than :length characters"
+            },
+
+            success : {
+                en : ""
+            }
+        }
+    },
 
     /**
      * @rule max
