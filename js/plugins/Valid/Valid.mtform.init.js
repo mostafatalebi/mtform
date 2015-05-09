@@ -64,6 +64,16 @@ var MTF_Valid = function(){
     this.rules = [];
 
     /**
+     * It keeps any values which must be kept for rule.
+     * The key is a random id, and the value is the value
+     * of a currently bound-rule. The random key is set
+     * as the value of rule in the attribute of the
+     * element. e.g: rule_name={random_value}&another_rule={another_random_val}&etc..
+     * @type {Object}
+     */
+    this.rules_values = {};
+
+    /**
      * An array which holds sets of object containing the name of the event and the
      * index&type of the element to which they must be bound.
      * @type {Array}
@@ -74,6 +84,15 @@ var MTF_Valid = function(){
     // rules which are no longer used. Since they are already assigned to
     // their respective components.
     this.rules_obsolete = [];
+
+
+    /**
+     * An object containing references to the custom elements which have been
+     * used as a message element. These elements are created by the developer
+     * outside of $mtf, hence something must trace them.
+     * @type {Array}
+     */
+    this.templates_custom = [];
 
 }
 

@@ -50,7 +50,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
             "radio" :    "14a4fe98a74ea1",
             "checkbox" : "10e98a74eb54c1a1",
             "rule" :     "00ca050b2a",
-            "submit" :   "57018896106",
+            "submit" :   "18dey0uaAM9qd",
             "button" :   "3fa4054f214",
             "textarea" : "f0f80be6e30c",
             "select" :   "6e051f395b61"

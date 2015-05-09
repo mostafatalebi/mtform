@@ -156,7 +156,7 @@ MTF_VALID_RULES = {
      * @description checks for another input's value
      * @return {NULL}
      * @requires_value YES
-     *                 -value a value
+     *                 -value a value to be matched against
      *                 -element an element whose value is check against the 'value'
      */
     "if-is" : {
@@ -164,11 +164,15 @@ MTF_VALID_RULES = {
 
         main : function(elm, rule_value, data){
             var result = { status : false, data : "" };
-            rule_value = $mtf.$lives.getValues(rule_value);
-            var elm_value = ($mtf.E(rule_value[0]).findAndGetContent())
-            if( rule_value[1]!= elm_value )
+
+            var elm_value = ($mtf.E(rule_value.element).findAndGetContent());
+            if( rule_value.value != elm_value )
             {
                 return result;
+            }
+            else
+            {
+                result.status = true;
             }
 
         },
@@ -184,8 +188,8 @@ MTF_VALID_RULES = {
         template_allow : true,
 
         templates : {
-            main : "<span :attrs></span>",
-            error : "<span :attrs ></span>",
+            main :    "<span :attrs></span>",
+            error :   "<span :attrs ></span>",
             success : "<span :attrs ></span>"
         },
 
@@ -202,7 +206,7 @@ MTF_VALID_RULES = {
             },
 
             error : {
-                en : ":field should not more than :length characters"
+                en : ":field's value should be :value"
             },
 
             success : {
