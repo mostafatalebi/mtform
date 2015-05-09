@@ -450,11 +450,32 @@ mtFormInit.prototype.objectJoinWithFormData = function( object, formData ) {
     var obj_keys = Object.keys( object );
     for(var i = 0; i < obj_keys.length; i++ )
     {
-        __( obj_keys[i] );
-        __( object[ obj_keys[i] ] );
         formData.append( obj_keys[i], object[ obj_keys[i] ]);
     }
 
     return formData;
 }
 
+/**
+ * Generates a random string containing numbers and letters based on a the length passed.
+ * @param len {Integer} a number representing the length of
+ *                      the generated string.
+ * @returns {string}
+ */
+mtFormInit.prototype.rand = function(len){
+
+    var charArr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "9", "a", "b", "c", "d", "e", "f", "g", "h", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    var result = "";
+    for(var i = 0; i < len; i++)
+    {
+        var rand_key = Math.random();
+        var multiplier = 10;
+        if( rand_key < 0.25) multiplier = 10;
+        else if ( rand_key < 0.5) multiplier = 20;
+        else multiplier = 36;
+        var char = charArr[Math.floor((rand_key*multiplier))];
+        result = result + char;
+    }
+
+    return result;
+}
