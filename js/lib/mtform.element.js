@@ -1,6 +1,7 @@
 mtFormInit.prototype.E = function(element)
 {
-    this.Element = element;
+    this.Element = (typeof element === "string" ) ?
+        document.querySelector(element) : element;
     return {
         /**
          * gets the attribute "name" of the element
@@ -47,15 +48,13 @@ mtFormInit.prototype.E = function(element)
         /**
          * Checks an element's type and then returns its content either by returning value attribute
          * or innerHTML attribute.
-         * @param element {Element|String} Either a Javascript element or a CSS Selector. No collection
-         *                                 would be selected, only the first element is selected.
          * @param no_innerHTML {Boolean} [optional] default=false if set, then textarea and button tags are also
          *                                          treated like normal input and their value property would be
          *                                          returned.
          * @returns {*}
          */
-        findAndGetContent : function(element, no_innerHTML){
-
+        findAndGetContent : function(no_innerHTML){
+            var element = $mtf.Element;
             var tag_name = element.tagName.toLowerCase();
             element = ( typeof element === 'string' ) ? document.querySelector(element) : element;
 
