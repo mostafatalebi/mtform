@@ -48,6 +48,7 @@ MTF_Valid.prototype.getRuleMethod = function(rule_name){
  */
 MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
     config = (typeof config !== "object") ? {} : config;
+    var last_comp = $mtf.componentLastInfo;
     /*
     Setting the default values
      */
@@ -56,12 +57,14 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
     var events = [];
     var inline = true;
     var message_element = null; // @todo must be fulfilled in coming days
+    var placeholders = {};
 
     if( config.hasOwnProperty("message") ) message_object  = config.message;
     if( config.hasOwnProperty("events") ) events  = config.events;
     if( config.hasOwnProperty("type") ) inline  = config.inline;
     if( config.hasOwnProperty("template") ) template  = config.template;
     if( config.hasOwnProperty("message_element") ) message_element  = config.message_element;
+    if( config.hasOwnProperty("placeholders") ) placeholders = config.placeholders;
 
     // if user has not passed any value to use_template, we delegate the decision for
     // per-rule and global configurations.
@@ -71,7 +74,7 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
         // component once, but it is possible to allow several
         // instances per component. The following code block checks to see
         // whether to allow multiple insertion or else secure one-insertion
-        var last_comp = $mtf.componentLastInfo;
+
 
         if( this.__compNotSame(last_comp) )
         {
@@ -91,8 +94,8 @@ MTF_Valid.prototype.AddRule = function(rule_name, rule_value, config){
         }
     }
 
+    this.__add_rule_to_stack(last_comp.index, last_comp.type, [ rule_name , rule_value ], events, placeholders );
 
-    this.__assign_rule(rule_name, rule_value, events);
 
 }
 
@@ -187,9 +190,13 @@ MTF_Valid.prototype.executeRule = function(element, rule_name, rule_value){
  * @param events
  * @private
  */
-MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, rule_obj, events){
+MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, rule_obj, events, placeholders){
 
     var rule_object;
+
+    /** inserting placeholders **/
+    var placeholder_element_key = element_index + "-" + element_type + "-" + rule_obj[0];
+    this.template_placeholder_values[placeholder_element_key] = placeholders;
 
     if( this.rules.length > 0 )
     {
@@ -204,17 +211,21 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
                 this.rules[i]['type'] = element_type;
                 this.rules[i]['events'] = events;
                 this.rules[i]['message_id'] = this.last_message_id;
+                //this.rules[i]['placeholders'][rule_obj[0]] = placeholders;
                 rule_object = this.rules[i];
             }
             else
             {
                 var rule_new = {};
+                var placeholder_obj = {};
+                placeholder_obj[rule_obj[0]] = placeholders;
                 rule_new[rule_obj[0]] = rule_obj[1];
                 rule_object = {
                     index : element_index,
                     type : element_type,
                     rules : rule_new,
                     events : events,
+                    //placeholders : placeholder_obj,
                     'message_id' : this.last_message_id
                 };
                 this.rules.push(rule_object);
@@ -225,11 +236,14 @@ MTF_Valid.prototype.__add_rule_to_stack = function(element_index, element_type, 
     {
         var rule_new = {};
         rule_new[rule_obj[0]] = rule_obj[1];
+        var placeholder_obj = {};
+        placeholder_obj[rule_obj[0]] = placeholders;
         rule_object = {
             index : element_index,
             type : element_type,
             rules : rule_new,
             events : events,
+            //"placeholders" : placeholder_obj,
             'message_id' : this.last_message_id,
         };
         this.rules.push(rule_object);
@@ -264,6 +278,9 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     var callback_error_function = rules_array[keys[w]]['error'];
                     var rule_value = rules_array[keys[w]]['value'];
                     var messages = rules_array[keys[w]]['messages'];
+                    var placeholders = rules_array[keys[w]]['placeholders'];
+
+
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
                     events = rules_array[keys[w]]['events-default'];
@@ -275,6 +292,8 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                     var eventCallbackHandler = mainFunction.eventCallbackHandler;
 
                     var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
+
+
 
 
                     /**
@@ -292,7 +311,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                      * @param messages_success message string for successCallback
                      * @returns {Function}
                      */
-                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container, messages_main, messages_error, messages_success) {
+                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container, messages_main, messages_error, messages_success, placeholders) {
                         return function (event) {
                             var current_element = item;
                             var event_object = event;
@@ -301,21 +320,24 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
                                     return cb_main(current_element, rule_value, {
                                         "message_element": msg_container,
                                         "message_text": messages_main,
-                                        "event": event_object
+                                        "event": event_object,
+                                        "placeholders" : placeholders,
                                     });
                                 },
                                 function () {
                                     return cb_error(current_element, rule_value, {
                                         "message_element": msg_container,
                                         "message_text": messages_error,
-                                        "event": event_object
+                                        "event": event_object,
+                                        "placeholders" : placeholders,
                                     })
                                 },
                                 function () {
                                     return cb_success(current_element, rule_value, {
                                         "message_element": msg_container,
                                         "message_text": messages_success,
-                                        "event": event_object
+                                        "event": event_object,
+                                        "placeholders" : placeholders,
                                     })
                                 }
                             );
@@ -327,7 +349,7 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
 
                     callbackProcessQueue.push(
                         createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
-                        messages.error[$mtf.lang], messages.success[$mtf.lang])
+                        messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders)
                     );
 
 
@@ -367,19 +389,6 @@ MTF_Valid.prototype.__add_event_listeners = function(form_selector){
         }
     });
 
-}
-
-/**
- * Registers the rule to the main rules object with the target component's index and type
- * retrieved from componentLastInfo API of the main object.
- * @param ruleName {string} the name of the rule
- * @param ruleValue {mixed} the value of the rule
- * @private
- */
-MTF_Valid.prototype.__assign_rule = function(ruleName, ruleValue, events){
-    var last_comp = $mtf.componentLastInfo;
-    //ruleValue = (ruleValue) ? ruleValue : true;
-    this.__add_rule_to_stack(last_comp.index, last_comp.type, [ ruleName , ruleValue ], events );
 }
 
 /**
@@ -539,6 +548,8 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
 MTF_Valid.prototype.__find_rules = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
 
+    var event_item_info = this.getTypeAndIndex(element.getAttribute( $MTF_Valid_Config.events_optional_attr ));
+
     var found_rules = {};
 
     if( !$mtf.is_empty(rule_attr) && $mtf.objectLength(rule_attr) > 0 )
@@ -547,13 +558,19 @@ MTF_Valid.prototype.__find_rules = function(element){
 
         for( var i = 0; i < rules.length; i++ )
         {
+
             var key_value = rules[i].split("=");
             var rule_value = this.rules_values[key_value[1]];
+
+            // searching for placeholders
+            var placeholders = this.template_placeholder_values[event_item_info.index + "-" + event_item_info.type + "-" + key_value[0]];
+
             var callback_method = this.rules_collection[key_value[0]]['main'];
             var success_callback = this.rules_collection[key_value[0]]['success'];
             var error_callback = this.rules_collection[key_value[0]]['error'];
             var events_collection = this.__get_optional_events(element);
             var msg = this.rules_collection[key_value[0]]['messages'];
+
             found_rules[key_value[0]] = {
                 callback : callback_method,
                 success : success_callback,
@@ -561,7 +578,8 @@ MTF_Valid.prototype.__find_rules = function(element){
                 value : rule_value,
                 events : events_collection,
                 messages : msg,
-                "events-default" : this.rules_collection[key_value[0]]['events']
+                "events-default" : this.rules_collection[key_value[0]]['events'],
+                placeholders : placeholders
             };
         }
 
@@ -575,7 +593,7 @@ MTF_Valid.prototype.__get_optional_events = function(element){
     if(event_attr)
     {
         event_attr = event_attr.split("-");
-        var event_readable = this.__get_hash_name(event_attr[0]);
+        var event_readable = event_attr[0];
         return this.events_optional[event_readable][event_attr[1]];
     }
 
@@ -601,12 +619,12 @@ MTF_Valid.prototype.__define_rule = function(rule_name, value){
  */
 MTF_Valid.prototype.__get_hash_name = function(hash_value)
 {
-    var len = Object.keys($MTF_Valid_Config.hash_table);
-    for(var i = 0; i < len.length; i++)
+    var hash_table_keys = Object.keys($MTF_Valid_Config.hash_table);
+    for(var i = 0; i < hash_table_keys.length; i++)
     {
-        if($MTF_Valid_Config.hash_table[len[i]] == hash_value)
+        if($MTF_Valid_Config.hash_table[hash_table_keys[i]] == hash_value)
         {
-            return $MTF_Valid_Config.hash_table[len[i]];
+            return hash_table_keys[i];
         }
     }
 }
@@ -758,7 +776,29 @@ MTF_Valid.prototype.messageIdIntoTemplate = function(element_selector_or_object,
     return $mtf.E(element_selector_or_object).Attr($MTF_Valid_Config.input_message_attr_name, message_id);
 }
 
+MTF_Valid.prototype.parseMessage = function(message, placeholders){
+    var keys = Object.keys(placeholders);
+    var msg_parsed = "";
+    for(var i = 0; i < keys.length; i++)
+    {
+        msg_parsed = message.replace(":"+keys[i].toLowerCase(), placeholders[keys[i]]);
+    }
+    return msg_parsed;
+}
 
-MTF_Valid.prototype.getValues = function(rule_value_id){
-    return this.rules_values[rule_value_id];
+/**
+ *
+ * @param element_valid_ev_attribute {String} the value of the valid-ev attribute
+ * @returns {*}
+ */
+MTF_Valid.prototype.getTypeAndIndex = function(element_valid_ev_attribute){
+    if( typeof element_valid_ev_attribute === "string" && element_valid_ev_attribute != "" )
+    {
+        var splitted = element_valid_ev_attribute.split("-");
+        var type_str = this.__get_hash_name(splitted[0]);
+        return {
+            type : type_str,
+            index : splitted[1]
+        };
+    }
 }

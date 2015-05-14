@@ -31,6 +31,7 @@ MTF_VALID_RULES = {
          *                     extra_data {mixed} data that might be returned by main() function
          *                     are accessible via this parameter
          *                     would be checked.
+         * @placeholders     :field
          * @returns {Boolean|Object} an object containing two value
          *                   status {boolean} indicating the status of the validation
          *                   data {mixed} an optional data to be returned
@@ -40,11 +41,6 @@ MTF_VALID_RULES = {
         main : function(elm, rule_value, data){
             var result = { status : false, data : "" };
             result.status = /^[a-zA-Z0-9_.-]+@+[a-zA-Z0-9-]+\.{1}[a-zA-Z0-9-]{2,20}(?:\.{1}[a-zA-Z0-9-]{2,20})?(?:\.{1}[a-zA-Z0-9-]{2,20})?$/.test($mtf.E(elm).Value());
-
-            if(data.hasOwnProperty("message_element"))
-            {
-                $mtf.E(data.message_element).HTML(data.message_text);
-            }
 
             return result;
 
@@ -70,7 +66,18 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            var msg_parsed = "";
+
+            if(data.hasOwnProperty("placeholders"))
+            {
+                msg_parsed = $mtf.$lives.Valid.parseMessage(data.message_text, data.placeholders);
+            }
+            else
+            {
+                data.message_text.replace(":field", elm.getAttribute("name"));
+            }
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
         /**
@@ -93,7 +100,21 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         error : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            if(data.hasOwnProperty("message_element"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.parseMessage(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
         },
 
         /**
@@ -142,11 +163,11 @@ MTF_VALID_RULES = {
             },
 
             error : {
-                en : ":field is not formatted correctly."
+                en : ":field's value must be in a correct email format."
             },
 
             success : {
-                en : ""
+                en : ":field's value validated successfully."
             }
         }
     },

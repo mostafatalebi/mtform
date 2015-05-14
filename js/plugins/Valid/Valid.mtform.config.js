@@ -69,6 +69,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
             submit : "input",
             hidden : "hidden",
             select : "select"
-        }
+        },
+
     };
 }

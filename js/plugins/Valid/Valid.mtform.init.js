@@ -74,6 +74,12 @@ var MTF_Valid = function(){
     this.rules_values = {};
 
     /**
+     * Stores all placeholders for a rule which have been passed to the add-rule function
+     * @type {{}}
+     */
+    this.template_placeholder_values = {};
+
+    /**
      * An array which holds sets of object containing the name of the event and the
      * index&type of the element to which they must be bound.
      * @type {Array}
