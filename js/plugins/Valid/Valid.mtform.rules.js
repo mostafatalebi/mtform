@@ -70,7 +70,7 @@ MTF_VALID_RULES = {
 
             if(data.hasOwnProperty("placeholders"))
             {
-                msg_parsed = $mtf.$lives.Valid.parseMessage(data.message_text, data.placeholders);
+                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
             }
             else
             {
@@ -106,7 +106,7 @@ MTF_VALID_RULES = {
 
                 if(data.hasOwnProperty("placeholders"))
                 {
-                    msg_parsed = $mtf.$lives.Valid.parseMessage(data.message_text, data.placeholders);
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
                 }
                 else
                 {

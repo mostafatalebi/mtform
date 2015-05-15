@@ -22,13 +22,13 @@ $mtf.$lives.Valid = new MTF_Valid();
  * @param rule_value {callback} the value of rule in case it needs any
  * @param events {object.array} [optional] an array of events names
  */
-$mtf.extends("VAdd", function(rule_name, rule_value, use_template, messages_object, events, insertion_type){
+$mtf.extends("Rule", function(rule_name, rule_value, use_template, messages_object, events, insertion_type){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
     }
 
-    $mtf.$lives.Valid.AddRule(rule_name, rule_value, use_template, messages_object, events, insertion_type);
+    $mtf.$lives.Valid.ruleAdd(rule_name, rule_value, use_template, messages_object, events, insertion_type);
 
     return $mtf;
 }, true);
@@ -42,7 +42,7 @@ $mtf.extends("VAdd", function(rule_name, rule_value, use_template, messages_obje
  *              being searched for its children to
  *              to be applied the registered rules.
  */
-$mtf.extends("VEventize", function(form_selector){
+$mtf.extends("Eventize", function(form_selector){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
@@ -58,7 +58,7 @@ $mtf.extends("VEventize", function(form_selector){
  * @description Binds rules to the components and make them printable. It injects
  *                    special attributes to the <tag />
  */
-$mtf.extends("VBind", function(){
+$mtf.extends("Bind", function(){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
         $mtf.$lives.Valid = new MTF_Valid();
