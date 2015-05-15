@@ -7,3 +7,4 @@ if(
 {
     window.$mtf = new mtFormInit();
 }
+

@@ -1,4 +1,4 @@
-$mtf.defineExport( "mtForm", function(){
+$mtf.exportDefine( "mtForm", function(){
     var data = {};
     data.collection = $mtf.collection;
     data.collection_ordered = $mtf.collectionOrdered;

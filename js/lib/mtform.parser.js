@@ -30,20 +30,3 @@ mtFormInit.prototype.__understandInput = function(input, callback){
         return new_result;
     }
 }
-
-/******
-
- ["one", 'two', 'three']
- function(){ return "one"; }
- "one"
-
- for(var i=; i < some.length; i++)
-{
-    __understand(input, function(currentInput){
-
-    });
-}
-
- dosomething({ a : "something"}, function(){});
- function(object[i]){};
- */

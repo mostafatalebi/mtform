@@ -12,7 +12,7 @@ mtFormInit.prototype.select = function(element_selector_or_object){
         : element_selector_or_object;
 }
 
-mtFormInit.prototype.argsToAttrs = function(args, scope_of_usage, parseValues){
+mtFormInit.prototype.attributes_concat = function(args, scope_of_usage, parseValues){
     parseValues = (typeof  parseValues === 'undefined' || typeof  parseValues === null)
         ? false : parseValues;
     scope_of_usage = (typeof  scope_of_usage === 'undefined' || typeof  scope_of_usage === null)

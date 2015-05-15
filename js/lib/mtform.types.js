@@ -41,7 +41,6 @@ var MTF_PLACEHOLDERS = {
     attrs : ":attrs",
     value : ":value",
     innerValue : ":innerValue",
-    message : ":message"
 };
 
 /**

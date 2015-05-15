@@ -195,7 +195,7 @@ mtFormInit.prototype.Custom = function(markup, args){
 mtFormInit.prototype.AttachLabel = function(args, innerValue)
 {
     var last_comp_info = this.componentLastInfo;
-    this.__label(last_comp_info, args, innerValue);
+    this.label_generate(last_comp_info, args, innerValue);
     return this;
 }
 
@@ -211,7 +211,7 @@ mtFormInit.prototype.HtmlAfter = function(htmlContent, array_skip)
         ? false :  array_skip;
     this.isHtml = true;
     this.htmlObject.after = htmlContent;
-    this.__addHtmls(this.componentLastInfo, "after", array_skip);
+    this.html_inject(this.componentLastInfo, "after", array_skip);
     return this;
 }
 
@@ -227,7 +227,7 @@ mtFormInit.prototype.HtmlBefore = function(htmlContent, array_skip)
         ? false :  array_skip;
     this.isHtml = true;
     this.htmlObject.before = htmlContent;
-    this.__addHtmls(this.componentLastInfo, "before", array_skip);
+    this.html_inject(this.componentLastInfo, "before", array_skip);
     return this;
 }
 
@@ -244,13 +244,13 @@ mtFormInit.prototype.AllComponents = function(){
 }
 
 /**
- * Sets the component for the last created component.
+ * Sets the template for the last created component.
  * @param html @__htmlContent
  * @returns {mtFormInit} @__mtformObject
  */
 mtFormInit.prototype.Template = function(html){
-    this.setTemplate(html);
-    this.parseTemplate("component");
+    this.template_set(html);
+    //this.parseTemplate("component");
     return this;
 }
 
@@ -260,7 +260,7 @@ mtFormInit.prototype.Template = function(html){
  * @param componentType @__componentTypes
  * @returns {mtFormInit} @__mtformObject
  */
-mtFormInit.prototype.setDefaultTemplate = function(html, componentType){
+mtFormInit.prototype.templateSetDefault = function(html, componentType){
     this.templatesFormComponents[componentType] = html;
     return this;
 }
@@ -343,7 +343,7 @@ mtFormInit.prototype.MakePrepend = function(element){
  * @returns {mtFormInit}
  */
 mtFormInit.prototype.JSON = function(element){
-    this.generateJSON();
+    this.json_generate();
     return this;
 }
 

@@ -2,15 +2,7 @@
  * Created by safa on 30/11/2014.
  */
 
-// =======================
-// PRIVATE FUNCTIONS
-// =======================
-mtFormInit.prototype.__injectHtml = function()
-{
-    // let's see what it will do, currently no decision on it
-}
-
-mtFormInit.prototype.__addHtmls = function(component_last_collection_properties, insertion_type, array_skip)
+mtFormInit.prototype.html_inject = function(component_last_collection_properties, insertion_type, array_skip)
 {
     if(insertion_type == 'after')
     {
@@ -83,6 +75,7 @@ mtFormInit.prototype.__addHtmls = function(component_last_collection_properties,
 }
 
 /**
+ * @todo must be completed
  * Creates a label for the last created form component.
  * @param component_last_collection_properties an object containing the info about the last created
  *          component
@@ -90,38 +83,27 @@ mtFormInit.prototype.__addHtmls = function(component_last_collection_properties,
  * @param args an object accepting key-value pairs for attributes.
  * @private
  */
-mtFormInit.prototype.__label = function(component_last_collection_properties, labelValue, args)
+mtFormInit.prototype.label_generate = function(component_last_collection_properties, args, labelValue)
 {
-    var label = this.createElement("label", labelValue, args);
+    var label = this.template_fetch("label");
+
+
+    var attrs = this.attributes_concat(args, "local");
+    label = this.template_process(label, [":attrs", ":innerValue"], [attrs, labelValue]);
     this.collections[component_last_collection_properties.type][component_last_collection_properties.index]
         =
         label+this.collections[component_last_collection_properties.type][component_last_collection_properties.index];
 }
 
-// =======================
-// PROTECTED FUNCTIONS
-// =======================
 
-
-mtFormInit.prototype.createElement = function(name, args, content)
-{
-    args = (typeof args !== 'object') ? {} : args;
-    if(name == 'label')
-    {
-        var attrs = this.argsToAttrs(args, "local");
-        return "<label "  + attrs + ">" + content + "</label>";
-    }
-
-}
-
-mtFormInit.prototype.createCustom = function(component_type, value, args){
+mtFormInit.prototype.create_custom = function(component_type, value, args){
     var arguments = "";
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
     if(this.is_empty(args))
         args = "";
     else if (typeof args === 'object')
-        args = this.argsToAttrs(args);
+        args = this.attributes_concat(args);
 
 
     var inp;
@@ -180,7 +162,7 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
             }
         }
 
-        arguments = this.argsToAttrs(args);
+        arguments = this.attributes_concat(args);
     }
 
     else if (typeof args === 'string')
@@ -235,8 +217,8 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
 }
 
 mtFormInit.prototype.addInput = function(attrs){
-    var input = this.getTpl("input");
-    var prs = this.parser(input, [":attrs"], [attrs]);
+    var input = this.template_fetch("input");
+    var prs = this.template_process(input, [":attrs"], [attrs]);
     this.__setLastComponentType("input");
     this.__addComponentInstance(prs, "input");
     return prs;
@@ -245,8 +227,8 @@ mtFormInit.prototype.addInput = function(attrs){
 mtFormInit.prototype.addHidden = function(attrs){
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("Hidden input already has a 'type' attribute. Cannot be changed.");
-    var input = this.getTpl("hidden");
-    var prs = this.parser(input, [":attrs"], [attrs]);
+    var input = this.template_fetch("hidden");
+    var prs = this.template_process(input, [":attrs"], [attrs]);
     this.__setLastComponentType("hidden");
     this.__addComponentInstance(prs, "hidden");
 
@@ -256,8 +238,8 @@ mtFormInit.prototype.addHidden = function(attrs){
 mtFormInit.prototype.addPassword = function(attrs){
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("Password input already has a 'type' attribute. Cannot be changed.");
-    var input = this.getTpl("password");
-    var prs = this.parser(input, [":attrs"], [attrs]);
+    var input = this.template_fetch("password");
+    var prs = this.template_process(input, [":attrs"], [attrs]);
     this.__setLastComponentType("password");
     this.__addComponentInstance(prs, "password");
     return prs;
@@ -266,8 +248,8 @@ mtFormInit.prototype.addPassword = function(attrs){
 mtFormInit.prototype.addFile = function(attrs){
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("File input already has a 'type' attribute. Cannot be changed.");
-    var input = this.getTpl("file");
-    var prs = this.parser(input, [":attrs"], [attrs]);
+    var input = this.template_fetch("file");
+    var prs = this.template_process(input, [":attrs"], [attrs]);
     this.__setLastComponentType("file");
     this.__addComponentInstance(prs, "file");
     return prs;
@@ -276,8 +258,8 @@ mtFormInit.prototype.addFile = function(attrs){
 mtFormInit.prototype.addTextarea = function(attrs, innerValue){
     innerValue = (typeof innerValue === 'undefined' || typeof innerValue === null)
         ? "" : innerValue;
-    var textarea = this.getTpl("textarea");
-    var prs = this.parser(textarea, [":attrs", ":innerValue"], [attrs, innerValue]);
+    var textarea = this.template_fetch("textarea");
+    var prs = this.template_process(textarea, [":attrs", ":innerValue"], [attrs, innerValue]);
     this.__setLastComponentType("textarea");
     this.__addComponentInstance(prs, "textarea");
     return prs;
@@ -289,8 +271,8 @@ mtFormInit.prototype.addSubmit = function(attrs){
         ? "value='"+attrs+"'" : attrs;
     if(typeof attrs.type !== "undefined" && typeof attrs.type !== 'null' && attrs.type != "")
         console.warn("Submit input already has a 'type' attribute. Cannot be changed.");
-    var submit = this.getTpl("submit");
-    var prs = this.parser(submit, [":attrs"], [attrs]);
+    var submit = this.template_fetch("submit");
+    var prs = this.template_process(submit, [":attrs"], [attrs]);
     this.__setLastComponentType("submit");
     this.__addComponentInstance(prs, "submit");
     return prs;
@@ -300,8 +282,8 @@ mtFormInit.prototype.addButton = function(attrs, innerValue){
     var value = "";
     value = (typeof innerValue === "undefined" || typeof innerValue === "null")
         ? "" : innerValue;
-    var button = this.getTpl("button");
-    var prs = this.parser(button, [":attrs", ":innerValue"], [attrs, innerValue]);
+    var button = this.template_fetch("button");
+    var prs = this.template_process(button, [":attrs", ":innerValue"], [attrs, innerValue]);
     this.__setLastComponentType("button");
     this.__addComponentInstance(prs, "button");
     return prs;
@@ -321,7 +303,7 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
         ? "value='"+radiosArgs+"'" : "value='"+radiosArgs.value+"'";
 
     var radios = [];
-    var radiosTplMain = this.getTpl("radio");
+    var radiosTplMain = this.template_fetch("radio");
 
     // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
     // value if the user passer lower number of templates than number of radios.
@@ -335,7 +317,7 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
 
     // Our loop criterion is .values property. Because for radio buttons, value
     // is the most necessarily unique attribute.
-    var label_attrs = this.argsToAttrs(radiosArgs.labels_attrs);
+    var label_attrs = this.attributes_concat(radiosArgs.labels_attrs);
     for(var i = 0; i < radiosArgs.values.length; i++)
     {
         // we check if the current component should be checked or not, if yes,
@@ -383,7 +365,7 @@ mtFormInit.prototype.addRadios = function(attrs, radiosArgs){
         }
 
         // we then parse them individually
-        radios.push(this.parser(radiosTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, radio_value, label, label_attrs]));
+        radios.push(this.template_process(radiosTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, radio_value, label, label_attrs]));
     }
 
     this.__setLastComponentType("radio");
@@ -399,7 +381,7 @@ mtFormInit.prototype.addCheckboxes = function(attrs, checkboxesArgs){
         ? "value='"+checkboxesArgs+"'" : "value='"+checkboxesArgs.value+"'";
 
     var checkboxes = [];
-    var checkboxesTplMain = this.getTpl("checkbox");
+    var checkboxesTplMain = this.template_fetch("checkbox");
 
     // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
     // value if the user passer lower number of templates than number of checkboxes.
@@ -413,7 +395,7 @@ mtFormInit.prototype.addCheckboxes = function(attrs, checkboxesArgs){
 
     // Our loop criterion is .values property. Because for checkbox buttons, value
     // is the most necessarily unique attribute.
-    var label_attrs = this.argsToAttrs(checkboxesArgs.labels_attrs);
+    var label_attrs = this.attributes_concat(checkboxesArgs.labels_attrs);
     for(var i = 0; i < checkboxesArgs.values.length; i++)
     {
         // we check if the current component should be checked or not, if yes,
@@ -461,7 +443,7 @@ mtFormInit.prototype.addCheckboxes = function(attrs, checkboxesArgs){
         }
 
         // we then parse them individually
-        checkboxes.push(this.parser(checkboxesTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, checkbox_value, label, label_attrs]));
+        checkboxes.push(this.template_process(checkboxesTpl, [":attrs", ":values", ":title", ":label::attrs"], [attrs, checkbox_value, label, label_attrs]));
     }
 
     this.__setLastComponentType("checkbox");
@@ -475,13 +457,13 @@ mtFormInit.prototype.addSelect = function(attrs, options){
         ? "value='"+options+"'" : "value='"+options.value+"'";
 
     var option = [];
-    var selectTplMain = this.getTpl("select");
+    var selectTplMain = this.template_fetch("select");
 
     // a distinct iterator for templates (in case it be array). It is the same as i, but might have a different
     // value if the user passer lower number of templates than number of select.
     var templatePossibleIterator = 0;
     var optionTpl = "";
-    var option_template = this.getTpl("option");
+    var option_template = this.template_fetch("option");
     for(var i = 0; i < options.values.length; i++)
     {
         var unique_values = "";
@@ -535,21 +517,21 @@ mtFormInit.prototype.addSelect = function(attrs, options){
         if(options.optionAttrUseOneSet === true) current_option_attr = options.optionAttr[0];
         else current_option_attr = options.optionAttr[i];;
         // we then parse them individually
-        option.push(this.parser(optionTpl, [":attrs", ":uniqueValue", ":innerValue"],
-            [this.argsToAttrs(current_option_attr), unique_values, innerValue]));
+        option.push(this.template_process(optionTpl, [":attrs", ":uniqueValue", ":innerValue"],
+            [this.attributes_concat(current_option_attr), unique_values, innerValue]));
     }
 
     option = option.join("");
-    selectTplMain = this.parser(selectTplMain, [":options", ":attrs"], [option, attrs])
+    selectTplMain = this.template_process(selectTplMain, [":options", ":attrs"], [option, attrs])
     this.__setLastComponentType("select");
     this.__addComponentInstance(selectTplMain, "select");
     return selectTplMain;
 };
 
 mtFormInit.prototype.addForm = function(attrs){
-    var form_tpl = this.getTpl("form");
-    attrs = this.argsToAttrs(attrs);
-    form_tpl = this.parser(form_tpl, [":attrs"], [attrs]);
+    var form_tpl = this.template_fetch("form");
+    attrs = this.attributes_concat(attrs);
+    form_tpl = this.template_process(form_tpl, [":attrs"], [attrs]);
     this.forms.push(form_tpl);
 };
 
@@ -557,8 +539,8 @@ mtFormInit.prototype.addMessage = function(attrs, msg_string){
 
     msg_string = (typeof msg_string === "undefined" || typeof msg_string === "null")
         ? "" : msg_string;
-    var message = this.getTpl("message");
-    var prs = this.parser(message, [":attrs", ":message"], [attrs, msg_string]);
+    var message = this.template_fetch("message");
+    var prs = this.template_process(message, [":attrs", ":message"], [attrs, msg_string]);
     this.__setLastComponentType("message");
     this.__addComponentInstance(prs, "message");
     return prs;
@@ -569,7 +551,7 @@ mtFormInit.prototype.addCustom = function(value, attrs){
 
     if(attrs)
     {
-         prs = this.parser(value, [":attrs"], [attrs]);
+         prs = this.template_process(value, [":attrs"], [attrs]);
     }
 
     this.__setLastComponentType("custom");

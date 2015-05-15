@@ -61,8 +61,8 @@ mtFormInit.prototype.plugin = {
             }
         }
 
-        var method = (configurations.method_name) ? configurations.method_name : plugin_name;
-        this[method] = callback;
+        var method = ( configurations.hasOwnProperty("method_name") ) ? configurations.method_name : plugin_name;
+        $mtf[method] = callback;
         return true;
     },
 

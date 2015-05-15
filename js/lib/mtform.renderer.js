@@ -11,14 +11,11 @@
  */
 mtFormInit.prototype.generate = function(){
 
-    // checks to see if there any rules to be applied
-    this.collectionParsed = this.__parseRules(true);
-    this.collectionParsed = this.__cleanPlaceholder(this.collectionParsed);
 
     // if it is set, then applies it
-    // this.__makeAlternate();
+    // this.alternate();
 
-    var new_collection = this.collectionIterateSequentially(this.collectionParsed, this.collectionSequential);
+    var new_collection = this.collectionIterateSequentially(this.collections, this.collectionSequential);
     var html_result = "";
 
     var collection_keys = Object.keys(new_collection);
@@ -48,7 +45,7 @@ mtFormInit.prototype.generate = function(){
 
     // Since makeAlternate works with one-dimension linear collection of components,
     // we have to call it right after flattening the multi-dimensional collection
-    this.__makeAlternate();
+    this.alternate();
 
 
     var collection_to_html = this.collectionOrdered.join("");
@@ -56,7 +53,7 @@ mtFormInit.prototype.generate = function(){
     // if user has specified any form, then the current generated HTML would be
     // injected into the form. Else, it would ignore and let the script does its
     // job.
-    collection_to_html = this.__assignToForm(collection_to_html);
+    collection_to_html = this.components_into_form(collection_to_html);
 
     this.htmls = collection_to_html;
 };
@@ -66,7 +63,7 @@ mtFormInit.prototype.generate = function(){
  * Generates an JSON version of all created components. It does not output anything, it
  * just prepares the JSON version for other methods such as makeJSON() to use it.
  */
-mtFormInit.prototype.generateJSON = function(){
+mtFormInit.prototype.json_generate = function(){
 
     this.__parseRules();
 
@@ -77,14 +74,14 @@ mtFormInit.prototype.generateJSON = function(){
 };
 
 
-mtFormInit.prototype.__assignToForm = function(formContent){
+mtFormInit.prototype.components_into_form = function(formContent){
     var form_html;
     var form_length = this.forms.length;
     if(form_length > 0 )
     {
         for(var i = 0; i < form_length; i++)
         {
-            form_html = this.parser(this.forms[i], [":form"], [formContent]);
+            form_html = this.template_process(this.forms[i], [":form"], [formContent]);
             return form_html;
         }
 
@@ -98,7 +95,7 @@ mtFormInit.prototype.__assignToForm = function(formContent){
     }
 }
 
-mtFormInit.prototype.__makeAlternate = function()
+mtFormInit.prototype.alternate = function()
 {
     if(this.isAlternate === true)
     {
@@ -152,7 +149,7 @@ mtFormInit.prototype.get = function(){
 
 
 
-mtFormInit.prototype.wrapInHtml = function(openTag, closeTag){
+mtFormInit.prototype.html_wrapper = function(openTag, closeTag){
     this.content("<br />");
     for(var i = 0; i < this.inputs.length; i++)
     {

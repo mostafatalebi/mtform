@@ -14,7 +14,7 @@ mtFormInit.prototype.extends = function( name, callback ){
 }
 
 
-mtFormInit.prototype.defineExport = function( name, exportFunction ){
+mtFormInit.prototype.exportDefine = function( name, exportFunction ){
     var new_plugin = { name : "", callback : null };
     new_plugin.name = name;
     new_plugin.callback = exportFunction;
@@ -22,12 +22,12 @@ mtFormInit.prototype.defineExport = function( name, exportFunction ){
 }
 
 
-mtFormInit.prototype.defineImport = function( name, importFunction ){
+mtFormInit.prototype.importDefine = function( name, importFunction ){
     var new_plugin = { name : importFunction };
     this.imports.push(new_plugin);
 }
 
-mtFormInit.prototype.defineReset = function( name, resetFunction ){
+mtFormInit.prototype.resetDefine = function( name, resetFunction ){
     var new_plugin = { name : resetFunction };
     this.resets.push(new_plugin);
 }
