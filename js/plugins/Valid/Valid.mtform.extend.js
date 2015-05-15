@@ -28,7 +28,7 @@ $mtf.extends("Rule", function(rule_name, rule_value, use_template, messages_obje
         $mtf.$lives.Valid = new MTF_Valid();
     }
 
-    $mtf.$lives.Valid.ruleAdd(rule_name, rule_value, use_template, messages_object, events, insertion_type);
+    $mtf.$lives.Valid.ruleRegister(rule_name, rule_value, use_template, messages_object, events, insertion_type);
 
     return $mtf;
 }, true);
@@ -79,7 +79,7 @@ $mtf.defineExport("ValidExport", function(){
     data.message_to_components = $mtf.$lives.Valid.message_to_components;
     data.message_injection_container = $mtf.$lives.Valid.message_injection_container;
     data.events = $mtf.$lives.Valid.events;
-    data.events_optional = $mtf.$lives.Valid.events_optional;
+    data.events_to_rules_collection = $mtf.$lives.Valid.events_to_rules_collection;
     return data;
 });
 
@@ -93,7 +93,7 @@ $mtf.defineImport("ValidImport", function(importData){
     $mtf.$lives.Valid.message_to_components = importData.message_to_components =
     $mtf.$lives.Valid.message_injection_container = importData.message_injection_container;
     $mtf.$lives.Valid.events = importData.events;
-    $mtf.$lives.Valid.events_optional = importData.events_optional;
+    $mtf.$lives.Valid.events_to_rules_collection = importData.events_to_rules_collection;
 });
 
 

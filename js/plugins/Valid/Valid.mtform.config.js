@@ -15,7 +15,7 @@ if(typeof window.MTF_Valid_Config !== 'object')
         rules_each_separator : '&',
         message_attr_name : "data-msgparentid",
         input_message_attr_name : "data-msgcontainerid",
-        events_optional_attr : 'data-validev',
+        attribute_component_info : 'data-validev',
 
         //### EVENT MANAGEMENT ###//
         // all values have to be in array

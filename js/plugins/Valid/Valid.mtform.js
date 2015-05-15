@@ -17,20 +17,12 @@ MTF_Valid.prototype.ruleDefine = function(ruleName, ruleObject){
 
 
 /**
- * Registers the rule to the @__lastComponent
- * @param rule_name  {string} the name of the rule which is already defined somewhere
- * @param rule_value {*} the value of the rule. Note: for many rules this param is not required,
- *                   the mere declaration of the name of the rule means it works, but for
- *                   some rules such as max_length or min_length this is required as to
- *                   designate to which value the input's value must be compared.
- * @param events     {object} custom events which are used to trigger the rule
- * @param use_template {boolean} [optional] if set to false, the rule does not generate
- *                    a message template.
- * @param insertion_type whether to inject it right after the form component or insert it regularly into
- *                        components collection.
- * @constructor
+ * registers a rule for a the last component of MTForm and
+ * @param rule_name @__ruleName
+ * @param rule_value @__ruleValueId
+ * @param config the configuration object
  */
-MTF_Valid.prototype.ruleAdd = function(rule_name, rule_value, config){
+MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
     config = (typeof config !== "object") ? {} : config;
     var last_comp = $mtf.componentLastInfo;
     /*
@@ -78,7 +70,7 @@ MTF_Valid.prototype.ruleAdd = function(rule_name, rule_value, config){
         }
     }
 
-    this.rule_add_to_collection(last_comp.index, last_comp.type, [ rule_name , rule_value ], events, placeholders );
+    this.rule_add_to_collection(last_comp, [ rule_name , rule_value ], events, placeholders );
 
 
 }
@@ -158,19 +150,19 @@ MTF_Valid.prototype.rule_execute = function(element, rule_name, rule_value){
 }
 
 /**
- * Adds the defined rule to the stack.
- * @param element_index
- * @param element_type
- * @param rule_obj
- * @param events
+ * Adds the defined rule to the collection.
+ * @param lastCompInfo {Object} @__lastComponent
+ * @param rule_obj {Array} an array containing the name and the valueId of the rule
+ * @param events an array containing the events of the rule
+ * @param placeholders @__placeholder
  * @private
  */
-MTF_Valid.prototype.rule_add_to_collection = function(element_index, element_type, rule_obj, events, placeholders){
+MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, events, placeholders){
 
     var rule_object;
 
     /** inserting placeholders **/
-    var placeholder_element_key = element_index + "-" + element_type + "-" + rule_obj[0];
+    var placeholder_element_key = lastCompInfo.index + "-" + lastCompInfo.type + "-" + rule_obj[0];
     this.template_placeholder_values[placeholder_element_key] = placeholders;
 
     if( this.rules.length > 0 )
@@ -179,11 +171,11 @@ MTF_Valid.prototype.rule_add_to_collection = function(element_index, element_typ
         // being bound to a rule, if yes, then just add the rule than creating a collection anew
         {
 
-            if( this.rules[i]['index'] == element_index && this.rules[i]['type'] == element_type )
+            if( this.rules[i]['index'] == lastCompInfo.index && this.rules[i]['type'] == lastCompInfo.type )
             {
                 this.rules[i]['rules'][rule_obj[0]] = rule_obj[1];
-                this.rules[i]['index'] = element_index;
-                this.rules[i]['type'] = element_type;
+                this.rules[i]['index'] = lastCompInfo.index;
+                this.rules[i]['type'] = lastCompInfo.type;
                 this.rules[i]['events'] = events;
                 this.rules[i]['message_id'] = this.last_message_id;
                 //this.rules[i]['placeholders'][rule_obj[0]] = placeholders;
@@ -196,8 +188,8 @@ MTF_Valid.prototype.rule_add_to_collection = function(element_index, element_typ
                 placeholder_obj[rule_obj[0]] = placeholders;
                 rule_new[rule_obj[0]] = rule_obj[1];
                 rule_object = {
-                    index : element_index,
-                    type : element_type,
+                    index : lastCompInfo.index,
+                    type : lastCompInfo.type,
                     rules : rule_new,
                     events : events,
                     //placeholders : placeholder_obj,
@@ -228,21 +220,22 @@ MTF_Valid.prototype.rule_add_to_collection = function(element_index, element_typ
 }
 
 /**
- * Based on the rules and its bound index and type, it search main collections and find the proper string for\
+ * Based on the rules and its bound index and type, it search main collections and find the proper string for
  * the already-added form-component and merge the rule attribute to them using regular expression.
  * Note: in this stage, no form component has yet been created and all data are string.
  * @private
  */
 MTF_Valid.prototype.rules_bind = function(){
 
-    var l = this.rules.length;
+
     for( var i = 0; i < this.rules.length; i++ )
     {
         var rule_parsed = this.rules_parsed(this.rules[i]['rules']);
-        var events_parsed;
+        var attribute_component_info;
 
         if(this.rules[i]['events'])
-             events_parsed = this.events_parsed(this.rules[i]['events'], this.rules[i]['type'], this.rules[i]['index']);
+            this.events_to_component_register(this.rules[i]['events'], { type : this.rules[i]['type'], index : this.rules[i]['index'] } );
+            attribute_component_info = this.component_info_attribute_set(this.rules[i]['type'], this.rules[i]['index']);
 
         rule_parsed = this.__wrap_in_attr(rule_parsed);
 
@@ -258,7 +251,7 @@ MTF_Valid.prototype.rules_bind = function(){
         var reg_rule = new RegExp("(\<" + reg_comp_type + "*\s*)+(.*)");
 
         // ensuring that no undefined is returned. ONLY string must be allowed
-        if(typeof events_parsed !== 'string' ) events_parsed = "";
+        if(typeof attribute_component_info !== 'string' ) attribute_component_info = "";
         if(typeof rule_parsed !== 'string' ) rule_parsed = "";
         if(typeof msg_container !== 'string' ) msg_container = "";
 
@@ -269,13 +262,13 @@ MTF_Valid.prototype.rules_bind = function(){
             for( var i = 0; i < component.length; i++ )
             {
                 var component_split = reg_rule.exec(component[i]);
-                component[i] = component[i].replace(reg_rule, component_split[1] + " " + events_parsed + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+                component[i] = component[i].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
             }
         }
         else
         {
             var component_split = reg_rule.exec(component);
-            component = component.replace(reg_rule, component_split[1] + " " + events_parsed + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+            component = component.replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
         }
 
         $mtf.collections[type][index] = component;
@@ -353,7 +346,7 @@ MTF_Valid.prototype.rules_parsed = function(rule_object){
 MTF_Valid.prototype.rules_find = function(element){
     var rule_attr = element.getAttribute( $MTF_Valid_Config.rules_attr_name );
 
-    var event_item_info = this.get_type_index(element.getAttribute( $MTF_Valid_Config.events_optional_attr ));
+    var event_item_info = this.get_type_index(element.getAttribute( $MTF_Valid_Config.attribute_component_info ));
 
     var found_rules = {};
 
@@ -373,7 +366,7 @@ MTF_Valid.prototype.rules_find = function(element){
             var callback_method = this.rules_collection[key_value[0]]['main'];
             var success_callback = this.rules_collection[key_value[0]]['success'];
             var error_callback = this.rules_collection[key_value[0]]['error'];
-            var events_collection = this.events_get_optional(element);
+            var events_collection = this.events_fetch(element);
             var msg = this.rules_collection[key_value[0]]['messages'];
 
             found_rules[key_value[0]] = {
@@ -504,29 +497,27 @@ MTF_Valid.prototype.Eventize = function(parent_container_id){
     this.events_add_listeners(parent_container_id);
 }
 
-
 /**
- * parses the event into a usable string.
- * @param events_array the events array
- * @param item_type @__elementLastType
- * @param item_index @__elementLastIndex
- * @returns {string}
- * @private
+ *
+ * @param events_array
+ * @param compLastInfo
  */
-MTF_Valid.prototype.events_parsed = function(events_array, item_type, item_index){
-    item_type = this.hash_name_to_value(item_type);
-    if(!this.events_optional[item_type])
-    {
-        this.events_optional[item_type] = {};
-    }
-    if(!this.events_optional[item_type][item_index])
-    {
-        this.events_optional[item_type][item_index] = [];
-    }
-    this.events_optional[item_type][item_index] = events_array;
+MTF_Valid.prototype.events_to_component_register = function(events_array, compLastInfo)
+{
+    item_type = this.hash_name_to_value(compLastInfo.type);
 
-    return $MTF_Valid_Config.events_optional_attr + "='" + item_type + "-" + item_index + "'";
-};
+    if(!this.events_to_rules_collection[compLastInfo.type])
+    {
+        this.events_to_rules_collection[compLastInfo.type] = {};
+    }
+
+    if(!this.events_to_rules_collection[compLastInfo.type][compLastInfo.index])
+    {
+        this.events_to_rules_collection[compLastInfo.type][compLastInfo.index] = [];
+    }
+
+    this.events_to_rules_collection[compLastInfo.type][compLastInfo.index] = events_array;
+}
 
 
 
@@ -535,7 +526,7 @@ MTF_Valid.prototype.events_parsed = function(events_array, item_type, item_index
  * creates an anonymous function that manages the two other optional callbacks.
  * If the initial_callback returns false, then the error callback is called,
  * otherwise the success is called.
- * @param initial_callback the main callaback for the event
+ * @param initial_callback {function} the main callback for the event
  * @param error {function} optional a callback to be called when initial_callback returns false
  * @param success {function} optional a callback to be called when initial_callback returns true
  */
@@ -558,7 +549,7 @@ MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, s
 
 
 /**
- * Checks to see what "event" has been defined for a certain component type
+ * Checks to see what "events" have been defined for a certain component type
  * @param tag_name the name of the tag for which an event is to be searched
  * @returns {object} an array of events
  */
@@ -567,10 +558,12 @@ MTF_Valid.prototype.event_get_default = function(tag_name){
 }
 
 /**
- * Adds event listener for the form components for their values to be checked against
- * their bound rules on the occurance of that certain event.
+ * Adds event listener to the form-component children of a form. This function iterates recursively through
+ * all the children of a form's,checkes if their are of type form component, if yes, then
+ * checks if they have any events to be attached to them. In case true, it creates a callback,
+ * passes all necessary arguments of that specific rule to that call back, and then attaches the event
+ * with that callback set as its callback, to the element.
  * @param form_selector the CSS selector to select form which contains the components
- * @private
  */
 MTF_Valid.prototype.events_add_listeners = function(form_selector){
     var parent_cont = document.querySelector(form_selector);
@@ -598,10 +591,10 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
                     events = rules_array[keys[w]]['events-default'];
-                    var events_optional = mainFunction.events_get_optional(item);
-                    if( events_optional && events_optional.length > 0 )
+                    var events_to_rules_collection = mainFunction.events_fetch(item);
+                    if( events_to_rules_collection && events_to_rules_collection.length > 0 )
                     {
-                        events = events_optional;
+                        events = events_to_rules_collection;
                     }
                     var event_callback_handler = mainFunction.event_callback_handler;
 
@@ -705,14 +698,21 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
 
 }
 
-MTF_Valid.prototype.events_get_optional = function(element){
-    var event_attr = element.getAttribute( $MTF_Valid_Config.events_optional_attr );
+/**
+ * fetches the events which are bound to this component. It reads the corresponding attribute
+ * which holds the type and index of a component and then searches for the events bound to this
+ * specific component.
+ * @param element {Object} @__elementJavascript
+ * @returns {Array} an array of events [might be zeor-length]
+ */
+MTF_Valid.prototype.events_fetch = function(element){
+    var event_attr = element.getAttribute( $MTF_Valid_Config.attribute_component_info );
 
     if(event_attr)
     {
         event_attr = event_attr.split("-");
         var event_readable = event_attr[0];
-        return this.events_optional[event_readable][event_attr[1]];
+        return this.events_to_rules_collection[event_readable][event_attr[1]];
     }
 
 }
@@ -722,7 +722,7 @@ MTF_Valid.prototype.events_get_optional = function(element){
  * @param rule_name the name of the the for which this message container is bound
  * @param inline {Boolean} Defautl = true. If true, then it inserts a container right after the input by editing the
  * current inserted input in the main $mtf.collection
- * @returns {mixed}
+ * @returns {Object} returns a message object containing all types and languages
  * @private
  */
 MTF_Valid.prototype.message_container_insert = function(rule_name, inline){
@@ -753,7 +753,11 @@ MTF_Valid.prototype.message_container_insert = function(rule_name, inline){
 
 }
 
-
+/**
+ * Returns all the messages of a rule.
+ * @param rule_name @__ruleName
+ * @returns {*}
+ */
 MTF_Valid.prototype.messages_fetch = function(rule_name){
     if(this.rules_collection[rule_name].hasOwnProperty("messages"))
     {
@@ -770,20 +774,47 @@ MTF_Valid.prototype.message_edit = function(rule_name, type, message, language){
     this.rules_collection[rule_name].messages[type][language] = message;
 }
 
-MTF_Valid.prototype.message_language_edit = function(rule_name, type, messages){
-    this.rules_collection[rule_name].messages[type] = messages;
+/**
+ * Sets the message of a certain language of a certain type
+ * @param rule_name @__ruleName
+ * @param type {String} the type of the messages to be edited (e.g. error)
+ * @param language {String} the name of the language which is going to be edited
+ * @param messages {String} the messages container. Note: it should contain all the (target) languages.
+
+ */
+MTF_Valid.prototype.message_language_edit = function(rule_name, type, language, messages){
+    this.rules_collection[rule_name].messages[type][language] = messages;
 }
 
-
+/**
+ * Sets all the messages of a certain type (e.g. error) at once.
+ * @param rule_name @__ruleName
+ * @param type {String} the type of the messages to be edited (e.g. error)
+ * @param messages the messages container. Note: it should contain all the (target) languages.
+ */
 MTF_Valid.prototype.messages_edit_all = function(rule_name, type, messages){
     this.rules_collection[rule_name].messages[type] = messages;
 }
 
-
+/**
+ * Adds an attribute whose value is the message id of the message container to which the element
+ * is bound. The operation is done a live element.
+ * @param element_selector_or_object {String|Object} @__selectorOrElement
+ * @param message_id
+ * @returns {*}
+ */
 MTF_Valid.prototype.message_id_into_template = function(element_selector_or_object, message_id){
     return $mtf.E(element_selector_or_object).Attr($MTF_Valid_Config.input_message_attr_name, message_id);
 }
 
+
+/**
+ * Parses the messages. It treats the keys of the "placeholders" object as placeholder and replace them
+ * with their respective values. Placeholders are prepended with a ":".
+ * @param message {String} the message string
+ * @param placeholders @__placeholder
+ * @returns {string}
+ */
 MTF_Valid.prototype.message_parse = function(message, placeholders){
     var keys = Object.keys(placeholders);
     var msg_parsed = "";
@@ -794,19 +825,49 @@ MTF_Valid.prototype.message_parse = function(message, placeholders){
     return msg_parsed;
 }
 
-MTF_Valid.prototype.hash_generate_new = function(cmp_obj){
-    var hash = this.hash_name_to_value(cmp_obj.type);
-    var id = "mtmsg"+hash+cmp_obj.index;
+/**
+ * Returns a new hash. this function returns a hash of current component's type, with its
+ * index appended to it to avoid collision with other components of the same type.
+ * @param lastCompObject @__lastComponent
+ * @returns {string}
+ */
+MTF_Valid.prototype.hash_generate_new = function(lastCompObject){
+    var hash = this.hash_name_to_value(lastCompObject.type);
+    var id = "mtmsg"+hash+lastCompObject.index;
     return id;
 }
 
+/**
+ * Returns current language used by MTForm
+ * @returns {String}
+ */
 MTF_Valid.prototype.language_detect = function(){
     return $MTF_Valid_Config.lang;
 }
 
-
+/**
+ * Checks to see if the component whose type and index is passed, has already been injected with a message
+ * container (of type injection). This function is used because message container of injection type are
+ * just injected into the current component's template (inline-method), and hence are not treated as a distinct
+ * component.
+ * @param lastCompObject {Object} @__lastComponent
+ * @returns {boolean}
+ */
 MTF_Valid.prototype.component_not_bound_to_message = function(lastCompObject){
     var g = (lastCompObject.type + "-" + lastCompObject.index);
     return ( this.message_to_components.indexOf(lastCompObject.index + "-" + lastCompObject.type) !== -1 )
         ? false : true;
 }
+
+
+/**
+ * parses the event into a usable string. This function creates a index and type of the component
+ * @param events_array the events array
+ * @param item_type @__elementLastType
+ * @param item_index @__elementLastIndex
+ * @returns {string}
+ */
+MTF_Valid.prototype.component_info_attribute_set = function(item_type, item_index){
+    return $MTF_Valid_Config.attribute_component_info + "='" + item_type + "-" + item_index + "'";
+};
+

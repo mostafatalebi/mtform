@@ -1,0 +1,6 @@
+
+
+@__ruleName : {String} the name of the rule.
+@__ruleValueId : {String} the id which corresponds to the value of the rule
+@__ruleValue : {String|Object} the value of the rule
+@__placeholder : {Object} an object containing key&value pairs for placeholders.

@@ -7,7 +7,7 @@ var MTF_Valid = function(){
     this.rules_collection = MTF_VALID_RULES;
 
     // this option holds any event passed in the time of VAdd function call.
-    this.events_optional = {};
+    this.events_to_rules_collection = {};
 
 
 
