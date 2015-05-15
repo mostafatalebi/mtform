@@ -6,10 +6,10 @@
 @version 0.0.1
 **/
 
-$mtf.extends("Theme", function(){
-	var theme = new MT_Theme();
-    $mtf.$lives.Theme = theme;
-    return $mtf;
-});
+$mtf.plugin.define("Theme", function(init_list){
+    
+
+}, { core_version : "0.0.1", init : [ main : new MT_Theme ] });
+
 
 
