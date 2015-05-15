@@ -17,9 +17,9 @@ if( $mtf.pluginLoaded( "Theme" ) )
         label : "<label :attrs >:innerValue</label>",
     };
 
-    $mtf.$lives.Theme.addTheme( "Bootstrap3", templates );
-    $mtf.$lives.Theme.setTheme( "Bootstrap3");
-    $mtf.$lives.Theme.setDefaultAttr("input", { class : "one-such-item"} );
-    $mtf.$lives.Theme.setDefaultAttr("message", { class : "alert alert-danger" /*, style : "display: none;"*/} );
-    $mtf.$lives.Theme.setDefaultAttr("submit", { class : "btn btn-large btn-info"} );
+    $mtf.Theme().addTheme( "Bootstrap3", templates );
+    $mtf.Theme().setTheme( "Bootstrap3");
+    $mtf.Theme().setDefaultAttr("input", { class : "one-such-item"} );
+    $mtf.Theme().setDefaultAttr("message", { class : "alert alert-danger" /*, style : "display: none;"*/} );
+    $mtf.Theme().setDefaultAttr("submit", { class : "btn btn-large btn-info"} );
 }
