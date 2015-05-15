@@ -7,9 +7,13 @@
 **/
 
 $mtf.plugin.define("Theme", function(init_list){
-    
+    if( !$mtf.$lives.hasOwnProperty("Theme") )
+    {
+        $mtf.$lives["Theme"] = new MT_Theme();
+    }
+    return $mtf.$lives["Theme"];
 
-}, { core_version : "0.0.1", init : [ main : new MT_Theme ] });
+}, { core_version : "0.0.1" } );
 
 
 

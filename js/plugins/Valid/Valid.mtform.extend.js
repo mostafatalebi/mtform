@@ -14,7 +14,7 @@
  * Providing a pointer to the main MTF_Valid Object
  */
 $mtf.$lives.Valid = new MTF_Valid();
-
+var mtf_valid_core_version_needed  = "0.0.1"
 /**
  * @method VAdd
  * @description Registers a rule for the @__lastComponent and its events in case any passed
@@ -22,6 +22,19 @@ $mtf.$lives.Valid = new MTF_Valid();
  * @param rule_value {callback} the value of rule in case it needs any
  * @param events {object.array} [optional] an array of events names
  */
+$mtf.plugin.define( "Rule", function(rule_name, rule_value, configs ){
+        if( $mtf.$lives.hasOwnProperty("Rule") )
+        {
+            $mtf.$lives.Valid = new MTF_Valid();
+        }
+
+    $mtf.$lives.Valid.ruleRegister(rule_name, rule_value, configs);
+
+    return $mtf;
+
+}, { core_version : mtf_valid_core_version_needed });
+
+/*
 $mtf.extends("Rule", function(rule_name, rule_value, use_template, messages_object, events, insertion_type){
     if( typeof $mtf.$lives.Valid !== "object" )
     {
@@ -32,7 +45,7 @@ $mtf.extends("Rule", function(rule_name, rule_value, use_template, messages_obje
 
     return $mtf;
 }, true);
-
+*/
 
 /**
  * @method VEventize
@@ -51,7 +64,7 @@ $mtf.extends("Eventize", function(form_selector){
     $mtf.$lives.Valid.Eventize(form_selector);
 
     return $mtf;
-});
+}, { core_version : mtf_valid_core_version_needed });
 
 /**
  * @method VBind
@@ -67,7 +80,7 @@ $mtf.extends("Bind", function(){
     $mtf.$lives.Valid.Bind();
 
     return $mtf;
-});
+}, { core_version : mtf_valid_core_version_needed });
 
 
 /**
@@ -81,7 +94,7 @@ $mtf.exportDefine("ValidExport", function(){
     data.events = $mtf.$lives.Valid.events;
     data.events_to_rules_collection = $mtf.$lives.Valid.events_to_rules_collection;
     return data;
-});
+}, { core_version : mtf_valid_core_version_needed });
 
 
 /**
@@ -94,6 +107,6 @@ $mtf.importDefine("ValidImport", function(importData){
     $mtf.$lives.Valid.message_injection_container = importData.message_injection_container;
     $mtf.$lives.Valid.events = importData.events;
     $mtf.$lives.Valid.events_to_rules_collection = importData.events_to_rules_collection;
-});
+}, { core_version : mtf_valid_core_version_needed });
 
 

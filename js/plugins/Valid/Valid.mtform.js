@@ -359,7 +359,7 @@ MTF_Valid.prototype.rules_find = function(element){
 
             var key_value = rules[i].split("=");
             var rule_value = this.rules_values[key_value[1]];
-
+            var g =  event_item_info.index + "-" + event_item_info.type + "-" + key_value[0];
             // searching for placeholders
             var placeholders = this.template_placeholder_values[event_item_info.index + "-" + event_item_info.type + "-" + key_value[0]];
 
@@ -417,6 +417,7 @@ MTF_Valid.prototype.__wrap_in_attr = function(rules){
 MTF_Valid.prototype.hash_value_to_name = function(hash_value)
 {
     var hash_table_keys = Object.keys($MTF_Valid_Config.hash_table);
+
     for(var i = 0; i < hash_table_keys.length; i++)
     {
         if($MTF_Valid_Config.hash_table[hash_table_keys[i]] == hash_value)
@@ -453,13 +454,15 @@ MTF_Valid.prototype.tag_name = function(input_type_string)
  * @returns {*}
  */
 MTF_Valid.prototype.get_type_index = function(element_valid_ev_attribute){
-    if( typeof element_valid_ev_attribute === "string" && element_valid_ev_attribute != "" )
+
+    if( typeof(element_valid_ev_attribute) == "string" && element_valid_ev_attribute != "" )
     {
         var splitted = element_valid_ev_attribute.split("-");
         var type_str = this.hash_value_to_name(splitted[0]);
+
         return {
             type : type_str,
-            index : splitted[1]
+            index : splitted[1],
         };
     }
 }
@@ -711,7 +714,7 @@ MTF_Valid.prototype.events_fetch = function(element){
     if(event_attr)
     {
         event_attr = event_attr.split("-");
-        var event_readable = event_attr[0];
+        var event_readable = this.hash_value_to_name(event_attr[0]);
         return this.events_to_rules_collection[event_readable][event_attr[1]];
     }
 
@@ -868,6 +871,6 @@ MTF_Valid.prototype.component_not_bound_to_message = function(lastCompObject){
  * @returns {string}
  */
 MTF_Valid.prototype.component_info_attribute_set = function(item_type, item_index){
-    return $MTF_Valid_Config.attribute_component_info + "='" + item_type + "-" + item_index + "'";
+    return $MTF_Valid_Config.attribute_component_info + "='" + this.hash_name_to_value(item_type) + "-" + item_index + "'";
 };
 
