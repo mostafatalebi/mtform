@@ -113,7 +113,7 @@ $mtf.extends("Post", function(url, extraConfig){
 })
 
 
-$mtf.defineExport("AjaxExport", function(){
+$mtf.exportDefine("AjaxExport", function(){
     var data = {};
     data.config = $mtf.$lives.Ajax.config;
     data.form_selector = $mtf.$lives.Ajax.form;
@@ -123,7 +123,7 @@ $mtf.defineExport("AjaxExport", function(){
     return data;
 });
 
-$mtf.defineImport("AjaxImport", function(importData){
+$mtf.importDefine("AjaxImport", function(importData){
     var data = {};
     $mtf.$lives.Ajax.config = importData.config;
     $mtf.$lives.Ajax.form = importData.form_selector;
