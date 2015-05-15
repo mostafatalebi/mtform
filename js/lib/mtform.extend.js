@@ -33,5 +33,5 @@ mtFormInit.prototype.resetDefine = function( name, resetFunction ){
 }
 
 mtFormInit.prototype.pluginLoaded = function( name ){
-    return $mtf.$lives.hasOwnProperty( name );
+    return $mtf.hasOwnProperty( name );
 }
