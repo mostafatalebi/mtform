@@ -206,8 +206,8 @@ MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, ev
         var placeholder_obj = {};
         placeholder_obj[rule_obj[0]] = placeholders;
         rule_object = {
-            index : element_index,
-            type : element_type,
+            index : lastCompInfo.index,
+            type : lastCompInfo.type,
             rules : rule_new,
             events : events,
             //"placeholders" : placeholder_obj,
@@ -742,7 +742,7 @@ MTF_Valid.prototype.message_container_insert = function(rule_name, inline){
         attributes[attr_name] = this.last_message_id;
         if( tpl )
         {
-            $mtf.createCustom("custom", tpl, attributes );
+            $mtf.create_custom("custom", tpl, attributes );
         }
         else
         {
@@ -770,7 +770,7 @@ MTF_Valid.prototype.messages_fetch = function(rule_name){
 }
 
 MTF_Valid.prototype.message_edit = function(rule_name, type, message, language){
-    language = (language) ? language : $mtf.getLang();
+    language = (language) ? language : $mtf.language_fetch();
     this.rules_collection[rule_name].messages[type][language] = message;
 }
 

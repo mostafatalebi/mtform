@@ -73,7 +73,7 @@ $mtf.extends("Bind", function(){
 /**
  * Export Cooperator
  */
-$mtf.defineExport("ValidExport", function(){
+$mtf.exportDefine("ValidExport", function(){
     var data = {};
     data.rules = $mtf.$lives.Valid.rules;
     data.message_to_components = $mtf.$lives.Valid.message_to_components;
@@ -87,7 +87,7 @@ $mtf.defineExport("ValidExport", function(){
 /**
  * Import Cooperator
  */
-$mtf.defineImport("ValidImport", function(importData){
+$mtf.importDefine("ValidImport", function(importData){
     var data = {};
     $mtf.$lives.Valid.rules = importData.rules;
     $mtf.$lives.Valid.message_to_components = importData.message_to_components =
