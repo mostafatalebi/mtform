@@ -73,3 +73,67 @@ if(typeof window.MTF_Valid_Config !== 'object')
 
     };
 }
+
+
+
+
+/**
+ * A value which indicates that something(function, variable etc.)
+ * of its regular type within that scope.
+ * @type {number}
+ */
+MTVL_CALLBACK_REGULAR = 101;
+
+/**
+ * A value which indicates that the something is expected
+ * to be of asynchronous type or associated with it in
+ * some way.
+ * @type {string}
+ */
+MTVL_CALLBACK_ASYNC = 102;
+
+/**
+ * A value which tells callback_handler to skip
+ * calling the success callback
+ * @type {string}
+ */
+MTVL_SKIP_CALLBACK_SUCCESS = 201;
+
+/**
+ * A value which tells callback_handler to skip
+ * calling the error callback
+ * @type {string}
+ */
+MTVL_SKIP_CALLBACK_ERROR = 202;
+
+
+
+/**
+ * An object which is returned by rules.
+ * @type {{type: number, skip_type: string, status: boolean, data: {}}}
+ */
+MTVL_RULE_RETURN = {
+    /**
+     * The type of function from which this object is returned
+     */
+    type : MTVL_CALLBACK_REGULAR,
+
+    /**
+     * skip_type specifies if the callback handler should skip any of the validation
+     * formal steps.
+     */
+    skip_type : MTVL_SKIP_CALLBACK_SUCCESS,
+
+    /**
+     * Validation status for main() function of the rule. By default
+     * it is assumed that the validation fails.
+     */
+    status : false,
+
+    /**
+     * Any optional data to be returned from rule's callbacks operations
+     */
+    data : {}
+}
+
+

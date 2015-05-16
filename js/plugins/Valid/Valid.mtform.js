@@ -534,19 +534,118 @@ MTF_Valid.prototype.events_to_component_register = function(events_array, compLa
  * @param success {function} optional a callback to be called when initial_callback returns true
  */
 MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, success){
-
     var result = initial_callback();
-    if(  result.status !== true )
-    {
 
-        if(error) error(result.data);
-        return false;
+    // checks to see if the return-object has a type property
+    if( result.hasOwnProperty("type") )
+    {
+        // checks to see if the function which has returned
+        // value is of regular type
+        if( result.type == MTVL_CALLBACK_REGULAR )
+        {
+
+            // checks to see if the handler should skip calling any of the error/success callback
+            if( result.hasOwnProperty("skip_type") &&  result.skip_type )
+            {
+
+                // checks to see if the result is false (= calling error callback)
+                if(  result.status !== true )
+                {
+                    // checks to see if the skip_type is set for error callback
+                    if( result.skip_type !== MTVL_SKIP_CALLBACK_ERROR )
+                    {
+                        var error_result;
+                        if(error)
+                            error_result = error(result.data);
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    // checks to see if the skip_type is set for success_callback
+                    if( result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS )
+                    {
+                        var success_result;
+                        if(success) success(result.data);
+                            success_result = success(result.data);
+                        return true;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            // checks to see if the function should skip the success_callback
+            else
+            {
+                if(  result.status !== true )
+                {
+                    if(error) error(result.data);
+                    return false;
+                }
+                else
+                {
+
+                    if(success) success(result.data);
+                    return true;
+                }
+            }
+        }
+        // the function is of asynchronous type
+        else if( result.type == MTVL_CALLBACK_ASYNC )
+        {
+            return true;
+        }
     }
     else
     {
+        if( result.hasOwnProperty("skip_type") )
+        {
+            if(  result.status !== true )
+            {
+                if( result.skip_type !== MTVL_SKIP_CALLBACK_ERROR )
+                {
+                    if(error) error(result.data);
+                    return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if( result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS )
+                {
+                    if(success) success(result.data);
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            if(  result.status !== true )
+            {
+                if(error) error(result.data);
+                return false;
+            }
+            else
+            {
 
-        if(success) success(result.data);
-        return true;
+                if(success) success(result.data);
+                return true;
+            }
+        }
+
     }
 }
 
@@ -632,6 +731,22 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                                         "message_text": messages_main,
                                         "event": event_object,
                                         "placeholders" : placeholders,
+
+                                        // such extra data is needed if the rule's main
+                                        // function tries to call error callback or success
+                                        // callback internally. This is needed for functions
+                                        // which contains asynchronous AJAX.
+                                        // But regardless of AJAX-bound functions, there
+                                        // are unpredicted conditions where a developer
+                                        // might want to right a customized rule which
+                                        // would do operations inside its main() function
+                                        // and hence should have access to this information
+                                        system : {
+                                            error_callback : cb_error,
+                                            success_callback : cb_success,
+                                            message_error : messages_error,
+                                            message_success : messages_success
+                                        }
                                     });
                                 },
                                 function () {

@@ -39,11 +39,16 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         main : function(elm, rule_value, data){
-            var result = { status : false, data : "" };
+            var result = MTVL_RULE_RETURN;
+
             result.status = /^[a-zA-Z0-9_.-]+@+[a-zA-Z0-9-]+\.{1}[a-zA-Z0-9-]{2,20}(?:\.{1}[a-zA-Z0-9-]{2,20})?(?:\.{1}[a-zA-Z0-9-]{2,20})?$/.test($mtf.E(elm).Value());
 
-            return result;
+            if( data.hasOwnProperty("skip_type") )
+            {
+                result.skip_type = data.skip_type;
+            }
 
+            return result;
         },
 
         /**
@@ -427,57 +432,106 @@ MTF_VALID_RULES = {
      *                 key : the name of the JSON-key sent through form
      *                 extra : an object containing extra data to be sent
      * @return {JSON} [optional]
-     * @requires_value YES => the URL to which the AJAX must be sent
+     * @requires_value YES => {Object|String}
+     *                 [if object]{
+     *                      url {String} [required] the URL
+     *                      data {Object} [optional]
+     *                      message_failure {String} [optional]
+     *                 }
      */
     "unique" : {
 
         events : ["blur"],
 
         main : function(elm, rule_value, data){
-            var result = { status : false, data : "" };
+            var result = MTVL_RULE_RETURN;
+
             var url_str = "";
 
             if( typeof rule_value !== "string" )
             {
                 url_str = rule_value.url;
+
+                if( typeof rule_value.data !== 'object' ) rule_value.data = {};
+
                 if( elm.tagName.toLowerCase() == "input" )
                 {
-                    rule_value[$mtf.E(elm).getName()] = $mtf.E(elm).Value();
+                    rule_value.data[$mtf.E(elm).getName()] = $mtf.E(elm).Value();
                 }
                 else if ( elm.tagName.toLowerCase() == "textarea" )
                 {
-                    rule_value[$mtf.E(elm).getName()] = $mtf.E(elm).HTML();
+                    rule_value.data[$mtf.E(elm).getName()] = $mtf.E(elm).HTML();
                 }
 
-                delete rule_value["url"];
             }
             else
             {
                 url_str = rule_value;
-                rule_value = {};
+                rule_value = { data : {} };
 
                 if( elm.tagName.toLowerCase() == "input" )
                 {
-                    rule_value[$mtf.E(elm).getName()] = $mtf.E(elm).Value();
+                    rule_value.data[$mtf.E(elm).getName()] = $mtf.E(elm).Value();
                 }
                 else if ( elm.tagName.toLowerCase() == "textarea" )
                 {
-                    rule_value[$mtf.E(elm).getName()] = $mtf.E(elm).HTML();
+                    rule_value.data[$mtf.E(elm).getName()] = $mtf.E(elm).HTML();
                 }
 
             }
 
-            var ajax = new AjaxCall({ url : url_str, type: "post", data : rule_value });
+            function __MTformSysValidRuleAjaxMain__(error_callback, success_callback){
+                var ajax = new AjaxCall({ url : url_str, type: "post", data : rule_value.data, responseType : 'json' });
+                var res;
+                ajax.success(function(responseData){
+                    success_callback(responseData)
+                });
+                ajax.error(function(responseData){
+                    error_callback(responseData)
+                });
 
-            ajax.success(function(data){
-                    if(data == false)
+                ajax.send();
+            };
+
+            __MTformSysValidRuleAjaxMain__(
+                // error callback
+                function(responseData){
+                    data.system.error_callback(elm, rule_value, {
+                            message_element : data.message_element,
+                            message_text : rule_value.failure_message,
+                            placeholders : data.placeholders,
+                            event : data.event
+                    });
+
+                },
+                // success callback
+                function(responseData){
+                    if(responseData.status == true)
                     {
-                        result.status = false;
-                        return result;
-                    }
-            });
+                        var obj = {
+                            message_element : data.message_element,
+                            message_text : data.system.message_success,
+                            placeholders : data.placeholders,
+                            event : data.event
+                        };
 
-            ajax.send();
+                        data.system.success_callback(elm, rule_value, obj);
+                    }
+                    else
+                    {
+                        data.system.error_callback(elm, rule_value, {
+                            message_element : data.message_element,
+                            message_text : data.system.message_error,
+                            placeholders : data.placeholders,
+                            event : data.event
+                        });
+                    }
+                }
+            );
+
+            result.type = MTVL_CALLBACK_ASYNC;
+            result.skip_type = 0;
+            return result;
         },
         success : function(elm, rule_value, data){
             $mtf.E(data.message_element).HTML(data.message_text);
@@ -491,7 +545,7 @@ MTF_VALID_RULES = {
         template_allow : true,
 
         templates : {
-            main : "<span :attrs></span>",
+            main : "<span :attrs ></span>",
             error : "<span :attrs ></span>",
             success : "<span :attrs ></span>"
         },
@@ -514,7 +568,7 @@ MTF_VALID_RULES = {
             },
 
             success : {
-                en : ""
+                en : ":field is unique."
             }
         }
     },
