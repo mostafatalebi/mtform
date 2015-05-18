@@ -738,7 +738,7 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                                         // which contains asynchronous AJAX.
                                         // But regardless of AJAX-bound functions, there
                                         // are unpredicted conditions where a developer
-                                        // might want to right a customized rule which
+                                        // might want to write a customized rule which
                                         // would do operations inside its main() function
                                         // and hence should have access to this information
                                         system : {
