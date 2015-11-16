@@ -25,6 +25,9 @@ MTF_Valid.prototype.ruleDefine = function(ruleName, ruleObject){
 MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
     config = (typeof config !== "object") ? {} : config;
     var last_comp = $mtf.componentLastInfo;
+
+
+
     /*
     Setting the default values
      */
@@ -35,12 +38,32 @@ MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
     var message_element = null; // @todo must be fulfilled in coming days
     var placeholders = {};
 
-    if( config.hasOwnProperty("message") ) message_object  = config.message;
-    if( config.hasOwnProperty("events") ) events  = config.events;
-    if( config.hasOwnProperty("type") ) inline  = config.inline;
-    if( config.hasOwnProperty("template") ) template  = config.template;
-    if( config.hasOwnProperty("message_element") ) message_element  = config.message_element;
-    if( config.hasOwnProperty("placeholders") ) placeholders = config.placeholders;
+    if( config.hasOwnProperty("message") )
+        message_object  = config.message;
+    else
+        config.message = message_object;
+    if( config.hasOwnProperty("events") )
+        events  = config.events;
+    else
+        config.events = events;
+    if( config.hasOwnProperty("type") )
+        inline  = config.inline;
+    else
+        config.type = inline;
+    if( config.hasOwnProperty("template") )
+        template  = config.template;
+    else
+        config.template = template;
+    if( config.hasOwnProperty("message_element") )
+        message_element  = config.message_element;
+    else
+        config.message_element = message_element;
+    if( config.hasOwnProperty("placeholders") )
+        placeholders = config.placeholders;
+    else
+        config.placeholders = placeholders;
+
+    this.rule_data_register(rule_name, last_comp, config);
 
     // if user has not passed any value to use_template, we delegate the decision for
     // per-rule and global configurations.
@@ -70,7 +93,7 @@ MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
         }
     }
 
-    this.rule_add_to_collection(last_comp, [ rule_name , rule_value ], events, placeholders );
+    this.rule_add_to_collection(rule_name, last_comp);
 
 
 }
@@ -157,20 +180,19 @@ MTF_Valid.prototype.rule_execute = function(element, rule_name, rule_value){
  * @param placeholders @__placeholder
  * @private
  */
-MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, events, placeholders){
+MTF_Valid.prototype.rule_add_to_collection = function(rule_name, component_info){
 
-    var rule_object;
-
-    /** inserting placeholders **/
-    var placeholder_element_key = lastCompInfo.index + "-" + lastCompInfo.type + "-" + rule_obj[0];
-    this.template_placeholder_values[placeholder_element_key] = placeholders;
-
-    if( this.rules.length > 0 )
+    var rule_data = this.rule_data_fetch(rule_name, component_info);
+    if( this.rule_to_component_exists(component_info) )
     {
-        for( var i = 0; i < this.rules.length; i++ ) // checks if this component has already
+        this.rule_to_component_update(component_info, rule_name, {
+            rules : [rule_name],
+            message_id : this.last_message_id,
+            events : rule_data.events
+        });
+       /* for( var i = 0; i < this.rules.length; i++ ) // checks if this component has already
         // being bound to a rule, if yes, then just add the rule than creating a collection anew
         {
-
             if( this.rules[i]['index'] == lastCompInfo.index && this.rules[i]['type'] == lastCompInfo.type )
             {
                 this.rules[i]['rules'][rule_obj[0]] = rule_obj[1];
@@ -178,7 +200,6 @@ MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, ev
                 this.rules[i]['type'] = lastCompInfo.type;
                 this.rules[i]['events'] = events;
                 this.rules[i]['message_id'] = this.last_message_id;
-                //this.rules[i]['placeholders'][rule_obj[0]] = placeholders;
                 rule_object = this.rules[i];
             }
             else
@@ -192,31 +213,23 @@ MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, ev
                     type : lastCompInfo.type,
                     rules : rule_new,
                     events : events,
-                    //placeholders : placeholder_obj,
+
                     'message_id' : this.last_message_id
                 };
                 this.rules.push(rule_object);
             }
-        }
+        }*/
     }
     else
     {
-        var rule_new = {};
-        rule_new[rule_obj[0]] = rule_obj[1];
-        var placeholder_obj = {};
-        placeholder_obj[rule_obj[0]] = placeholders;
-        rule_object = {
-            index : lastCompInfo.index,
-            type : lastCompInfo.type,
-            rules : rule_new,
-            events : events,
-            //"placeholders" : placeholder_obj,
-            'message_id' : this.last_message_id,
-        };
-        this.rules.push(rule_object);
-    }
 
-    this.rules_obsolete.push( rule_object );
+        this.rule_to_component_register(component_info, {
+            rules : [rule_name],
+            message_id : this.last_message_id,
+            events : rule_data.events
+        });
+
+    }
 }
 
 /**
@@ -227,21 +240,31 @@ MTF_Valid.prototype.rule_add_to_collection = function(lastCompInfo, rule_obj, ev
  */
 MTF_Valid.prototype.rules_bind = function(){
 
-
-    for( var i = 0; i < this.rules.length; i++ )
+    var rules_keys = Object.keys(this.rules);
+    for( var i = 0; i < rules_keys.length; i++ )
     {
-        var rule_parsed = this.rules_parsed(this.rules[i]['rules']);
+        var component_info  = this.name_extract(rules_keys[i]);
+        var type = component_info.type;
+        var index = component_info.index;
+
+        var component_rules = this.rules[rules_keys[i]];
+
+        var rule_parsed = this.rules_parsed(component_rules.rules);
+
         var attribute_component_info;
 
-        if(this.rules[i]['events'])
-            this.events_to_component_register(this.rules[i]['events'], { type : this.rules[i]['type'], index : this.rules[i]['index'] } );
-            attribute_component_info = this.component_info_attribute_set(this.rules[i]['type'], this.rules[i]['index']);
+        if(this.rules[rules_keys[i]]['events'])
+            this.events_to_component_register(this.rules[rules_keys[i]]['events'], { "type" : type, "index" : index } );
+            attribute_component_info = this.component_info_attribute_set(
+                type,
+                index
+            );
 
         rule_parsed = this.__wrap_in_attr(rule_parsed);
 
-        var type = this.rules[i]['type'];
-        var index = this.rules[i]['index'];
-        var msg_container = this.rules[i]['message_id'];
+
+
+        var msg_container = component_rules.message_id;
 
         var component = $mtf.collections[type][index];
         var msg_container = $MTF_Valid_Config.input_message_attr_name + "='" + msg_container + "'";
@@ -259,9 +282,9 @@ MTF_Valid.prototype.rules_bind = function(){
         if( typeof component === 'object' )
         {
             // for aggregated collections such as radios or selects
-            for( var i = 0; i < component.length; i++ )
+            for( var w = 0; w < component.length; w++)
             {
-                var component_split = reg_rule.exec(component[i]);
+                var component_split = reg_rule.exec(component[w]);
                 component[i] = component[i].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
             }
         }
@@ -287,7 +310,7 @@ MTF_Valid.prototype.rules_bind = function(){
                     var form_comp_extracted = reg_msg_rule.exec(current_comp);
                     var tpl =  this.template_detect(msg_info.ruleName);
                     var attributes = {};
-                    var attr = $MTF_Valid_Config.message_attr_name + "='" + this.rules[i]['message_id'] + "'";
+                    var attr = $MTF_Valid_Config.message_attr_name + "='" + component_rules.message_id + "'";
                     tpl = tpl.replace($mtf.ph("attrs"), attr);
                     tpl = form_comp_extracted[1] + tpl;
                     tpl = current_comp.replace(form_comp_extracted[1], tpl);
@@ -308,27 +331,24 @@ MTF_Valid.prototype.rules_bind = function(){
  * @returns {string}
  * @private
  */
-MTF_Valid.prototype.rules_parsed = function(rule_object){
+MTF_Valid.prototype.rules_parsed = function(rule_array){
 
-    var keys = Object.keys(rule_object);
     var rule_string = "";
     var sep = $MTF_Valid_Config.rules_each_separator;
-    for( var i = 0; i < keys.length; i++ )
+    for( var i = 0; i < rule_array.length; i++ )
     {
         var rule_value;
         var random_key = $mtf.rand(10);
 
-        rule_value = rule_object[keys[i]];
-        this.rules_values[random_key] = rule_value;
-        if( typeof rule_value === 'undefined' || typeof rule_value === null )
-            rule_value = true;
-        if(i+1 == keys.length)
+        rule_value = rule_array[i];
+
+        if(i+1 == rule_array.length)
         {
-            rule_string +=  keys[i] + "=" + random_key;
+            rule_string +=  rule_array[i] + "=" + random_key;
         }
         else
         {
-            rule_string +=  keys[i] + "=" + random_key + sep;
+            rule_string +=  rule_array[i] + "=" + random_key + sep;
         }
     }
 
@@ -361,7 +381,10 @@ MTF_Valid.prototype.rules_find = function(element){
             var rule_value = this.rules_values[key_value[1]];
             var g =  event_item_info.index + "-" + event_item_info.type + "-" + key_value[0];
             // searching for placeholders
-            var placeholders = this.template_placeholder_values[event_item_info.index + "-" + event_item_info.type + "-" + key_value[0]];
+            //var placeholders = this.template_placeholder_values[event_item_info.index + "-" + event_item_info.type + "-" + key_value[0]];
+
+            var placeholders = this.rule_data_fetch(key_value[0], event_item_info, "placeholders");
+
 
             var callback_method = this.rules_collection[key_value[0]]['main'];
             var success_callback = this.rules_collection[key_value[0]]['success'];
@@ -507,7 +530,7 @@ MTF_Valid.prototype.Eventize = function(parent_container_id){
  */
 MTF_Valid.prototype.events_to_component_register = function(events_array, compLastInfo)
 {
-    item_type = this.hash_name_to_value(compLastInfo.type);
+    var item_type = this.hash_name_to_value(compLastInfo.type);
 
     if(!this.events_to_rules_collection[compLastInfo.type])
     {
@@ -989,3 +1012,88 @@ MTF_Valid.prototype.component_info_attribute_set = function(item_type, item_inde
     return $MTF_Valid_Config.attribute_component_info + "='" + this.hash_name_to_value(item_type) + "-" + item_index + "'";
 };
 
+
+MTF_Valid.prototype.rule_data_register = function(rule_name, last_component_info, data_object ){
+    if( !this.rules_data.hasOwnProperty(rule_name))
+        this.rules_data[ rule_name ] = {};
+    if( !this.rules_data[ rule_name ].hasOwnProperty(last_component_info.type))
+        this.rules_data[ rule_name ][ last_component_info.type ] = {};
+    if( !this.rules_data[ rule_name ][ last_component_info.type ].hasOwnProperty(last_component_info.type))
+        this.rules_data[ rule_name ][ last_component_info.type ][ last_component_info.index ] = {};
+
+    this.rules_data[ rule_name ][ last_component_info.type ][ last_component_info.index ] = data_object;
+}
+
+MTF_Valid.prototype.rule_data_fetch = function(rule_name, last_component_info, property_name){
+    if(typeof property_name === 'string')
+    {
+        return this.rules_data[rule_name][last_component_info.type][last_component_info.index][property_name];
+    }
+    else
+    {
+        return this.rules_data[rule_name][last_component_info.type][last_component_info.index]
+    }
+}
+
+
+MTF_Valid.prototype.rule_data_update = function(rule_name, last_component_info, property_name, property_value){
+    return this.rules_data[rule_name][last_component_info.type][last_component_info.index][property_name] = property_value;
+}
+
+MTF_Valid.prototype.rule_to_component_register = function(component_info, data){
+    this.rules[this.name_create_from_index_type(component_info)] = data;
+}
+
+MTF_Valid.prototype.rule_to_component_fetch= function(component_info){
+    return this.rules[this.name_create_from_index_type(component_info)];
+}
+
+MTF_Valid.prototype.rule_to_component_exists = function(component_info){
+    return (this.rules.hasOwnProperty(this.name_create_from_index_type(component_info))) ? true : false;
+}
+
+MTF_Valid.prototype.rule_to_component_update = function(component_info, rule_name, data){
+    var old_data = this.rules[this.name_create_from_index_type(component_info)];
+
+    if(data.hasOwnProperty("rules"))
+    {
+        for(var i = 0; i < data.rules.length; i++)
+        {
+            old_data.rules.push(data.rules[i]);
+        }
+    }
+    if(data.hasOwnProperty("events"))
+    {
+        var length1 = Object.keys(data.events);
+        for(var i = 0; i < length1; i++)
+        {
+            var length2 = Object.keys(old_data.events);
+            var allow = false;
+            for(var w = 0; w < length2; w++)
+            {
+                if( old_data.events[length2[w]] == data.events[length1[i]])
+                {
+                    allow = true;
+                }
+            }
+            if(allow)
+            {
+                old_data.events.push(length1[i]);
+            }
+        }
+    }
+
+    this.rules[this.name_create_from_index_type(component_info)][rule_name] = old_data;
+}
+
+MTF_Valid.prototype.name_create_from_index_type = function(component_info){
+    return component_info.type + '-' + component_info.index;
+}
+
+MTF_Valid.prototype.name_extract = function(name_string){
+    var split_name = name_string.split("-");
+    return {
+        type : split_name[0],
+        index : split_name[1]
+    };
+}

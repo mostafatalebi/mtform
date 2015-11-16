@@ -9,6 +9,14 @@ var MTF_Valid = function(){
     // this option holds any event passed in the time of VAdd function call.
     this.events_to_rules_collection = {};
 
+    /**
+     * Stores data for each rule-per-component
+     * @type {{}}
+     */
+    this.rules_data = {};
+
+
+    this.rules_to_components = {};
 
 
     this.templates = MT_VALID_TEMPLATES;
@@ -61,7 +69,7 @@ var MTF_Valid = function(){
      * }
      * @type {{}}
      */
-    this.rules = [];
+    this.rules = {};
 
     /**
      * It keeps any values which must be kept for rule.

@@ -121,8 +121,11 @@ MTVL_RULE_RETURN = {
     /**
      * skip_type specifies if the callback handler should skip any of the validation
      * formal steps.
+     * @default executes callback handler
+     * @todo reminds in the documenation that success_callback at least can be used as a
+     * cleaner() function which cleans if there is any messages related to error_callback()
      */
-    skip_type : MTVL_SKIP_CALLBACK_SUCCESS,
+    skip_type : MTVL_CALLBACK_REGULAR,
 
     /**
      * Validation status for main() function of the rule. By default
