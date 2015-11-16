@@ -5,7 +5,7 @@ MTF_VALID_RULES = {
 
     /**
      * @rule email
-     * @description checks to see if input is a correctly formatter email or not
+     * @description checks to see if input is a correctly formatted email or not
      * @return {NULL}
      * @requires_value YES
      */

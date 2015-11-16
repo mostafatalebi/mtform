@@ -74,6 +74,8 @@ MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
         // instances per component. The following code block checks to see
         // whether to allow multiple insertion or else secure one-insertion
 
+        // @todo we have to make another complementary condition
+        // @todo to allow for insertion of multiple templates
 
         if( this.component_not_bound_to_message(last_comp) )
         {
@@ -92,6 +94,15 @@ MTF_Valid.prototype.ruleRegister = function(rule_name, rule_value, config){
             this.templates_custom.push(this.last_message_id);
         }
     }
+
+    // storing the rules values
+    if(!this.temporary_rules_values.hasOwnProperty(last_comp.type))
+        this.temporary_rules_values[last_comp.type] = {};
+    if(!this.temporary_rules_values[last_comp.type].hasOwnProperty(last_comp.index))
+        this.temporary_rules_values[last_comp.type][last_comp.index] = {};
+
+    this.temporary_rules_values[last_comp.type][last_comp.index][rule_name] = rule_value;
+
 
     this.rule_add_to_collection(rule_name, last_comp);
 
@@ -249,7 +260,7 @@ MTF_Valid.prototype.rules_bind = function(){
 
         var component_rules = this.rules[rules_keys[i]];
 
-        var rule_parsed = this.rules_parsed(component_rules.rules);
+        var rule_parsed = this.rules_parsed(component_rules.rules, component_info);
 
         var attribute_component_info;
 
@@ -331,7 +342,7 @@ MTF_Valid.prototype.rules_bind = function(){
  * @returns {string}
  * @private
  */
-MTF_Valid.prototype.rules_parsed = function(rule_array){
+MTF_Valid.prototype.rules_parsed = function(rule_array, last_component_info){
 
     var rule_string = "";
     var sep = $MTF_Valid_Config.rules_each_separator;
@@ -339,6 +350,16 @@ MTF_Valid.prototype.rules_parsed = function(rule_array){
     {
         var rule_value;
         var random_key = $mtf.rand(10);
+
+        if( this.temporary_rules_values.hasOwnProperty(last_component_info.type) )
+        {
+            var rules_values_keys = Object.keys(this.temporary_rules_values[last_component_info.type]);
+            for(var w = 0; w < rules_values_keys.length; w++)
+            {
+                this.rules_values[random_key] = this.temporary_rules_values[last_component_info.type][rules_values_keys[w]][rule_array[i]];
+            }
+        }
+
 
         rule_value = rule_array[i];
 
@@ -351,7 +372,7 @@ MTF_Valid.prototype.rules_parsed = function(rule_array){
             rule_string +=  rule_array[i] + "=" + random_key + sep;
         }
     }
-
+    this.rules[random_key]
     return rule_string;
 }
 

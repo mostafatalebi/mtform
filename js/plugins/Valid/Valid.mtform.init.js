@@ -80,6 +80,16 @@ var MTF_Valid = function(){
      * @type {Object}
      */
     this.rules_values = {};
+    this.temporary_rules_values = {}; // this object's role is the same as
+    // its preceding variable (rules_values), but it is temporary and stores the
+    // values based on the type and index of the elements and becomes useless , hence we keep them
+    // here, upon parsing the data into string to be rendered as HTML DOM Elements,
+    // we need to approach elements based on the current HTMLElement's DOM Attributes,
+    // therefore it turns to be impossible to catch the data using the type&index method,
+    // which makes us to uses a string-random-key value somewhere in the HTMLElement and then
+    // refer to the values object in JS using that random key. In short, we re-index the
+    // rules_values object from type-index to a random-key based one. type-index is not such a safe and nice
+    // way to be saved in HTMLElement attribute, random-key makes it more computer-ic.
 
     /**
      * Stores all placeholders for a rule which have been passed to the add-rule function
