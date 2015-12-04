@@ -14,7 +14,7 @@
  * Providing a pointer to the main MTF_Valid Object
  */
 $mtf.$lives.Valid = new MTF_Valid();
-var mtf_valid_core_version_needed  = "0.0.1"
+var mtf_valid_core_version_needed  = "0.0.1";
 /**
  * @method VAdd
  * @description Registers a rule for the @__lastComponent and its events in case any passed

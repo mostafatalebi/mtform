@@ -58,9 +58,10 @@ var AjaxCall = function(config){
         cache : (typeof config.cache === null || typeof config.cache === 'undefined') ? "no-cache" : config.cache,
 
         // this option sets the AJAX calls to be sent by the custom library itself. NOTE(Paradox): this config is not used within
-        // this library, but it is an option which could be set by user to force the wraper of this library to
+        // this library, but it is an option which could be set by user to force the wrapper of this library to
         // rely on the library and does not use jQuery which is used by the wrapper is a priority over this library
-        forceDomesticLibrary : (typeof config.forceDomesticLibrary === null || typeof config.forceDomesticLibrary === 'undefined') ? false : config.cache
+        forceDomesticLibrary : (typeof config.forceDomesticLibrary === null ||
+            typeof config.forceDomesticLibrary === 'undefined') ? false : config.cache
     }
 
     // creating the request object compatible with the browser

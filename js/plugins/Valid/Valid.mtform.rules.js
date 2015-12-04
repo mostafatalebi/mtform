@@ -72,14 +72,16 @@ MTF_VALID_RULES = {
          */
         success : function(elm, rule_value, data){
             var msg_parsed = "";
-
-            if(data.hasOwnProperty("placeholders"))
+            if($mtf.$lives.Valid.rule_is_last_in_stack("email"))
             {
-                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
-            }
-            else
-            {
-                data.message_text.replace(":field", elm.getAttribute("name"));
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
             }
 
             $mtf.E(data.message_element).HTML(msg_parsed);
@@ -105,9 +107,10 @@ MTF_VALID_RULES = {
          *                   data to be returned
          */
         error : function(elm, rule_value, data){
+            var msg_parsed = "";
             if(data.hasOwnProperty("message_element"))
             {
-                var msg_parsed = "";
+
 
                 if(data.hasOwnProperty("placeholders"))
                 {
@@ -115,11 +118,10 @@ MTF_VALID_RULES = {
                 }
                 else
                 {
-                    data.message_text.replace(":field", elm.getAttribute("name"));
+                    msg_parsed =  data.message_text.replace(":field", elm.getAttribute("name"));
                 }
-
-                $mtf.E(data.message_element).HTML(msg_parsed);
             }
+            $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
         /**
@@ -185,30 +187,61 @@ MTF_VALID_RULES = {
      *                 -value a value to be matched against
      *                 -element an element whose value is check against the 'value'
      */
-    "if-is" : {
+    "if-element" : {
         events : ["blur"],
 
-        main : function(elm, rule_value, data){
+        main : function(elm, element_to_match, data){
             var result = { status : false, data : "" };
 
-            var elm_value = ($mtf.E(rule_value.element).findAndGetContent());
-            if( rule_value.value != elm_value )
+            var original_element = $mtf.E(elm).findAndGetContent();
+            var secondary_element = $mtf.E(element_to_match).findAndGetContent();
+            if( original_element != secondary_element  )
             {
                 return result;
             }
             else
             {
                 result.status = true;
+                return result;
             }
 
         },
 
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            var msg_parsed = "";
+            // you can check to see if currently this
+            // rule has not other rule to be executed after it,
+            // using this, you can then show "success" messages only
+            // when the last rule is executed
+            if($mtf.$lives.Valid.rule_is_last_in_stack("if-element"))
+            {
+
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+            }
+            $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
         error : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            var msg_parsed = "";
+
+            if(data.hasOwnProperty("placeholders"))
+            {
+                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+            }
+            else
+            {
+                msg_parsed = data.message_text.replace([":field", ":value"], [elm.getAttribute("name"), $mtf.E(element_to_match).findAndGetContent()]);
+            }
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
         template_allow : true,
@@ -236,7 +269,7 @@ MTF_VALID_RULES = {
             },
 
             success : {
-                en : ""
+                en : ":field's value matches."
             }
         }
     },
@@ -264,7 +297,21 @@ MTF_VALID_RULES = {
         },
 
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            if($mtf.$lives.Valid.rule_is_last_in_stack("max"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
         },
 
         error : function(elm, rule_value, data){
@@ -324,7 +371,21 @@ MTF_VALID_RULES = {
         },
 
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            if($mtf.$lives.Valid.rule_is_last_in_stack("min"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
         },
 
         error : function(elm, rule_value, data){
@@ -383,7 +444,21 @@ MTF_VALID_RULES = {
         },
 
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+            if($mtf.$lives.Valid.rule_is_last_in_stack("number"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
         },
 
         error : function(elm, rule_value, data){
@@ -428,10 +503,25 @@ MTF_VALID_RULES = {
      * @rule unique
      * @description sends an ajax request to a specified URL, if the result is not false,
      *              then it assumes the input's value is unique.
+     * @note this rule is different. The type of the rule is of asynchronous
+     *       and as a result it needs to be handled differently. The error() and
+     *       success() callbacks are invoked internally through a third function
+     *       named systematically. You can inspect through the code to see
+     *       the details.
+     * @note this rule follows asynchronous rules' criteria; hence it should
+     *       be queued as the last rule due to its asynchronous nature.
      * @param {Object} url => the URL to which the request is sent
      *                 key : the name of the JSON-key sent through form
      *                 extra : an object containing extra data to be sent
-     * @return {JSON} [optional]
+     * @return {JSON} response object must have a key named "status" which
+     *                is of a type boolean and is used by MTFormJS to see
+     *                if the server confirms the uniqueness of the value or not
+     *                You can send any extra data from the server as long as
+     *                the key "status" is used with a value of type boolean.
+     *                [if Object] {
+     *                  'status' => [boolean]
+     *                  ...
+     *                }
      * @requires_value YES => {Object|String}
      *                 [if object]{
      *                      url {String} [required] the URL
@@ -534,10 +624,31 @@ MTF_VALID_RULES = {
             return result;
         },
         success : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+
+            if($mtf.$lives.Valid.rule_is_last_in_stack("unique"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
         },
 
         error : function(elm, rule_value, data){
+            var field_label = "Field";
+            if(data.placeholders.hasOwnProperty("field"))
+            {
+                field_label =data.placeholders.field;
+            }
+            data.message_text = data.message_text.replace(":field", field_label);
             $mtf.E(data.message_element).HTML(data.message_text);
         },
 
@@ -569,6 +680,106 @@ MTF_VALID_RULES = {
 
             success : {
                 en : ":field is unique."
+            }
+        }
+    },
+
+
+    /**
+     * @rule if-value
+     * @description checks for another input's value
+     * @return {NULL}
+     * @requires_value YES
+     *                 -value a value to be matched against
+     *                 -element an element whose value is check against the 'value'
+     */
+    "if-value" : {
+        events : ["blur"],
+
+        main : function(elm, value, data){
+            var result = MTVL_RULE_RETURN;
+
+            var original_element = $mtf.E(elm).findAndGetContent();
+
+            if( data.hasOwnProperty("skip_type") )
+            {
+                result.skip_type = data.skip_type;
+            }
+
+            if( original_element != value  )
+            {
+                return result;
+            }
+            else
+            {
+                result.status = true;
+                return result;
+            }
+
+        },
+
+        success : function(elm, rule_value, data){
+            var msg_parsed = "";
+            // you can check to see if currently this
+            // rule has not other rule to be executed after it,
+            // using this, you can then show "success" messages only
+            // when the last rule is executed
+            if($mtf.$lives.Valid.rule_is_last_in_stack("if-element"))
+            {
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+            }
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
+        },
+
+        error : function(elm, rule_value, data){
+            var msg_parsed = "";
+
+            if(data.hasOwnProperty("placeholders"))
+            {
+                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+            }
+            else
+            {
+                msg_parsed = data.message_text.replace([":field", ":value"], [elm.getAttribute("name"), $mtf.E(element_to_match).findAndGetContent()]);
+            }
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
+        },
+
+        template_allow : true,
+
+        templates : {
+            main :    "<span :attrs></span>",
+            error :   "<span :attrs ></span>",
+            success : "<span :attrs ></span>"
+        },
+
+        template_default : "main",
+
+        templates_default : {
+            main : {
+                style : "display: none;"
+            }
+        },
+        messages : {
+            main : {
+                en : "",
+            },
+
+            error : {
+                en : ":field's value should be :value"
+            },
+
+            success : {
+                en : ":field's value matches."
             }
         }
     },

@@ -118,5 +118,28 @@ var MTF_Valid = function(){
      */
     this.templates_custom = [];
 
+
+    /**
+     * An object which holds a key&value pair. The key is
+     * a random key which had been generated and put into
+     * a certain DOMElement, and the value is the name
+     * of the RULE for whose value the random key has been generated
+     * instead.
+     * Note: random key mechanism is simple. A random key is
+     * generated and is put into somewhere in the DOM. That value
+     * is also a pointer to a key of a collection. That key's value
+     * is the rule value. we need
+     * to keep a live track of such exchange. We can trace it
+     * through the DOM analysis, but due to process overhead overhead,
+     * we prefer data redundancy over process overhead.
+     * @type {{}}
+     */
+    this.rules_rand_key_to_rule_name = {};
+
 }
 
+
+if(!window.mtform_valid)
+{
+    window.mtform_valid = {};
+}

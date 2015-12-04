@@ -1,6 +1,6 @@
 /**
  * This plugin receives all the values of the form's components. It allows exclusion of certain components (by name).
- * It returns both an object or an JSON-string of the value with the form's name as their keys.
+ * It returns both an object or an JSON-string of the values with the form's name as their keys.
  */
 
 /**
@@ -16,6 +16,18 @@ var MTF_FormElement = function(form_selector) {
 MTF_FormElement.prototype.getComponents = function() {
     return this.form.elements;
 }
+
+MTF_FormElement.prototype.detectType = function(element) {
+    if( element.tagName.toLowerCase() == "checkbox" || element.tagName.toLowerCase() )
+    {
+
+    }
+    else
+    {
+        return element;
+    }
+};
+
 
 MTF_FormElement.prototype.getComponentsByAttribute = function( attr_name, element_exclusion_by_name, callback ){
     var form_data;

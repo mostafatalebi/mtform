@@ -58,7 +58,7 @@ mtFormInit.prototype.E = function(element)
             var tag_name = element.tagName.toLowerCase();
             element = ( typeof element === 'string' ) ? document.querySelector(element) : element;
 
-            if($mtf.form_components_names.indexOf() == tag_name )
+            if( $mtf.form_components_names.indexOf(tag_name) != -1 )
             {
                 if(tag_name == 'textarea' || tag_name == 'button')
                 {

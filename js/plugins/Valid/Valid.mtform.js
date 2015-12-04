@@ -252,8 +252,13 @@ MTF_Valid.prototype.rule_add_to_collection = function(rule_name, component_info)
 MTF_Valid.prototype.rules_bind = function(){
 
     var rules_keys = Object.keys(this.rules);
+
+    /**
+     * Looping through each element
+     */
     for( var i = 0; i < rules_keys.length; i++ )
     {
+        // extracting the name to get proper data
         var component_info  = this.name_extract(rules_keys[i]);
         var type = component_info.type;
         var index = component_info.index;
@@ -264,12 +269,19 @@ MTF_Valid.prototype.rules_bind = function(){
 
         var attribute_component_info;
 
+        /**
+         * The following block registers the events for elements. The event listeners
+         * are not attached here, they are attached when events_add_listeners() is invoked.
+         */
         if(this.rules[rules_keys[i]]['events'])
+        {
             this.events_to_component_register(this.rules[rules_keys[i]]['events'], { "type" : type, "index" : index } );
             attribute_component_info = this.component_info_attribute_set(
                 type,
                 index
             );
+        }
+
 
         rule_parsed = this.__wrap_in_attr(rule_parsed);
 
@@ -296,7 +308,7 @@ MTF_Valid.prototype.rules_bind = function(){
             for( var w = 0; w < component.length; w++)
             {
                 var component_split = reg_rule.exec(component[w]);
-                component[i] = component[i].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+                component[w] = component[w].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
             }
         }
         else
@@ -306,26 +318,102 @@ MTF_Valid.prototype.rules_bind = function(){
         }
 
         $mtf.collections[type][index] = component;
-      //  var this_rule_s_message_id =
+        //  var this_rule_s_message_id =
         /* finalizing message container */
         if( this.message_injection_container.length > 0 )
         {
-            var reg_msg_rule = new RegExp("(?:.*)(<input.*\/>)(?:.*)");
+            var reg_msg_rule = new RegExp("(?:.*)(<" + reg_comp_type + ".*\/>)(?:.*)");
             for( var w = 0; w < this.message_injection_container.length; w++ )
             {
+                // checks to see if the rule is bound to current component or not
                 if( this.message_injection_container[w].type == type &&
                     this.message_injection_container[w].index == index )
                 {
                     var msg_info = this.message_injection_container[w];
-                    var current_comp = $mtf.collections[msg_info.type][msg_info.index];
-                    var form_comp_extracted = reg_msg_rule.exec(current_comp);
+                    var current_comp = null;
+                    var temp_comp  = $mtf.collections[msg_info.type][msg_info.index];
+                    var form_comp_extracted = null;
                     var tpl =  this.template_detect(msg_info.ruleName);
-                    var attributes = {};
                     var attr = $MTF_Valid_Config.message_attr_name + "='" + component_rules.message_id + "'";
-                    tpl = tpl.replace($mtf.ph("attrs"), attr);
-                    tpl = form_comp_extracted[1] + tpl;
-                    tpl = current_comp.replace(form_comp_extracted[1], tpl);
-                    $mtf.collections[msg_info.type][msg_info.index] = tpl;
+                    var final_template = "";
+                    if( typeof temp_comp === "string")
+                    {
+                        current_comp = $mtf.collections[msg_info.type][msg_info.index];
+                        form_comp_extracted = reg_msg_rule.exec(current_comp);
+                        tpl = tpl.replace( $mtf.ph("attrs"), attr);
+                        tpl = form_comp_extracted[1] + tpl;
+                        final_template = current_comp.replace(form_comp_extracted[1], tpl);
+                    }
+                    /**
+                     * Currently the only known aggregated HTMLElements are
+                     * checkboxes, radios and selects.
+                     * Hence the following block is for the above type of HTMLElements
+                     */
+                    else if(typeof temp_comp == 'object')
+                    {
+                        // this is a value passed in the time of invocation
+                        // as the value of an option named "position"
+                        var positioning_index = 0;
+
+                        current_comp = $mtf.collections[msg_info.type][msg_info.index];
+                        form_comp_extracted = reg_msg_rule.exec(current_comp[positioning_index]);
+                        tpl = tpl.replace( $mtf.ph("attrs"), attr);
+
+                        // @todo for radios and checkboxes we pass the message container before the elements and not after them
+                        if( type == 'checkbox' || type == 'radio' )
+                        {
+                            tpl = tpl + form_comp_extracted[1];
+                        }
+                        else
+                        {
+                            tpl = form_comp_extracted[1] + tpl;
+                        }
+
+                        // we have to put everything back in order, hence re-loop the
+                        // collection and put them back.
+                        for( var pb = 0; pb < current_comp.length; pb++)
+                        {
+                            if( pb != positioning_index )
+                            {
+                                final_template += current_comp[pb];
+                            }
+                            else
+                            {
+                                final_template = current_comp[positioning_index].replace(form_comp_extracted[1], tpl);
+                            }
+                        }
+                        /*
+                        for( var k = 0; i < temp_comp.length; k++)
+                        {
+                            current_comp.push($mtf.collections[msg_info.type][msg_info.index][k]);
+                            form_comp_extracted.push(reg_msg_rule.exec($mtf.collections[msg_info.type][msg_info.index][k]));
+
+                            for(var s = 0; s < form_comp_extracted.length; s++)
+                            {
+                                if( typeof form_comp_extracted[s] == 'object' )
+                                {
+                                    tpl = form_comp_extracted[s][1] + tpl; // @todo undefined error here
+                                    if( typeof current_comp == 'object')
+                                    {
+                                        tpl = current_comp[0].replace(form_comp_extracted[s][1], tpl);
+                                    }
+                                    else
+                                    {
+                                        tpl = current_comp.replace(form_comp_extracted[s][1], tpl);
+                                    }
+
+                                    final_template += tpl;
+                                }
+
+                            }
+
+                        }
+                        **/
+
+                    }
+
+
+                    $mtf.collections[msg_info.type][msg_info.index] = final_template;
 
                     break;
                 }
@@ -371,6 +459,9 @@ MTF_Valid.prototype.rules_parsed = function(rule_array, last_component_info){
         {
             rule_string +=  rule_array[i] + "=" + random_key + sep;
         }
+
+        // save the random_key=rule_name pair
+        this.rules_rand_key_to_rule_name[random_key] = rule_array[i];
     }
     this.rules[random_key]
     return rule_string;
@@ -705,7 +796,7 @@ MTF_Valid.prototype.event_get_default = function(tag_name){
 
 /**
  * Adds event listener to the form-component children of a form. This function iterates recursively through
- * all the children of a form's,checkes if their are of type form component, if yes, then
+ * all the children of a form's,checks if their are of type form component, if yes, then
  * checks if they have any events to be attached to them. In case true, it creates a callback,
  * passes all necessary arguments of that specific rule to that call back, and then attaches the event
  * with that callback set as its callback, to the element.
@@ -732,7 +823,8 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                     var rule_value = rules_array[keys[w]]['value'];
                     var messages = rules_array[keys[w]]['messages'];
                     var placeholders = rules_array[keys[w]]['placeholders'];
-
+                    var other_options = rules_array[keys[w]];
+                    var rule_name = keys[w];
 
                     // since events accepts an array of events, we loops through events as well, no matter
                     // if the user has passed one event or more.
@@ -759,23 +851,26 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                      * @param item the current element
                      * @param rule_value the current rule's value assigned in Form Creation
                      * @param msg_container the message element
-                     * @param messages_main message string for mainCallback
-                     * @param messages_error message string for errorCallback
-                     * @param messages_success message string for successCallback
+                     * @param messages_main string for mainCallback
+                     * @param messages_error string for errorCallback
+                     * @param messages_success string for successCallback
+                     * @param placeholders object an object containing key&value pairs. Key is the name
+                     *                     of placeholder and value is its replacing value.
+                     * @param others object the rest of options
                      * @returns {Function}
                      */
-                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container, messages_main, messages_error, messages_success, placeholders) {
+                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container,
+                                                  messages_main, messages_error, messages_success, placeholders, others) {
                         return function (event) {
                             var current_element = item;
                             var event_object = event;
                             return $mtf.$lives.Valid.event_callback_handler(
                                 function () {
-                                    return cb_main(current_element, rule_value, {
+                                    var configuration = {
                                         "message_element": msg_container,
                                         "message_text": messages_main,
                                         "event": event_object,
-                                        "placeholders" : placeholders,
-
+                                        "placeholders": placeholders,
                                         // such extra data is needed if the rule's main
                                         // function tries to call error callback or success
                                         // callback internally. This is needed for functions
@@ -785,13 +880,25 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                                         // might want to write a customized rule which
                                         // would do operations inside its main() function
                                         // and hence should have access to this information
-                                        system : {
-                                            error_callback : cb_error,
-                                            success_callback : cb_success,
-                                            message_error : messages_error,
-                                            message_success : messages_success
+                                        system: {
+                                            error_callback: cb_error,
+                                            success_callback: cb_success,
+                                            message_error: messages_error,
+                                            message_success: messages_success
                                         }
-                                    });
+                                    };
+
+                                    var conf_keys = Object.keys(others);
+                                    for(var x = 0; x < conf_keys.length; x++)
+                                    {
+                                        if( !configuration.hasOwnProperty(conf_keys[x]) )
+                                        {
+                                            configuration[conf_keys[x]] = others[conf_keys[x]];
+                                        }
+                                    }
+
+
+                                    return cb_main(current_element, rule_value, configuration);
                                 },
                                 function () {
                                     return cb_error(current_element, rule_value, {
@@ -818,7 +925,7 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
 
                     callbackProcessQueue.push(
                         createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
-                            messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders)
+                            messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders, other_options)
                     );
 
 
@@ -1065,14 +1172,31 @@ MTF_Valid.prototype.rule_to_component_register = function(component_info, data){
     this.rules[this.name_create_from_index_type(component_info)] = data;
 }
 
+/**
+ *
+ * @param component_info
+ * @returns {*}
+ */
 MTF_Valid.prototype.rule_to_component_fetch= function(component_info){
     return this.rules[this.name_create_from_index_type(component_info)];
 }
 
+/**
+ * If a rule is associated with a component or not
+ * @param component_info
+ * @returns {boolean}
+ */
 MTF_Valid.prototype.rule_to_component_exists = function(component_info){
     return (this.rules.hasOwnProperty(this.name_create_from_index_type(component_info))) ? true : false;
 }
 
+/**
+ * Adds a rule with its data-object to the list of rules associated with the given
+ * component
+ * @param component_info the component to which the rules are associated
+ * @param rule_name the name of the rule to be added
+ * @param data the data object of the rule
+ */
 MTF_Valid.prototype.rule_to_component_update = function(component_info, rule_name, data){
     var old_data = this.rules[this.name_create_from_index_type(component_info)];
 
@@ -1107,14 +1231,38 @@ MTF_Valid.prototype.rule_to_component_update = function(component_info, rule_nam
     this.rules[this.name_create_from_index_type(component_info)][rule_name] = old_data;
 }
 
+/**
+ * Creates a name from the component's index and type
+ * @param component_info
+ * @returns {string}
+ */
 MTF_Valid.prototype.name_create_from_index_type = function(component_info){
     return component_info.type + '-' + component_info.index;
 }
 
+/**
+ * Extracts a name into type and index object.
+ * @param name_string
+ * @returns {{type: *, index: *}}
+ */
 MTF_Valid.prototype.name_extract = function(name_string){
     var split_name = name_string.split("-");
     return {
         type : split_name[0],
         index : split_name[1]
     };
+}
+
+/**
+ * Checks to see if the rule_name is the last rule in the rules-queue or not.
+ * @param rule_name the name of the rule to be checked
+ * @returns {boolean} true if the rule_name is the last rule in the rules-queue and false if
+ * it is not
+ */
+MTF_Valid.prototype.rule_is_last_in_stack = function(rule_name){
+
+    var rules_values_keys = Object.keys(this.rules_values);
+    var rules_length = rules_values_keys.length;
+    var last_rule_name = this.rules_rand_key_to_rule_name[rules_values_keys[rules_length-1]];
+    return (last_rule_name == rule_name);
 }

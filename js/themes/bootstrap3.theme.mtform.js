@@ -8,7 +8,7 @@ if( $mtf.pluginLoaded( "Theme" ) )
         hidden : "<input type='hidden' :attrs />",
         textarea : "<div class='input-group'><textarea class='form-control' :attrs >:innerValue</textarea></div>",
         radio : "<input type='radio' :values  :attrs /><span :label::attrs >:title</span>",
-        checkbox : "<input type='checkbox'   :attrs /><span :label::attrs >:title</span>",
+        checkbox : "<input type='checkbox'   :attrs /><span :label::attrs >:title</span><div class='something-container'></div>",
         submit : "<input type='submit'   :attrs />",
         button : "<button   :attrs >:value</button>",
         select : "<select  :attrs >:options</select>",
