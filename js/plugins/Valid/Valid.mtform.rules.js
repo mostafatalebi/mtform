@@ -124,6 +124,10 @@ MTF_VALID_RULES = {
             $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+        },
+
         /**
          * Allows insertion of templates for this rule.
          */
@@ -244,6 +248,10 @@ MTF_VALID_RULES = {
             $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+        },
+
         template_allow : true,
 
         templates : {
@@ -316,6 +324,10 @@ MTF_VALID_RULES = {
 
         error : function(elm, rule_value, data){
             $mtf.E(data.message_element).HTML(data.message_text);
+        },
+
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
         },
 
         template_allow : true,
@@ -392,6 +404,10 @@ MTF_VALID_RULES = {
             $mtf.E(data.message_element).HTML(data.message_text);
         },
 
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+        },
+
         template_allow : true,
 
         templates : {
@@ -465,6 +481,9 @@ MTF_VALID_RULES = {
             $mtf.E(data.message_element).HTML(data.message_text);
         },
 
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+        },
         /**
          * Allows insertion of templates for this rule.
          */
@@ -652,6 +671,9 @@ MTF_VALID_RULES = {
             $mtf.E(data.message_element).HTML(data.message_text);
         },
 
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+        },
 
         template_allow : true,
 
@@ -691,7 +713,7 @@ MTF_VALID_RULES = {
      * @return {NULL}
      * @requires_value YES
      *                 -value a value to be matched against
-     *                 -element an element whose value is check against the 'value'
+     *                 -element an element whose value is checked against the 'value'
      */
     "if-value" : {
         events : ["blur"],
@@ -704,6 +726,10 @@ MTF_VALID_RULES = {
             if( data.hasOwnProperty("skip_type") )
             {
                 result.skip_type = data.skip_type;
+            }
+            if( data.hasOwnProperty("cleaner"))
+            {
+                result.cleaner_type = data.cleaner;
             }
 
             if( original_element != value  )
@@ -752,6 +778,10 @@ MTF_VALID_RULES = {
             }
 
             $mtf.E(data.message_element).HTML(msg_parsed);
+        },
+
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
         },
 
         template_allow : true,

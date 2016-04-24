@@ -119,7 +119,7 @@ MTVL_CALL_CLEANER = 203;
  * cleaner function in any condition
  * @type {string}
  */
-MTVL_SKIP_CLEANER = 203;
+MTVL_SKIP_CLEANER = 204;
 
 
 
@@ -143,7 +143,7 @@ MTVL_RULE_RETURN = {
     skip_type : MTVL_CALLBACK_REGULAR,
 
 
-    cleaner : MTVL_CALL_CLEANER,
+    cleaner_type : MTVL_CALL_CLEANER,
 
     /**
      * Validation status for main() function of the rule. By default

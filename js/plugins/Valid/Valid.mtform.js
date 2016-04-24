@@ -501,6 +501,7 @@ MTF_Valid.prototype.rules_find = function(element){
             var callback_method = this.rules_collection[key_value[0]]['main'];
             var success_callback = this.rules_collection[key_value[0]]['success'];
             var error_callback = this.rules_collection[key_value[0]]['error'];
+            var cleaner_callback = this.rules_collection[key_value[0]]['cleaner'];
             var events_collection = this.events_fetch(element);
             var msg = this.rules_collection[key_value[0]]['messages'];
 
@@ -508,11 +509,13 @@ MTF_Valid.prototype.rules_find = function(element){
                 callback : callback_method,
                 success : success_callback,
                 error : error_callback,
+                cleaner : cleaner_callback,
                 value : rule_value,
                 events : events_collection,
                 messages : msg,
                 "events-default" : this.rules_collection[key_value[0]]['events'],
-                placeholders : placeholders
+                placeholders : placeholders,
+                others : this.rules_collection[key_value[0]],
             };
         }
 
@@ -667,8 +670,11 @@ MTF_Valid.prototype.events_to_component_register = function(events_array, compLa
  * @param initial_callback {function} the main callback for the event
  * @param error {function} optional a callback to be called when initial_callback returns false
  * @param success {function} optional a callback to be called when initial_callback returns true
+ * @param cleaner {function} optional a callback to be called over success callback. It is
+ *                                    heavier than success callback and is called instead of
+ *                                    success callback
  */
-MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, success){
+MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, success, cleaner){
     var result = initial_callback();
 
     // checks to see if the return-object has a type property
@@ -701,18 +707,30 @@ MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, s
                 }
                 else
                 {
-                    // checks to see if the skip_type is set for success_callback
-                    if( result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS )
+                    if( result.cleaner_type && result.cleaner_type != MTVL_SKIP_CLEANER )
                     {
                         var success_result;
-                        if(success) success(result.data);
-                            success_result = success(result.data);
+                        if(cleaner) cleaner(result.data);
+                        success_result = cleaner(result.data);
                         return true;
                     }
                     else
                     {
-                        return true;
+                        // checks to see if the skip_type is set for success_callback
+                        if( result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS )
+                        {
+                            var success_result;
+                            if(success) success(result.data);
+                            success_result = success(result.data);
+                            return true;
+                        }
+                        else
+                        {
+
+                            return true;
+                        }
                     }
+
                 }
             }
             // checks to see if the function should skip the success_callback
@@ -755,14 +773,22 @@ MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, s
             }
             else
             {
-                if( result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS )
+                if( result.cleaner_type && result.cleaner_type != MTVL_SKIP_CLEANER )
                 {
-                    if(success) success(result.data);
+                    var success_result;
+                    if(cleaner) cleaner(result.data);
+                    success_result = cleaner(result.data);
                     return true;
                 }
                 else
                 {
-                    return true;
+                    if (result.skip_type !== MTVL_SKIP_CALLBACK_SUCCESS) {
+                        if (success) success(result.data);
+                        return true;
+                    }
+                    else {
+                        return true;
+                    }
                 }
             }
         }
@@ -775,7 +801,6 @@ MTF_Valid.prototype.event_callback_handler = function(initial_callback, error, s
             }
             else
             {
-
                 if(success) success(result.data);
                 return true;
             }
@@ -820,6 +845,7 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                     var callback_function = rules_array[keys[w]]['callback'];
                     var callback_success_function = rules_array[keys[w]]['success'];
                     var callback_error_function = rules_array[keys[w]]['error'];
+                    var callback_cleaner_function = rules_array[keys[w]]['cleaner'];
                     var rule_value = rules_array[keys[w]]['value'];
                     var messages = rules_array[keys[w]]['messages'];
                     var placeholders = rules_array[keys[w]]['placeholders'];
@@ -859,7 +885,7 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                      * @param others object the rest of options
                      * @returns {Function}
                      */
-                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, msg_container,
+                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, cb_cleaner, msg_container,
                                                   messages_main, messages_error, messages_success, placeholders, others) {
                         return function (event) {
                             var current_element = item;
@@ -883,6 +909,7 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                                         system: {
                                             error_callback: cb_error,
                                             success_callback: cb_success,
+                                            cleaner_callback: cb_cleaner,
                                             message_error: messages_error,
                                             message_success: messages_success
                                         }
@@ -915,6 +942,14 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                                         "event": event_object,
                                         "placeholders" : placeholders,
                                     })
+                                },
+                                function () {
+                                    return cb_cleaner(current_element, rule_value, {
+                                        "message_element": msg_container,
+                                        "message_text": messages_success,
+                                        "event": event_object,
+                                        "placeholders" : placeholders,
+                                    })
                                 }
                             );
                         }
@@ -924,7 +959,8 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
                     var event = null;
 
                     callbackProcessQueue.push(
-                        createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function, msg_container, messages.main[$mtf.lang],
+                        createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function,
+                            callback_cleaner_function, msg_container, messages.main[$mtf.lang],
                             messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders, other_options)
                     );
 
