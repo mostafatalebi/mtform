@@ -192,7 +192,7 @@ mtFormInit.prototype.Custom = function(markup, args){
  * @param innerValue @__innerValue
  * @returns {object} @__mtformObject
  */
-mtFormInit.prototype.AttachLabel = function(args, innerValue)
+mtFormInit.prototype.AttachLabel = function(innerValue, args)
 {
     var last_comp_info = this.componentLastInfo;
     this.label_generate(last_comp_info, args, innerValue);
