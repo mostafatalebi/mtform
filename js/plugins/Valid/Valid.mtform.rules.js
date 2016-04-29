@@ -110,8 +110,6 @@ MTF_VALID_RULES = {
             var msg_parsed = "";
             if(data.hasOwnProperty("message_element"))
             {
-
-
                 if(data.hasOwnProperty("placeholders"))
                 {
                     msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
@@ -370,12 +368,18 @@ MTF_VALID_RULES = {
         events : ["blur"],
 
         main : function(elm, rule_value, data){
-            var result = { status : false, data : "" };
+            var result = MTVL_RULE_RETURN;
+
             result.status = (elm.value.length >= parseInt(rule_value)) ? true : false;
 
             if(data.hasOwnProperty("message_element"))
             {
                 $mtf.E(data.message_element).HTML(data.message_text);
+            }
+
+            if( data.hasOwnProperty("skip_type") )
+            {
+                result.skip_type = data.skip_type;
             }
 
             return result;
@@ -400,12 +404,25 @@ MTF_VALID_RULES = {
             }
         },
 
-        error : function(elm, rule_value, data){
-            $mtf.E(data.message_element).HTML(data.message_text);
+        error : function(elm, rule_value, data)
+        {
+            var msg_parsed = "";
+            if(data.hasOwnProperty("placeholders"))
+            {
+                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+            }
+            else
+            {
+                msg_parsed =  data.message_text.replace(":field", elm.getAttribute("name"));
+            }
+
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
         },
 
         cleaner : function (elm, rule_value, data){
             $mtf.E(data.message_element).HTML("");
+            data.message_element.innerHTML = "";
         },
 
         template_allow : true,
@@ -715,7 +732,7 @@ MTF_VALID_RULES = {
      *                 -value a value to be matched against
      *                 -element an element whose value is checked against the 'value'
      */
-    "if-value" : {
+    "value" : {
         events : ["blur"],
 
         main : function(elm, value, data){

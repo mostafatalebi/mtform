@@ -5,7 +5,7 @@ window.onload = function(){
         .AttachLabel( "First Name: ")
         .Input("lastname").Rule("min", 3)
         .AttachLabel( "Last Name: ")
-        .Input("email").Rule("email")
+        .Input("email").Rule("email", null, { template : true , placeholders : { "field" : "Email"}, events : ['blur'] })
         .AttachLabel( "Email Address: ")
         .Input("job").Rule("min", 3)
         .AttachLabel( "Current Job: ")
@@ -20,9 +20,14 @@ window.onload = function(){
         .Textarea("foundus", { placeholder : "Somewhere"})
         .AttachLabel( "How did you find us: ")
         .Input("_token", "true", { type : 'hidden'})
+        .Select("favorite_position", { labels : ['Backend Programmer', 'Frontend Programer', 'Sales Expert'],
+            values : ['bp', 'fp', 'se'], attrs : { 'data-type' : 'example'}, options_attrs : [{ class : 'each-option'}], repeat : true })
+        .Rule("value", 'bp', { template : true , placeholders : { "field" : "Favorite Position"}, events : ['blur', 'change'] })
+        .HtmlBefore("<br />").HtmlAfter("<br /><br /><br /><br />")
+        .AttachLabel("Your Favorite Position")
+
         .Submit("submit", "Register", { id : "register" }).Form({ id : "login-form" , action : "server.php"})
         .Bind().MakeAppend();
 
         $mtf.Eventize("#login-form");
-    console.log($mtf.Export());
 }

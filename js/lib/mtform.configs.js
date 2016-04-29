@@ -11,6 +11,4 @@ mtFormInit.prototype.config = function(){
 
     // allows exporting of the JSON result of the generated form
     //this.allowExport = true; CURRENTLY NOT SUPPORTED
-
-
 }

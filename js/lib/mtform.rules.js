@@ -14,6 +14,7 @@
  * @param ruleName
  * @param ruleValue
  * @returns {mtFormInit}
+ * @deprecated Use valid plugin
  */
 mtFormInit.prototype.addRule = function(ruleName, ruleValue){
     if(typeof ruleValue === null || typeof ruleValue === "undefined")
@@ -23,7 +24,13 @@ mtFormInit.prototype.addRule = function(ruleName, ruleValue){
     return this;
 };
 
-
+/**
+ *
+ * @param type
+ * @returns {string}
+ * @private
+ * @deprecated Use valid plugin
+ */
 mtFormInit.prototype.__rulesToString = function(type){
 
     type = (typeof type === null || typeof type === 'undefined')
@@ -47,6 +54,11 @@ mtFormInit.prototype.__rulesToString = function(type){
     return baseAttr+"="+"'"+rules+"'";
 };
 
+/**
+ *
+ * @returns {boolean}
+ * @deprecated Use valid plugin
+ */
 mtFormInit.prototype.hasRule = function(){
     return (this.rules.length > 0) ? true : false;
 };

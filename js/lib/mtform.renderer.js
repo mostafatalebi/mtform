@@ -161,10 +161,18 @@ mtFormInit.prototype.html_wrapper = function(openTag, closeTag){
 
 mtFormInit.prototype.Export = function( inclusion, exclusion ){
     var export_result = {};
+    console.log(this.exports);
     for( var i = 0; i < this.exports.length; i++ )
     {
-        var callback = this.exports[i]['callback'];
-        export_result[this.exports[i].name] = callback();
+        var callback = null;
+        try{
+            callback = this.exports[i]['callback'];
+            export_result[this.exports[i].name] = callback();
+        }
+        catch(e)
+        {
+
+        }
     }
     return export_result;
 };

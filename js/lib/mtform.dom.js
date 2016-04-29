@@ -1,7 +1,3 @@
-/**
- * Created by safa on 30/11/2014.
- */
-
 mtFormInit.prototype.html_inject = function(component_last_collection_properties, insertion_type, array_skip)
 {
     if(insertion_type == 'after')
@@ -451,6 +447,21 @@ mtFormInit.prototype.addCheckboxes = function(attrs, checkboxesArgs){
     return checkboxes;
 };
 
+/**
+ * Creates a <select> html component.
+ * @param attrs
+ * @param options
+ * It supports the following keys:
+ *      ..All supported HTML Attributes...
+ *      options_attrs Array an array objects holding option attributes. These attributes
+ *      have are mapped to each <option> corresponding to their index.
+ *      repeat boolean forces to use the first [object] element of the option_attrs
+ *                     for all the <option>s regardless of the Array.length.
+ *      @todo must add some index-associated keys for options_attr, so that the use can use
+ *      LAST_ITEM : [something] which tells the parses to use this object as the option of the last
+ *      option (FIRST_ITEM etc. and such keys)
+ * @returns {*}
+ */
 mtFormInit.prototype.addSelect = function(attrs, options){
     var value = "";
     value = (typeof options == 'string' || typeof options.value === "undefined" || typeof options.value === "null")
@@ -464,6 +475,10 @@ mtFormInit.prototype.addSelect = function(attrs, options){
     var templatePossibleIterator = 0;
     var optionTpl = "";
     var option_template = this.template_fetch("option");
+    if( !options.hasOwnProperty("options_attrs") )
+    {
+        options['options_attrs'] = [];
+    }
     for(var i = 0; i < options.values.length; i++)
     {
         var unique_values = "";
@@ -514,8 +529,8 @@ mtFormInit.prototype.addSelect = function(attrs, options){
             optionTpl = option_template;
         }
         var current_option_attr;
-        if(options.optionAttrUseOneSet === true) current_option_attr = options.optionAttr[0];
-        else current_option_attr = options.optionAttr[i];;
+        if( options.hasOwnProperty('repeat') && options.repeat === true) current_option_attr = options.options_attrs[0];
+        else current_option_attr = options.options_attrs[i];;
         // we then parse them individually
         option.push(this.template_process(optionTpl, [":attrs", ":uniqueValue", ":innerValue"],
             [this.attributes_concat(current_option_attr), unique_values, innerValue]));

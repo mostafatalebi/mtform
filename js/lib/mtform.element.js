@@ -39,10 +39,18 @@ mtFormInit.prototype.E = function(element)
         },
 
         HTML : function(html){
-            if(html)
+            if($mtf.Element.tagName.toLowerCase() == 'span' && html )
+            {
+                $mtf.Element.innerHTML = "";
+                $mtf.Element.appendChild(document.createTextNode(html));
+            }
+            else if(html)
+            {
                 $mtf.Element.innerHTML = html;
-            else
+            }
+            else {
                 return $mtf.Element.innerHTML;
+            }
         },
 
         /**
