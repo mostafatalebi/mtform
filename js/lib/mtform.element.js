@@ -39,7 +39,8 @@ mtFormInit.prototype.E = function(element)
         },
 
         HTML : function(html){
-            if($mtf.Element.tagName.toLowerCase() == 'span' && html )
+            console.log($mtf.Element.tagName.toLowerCase());
+            if($mtf.Element.tagName.toLowerCase() == 'span' && typeof html !== "undefined" )
             {
                 $mtf.Element.innerHTML = "";
                 $mtf.Element.appendChild(document.createTextNode(html));

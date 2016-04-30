@@ -291,7 +291,7 @@ MTF_VALID_RULES = {
 
         main : function(elm, rule_value, data){
             var result = { status : false, data : "" };
-            result.status = (elm.value.length <= parseInt(rule_value)) ? true : false;
+            result.status = (elm.value.length == 0 || elm.value.length <= parseInt(rule_value)) ? true : false;
 
             if(data.hasOwnProperty("message_element"))
             {
@@ -370,7 +370,7 @@ MTF_VALID_RULES = {
         main : function(elm, rule_value, data){
             var result = MTVL_RULE_RETURN;
 
-            result.status = (elm.value.length >= parseInt(rule_value)) ? true : false;
+            result.status = (elm.value.length == 0 || elm.value.length >= parseInt(rule_value)) ? true : false;
 
             if(data.hasOwnProperty("message_element"))
             {
@@ -447,6 +447,106 @@ MTF_VALID_RULES = {
 
             error : {
                 en : ":field should not be less than :length character"
+            },
+
+            success : {
+                en : ""
+            }
+        }
+    },
+
+    /**
+     * @rule required
+     * @description checks to see if the value's length is more than 1
+     * @return {NULL}
+     * @requires_value NO
+     */
+    "required" : {
+        events : ["blur"],
+
+        main : function(elm, rule_value, data){
+            var result = MTVL_RULE_RETURN;
+
+            result.status = (elm.value.length > 0) ? true : false;
+
+            if(data.hasOwnProperty("message_element"))
+            {
+                $mtf.E(data.message_element).HTML(data.message_text);
+            }
+
+            if( data.hasOwnProperty("skip_type") )
+            {
+                result.skip_type = data.skip_type;
+            }
+
+            return result;
+        },
+
+        success : function(elm, rule_value, data){
+            if($mtf.$lives.Valid.rule_is_last_in_stack("min"))
+            {
+                var msg_parsed = "";
+
+                if(data.hasOwnProperty("placeholders"))
+                {
+                    msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+                }
+                else
+                {
+                    msg_parsed = data.message_text.replace(":field", elm.getAttribute("name"));
+                }
+
+                $mtf.E(data.message_element).HTML(msg_parsed);
+            }
+        },
+
+        error : function(elm, rule_value, data)
+        {
+            var msg_parsed = "";
+
+            if(data.hasOwnProperty("placeholders"))
+            {
+                if(!data.placeholders.hasOwnProperty('::field'))
+                    data.placeholders['::field'] = $mtf.placeholders_get_default("::field", 'valid');
+
+                msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
+            }
+            else
+            {
+                msg_parsed =  data.message_text.replace(":field", elm.getAttribute("name"));
+            }
+
+
+            $mtf.E(data.message_element).HTML(msg_parsed);
+        },
+
+        cleaner : function (elm, rule_value, data){
+            $mtf.E(data.message_element).HTML("");
+            data.message_element.innerHTML = "";
+        },
+
+        template_allow : true,
+
+        templates : {
+            main : "<span :attrs></span>",
+            error : "<span :attrs ></span>",
+            success : "<span :attrs ></span>"
+        },
+
+        template_default : "main",
+
+        templates_default : {
+            main : {
+                style : "display: none;"
+            }
+        },
+        messages : {
+            main : {
+                en : "",
+            },
+
+            error : {
+                en : "::field's value should not be empty."
             },
 
             success : {
@@ -738,7 +838,7 @@ MTF_VALID_RULES = {
         main : function(elm, value, data){
             var result = MTVL_RULE_RETURN;
 
-            var original_element = $mtf.E(elm).findAndGetContent();
+            var current_element_value = $mtf.E(elm).findAndGetContent();
 
             if( data.hasOwnProperty("skip_type") )
             {
@@ -749,7 +849,7 @@ MTF_VALID_RULES = {
                 result.cleaner_type = data.cleaner;
             }
 
-            if( original_element != value  )
+            if( current_element_value != value  )
             {
                 return result;
             }
@@ -784,14 +884,25 @@ MTF_VALID_RULES = {
 
         error : function(elm, rule_value, data){
             var msg_parsed = "";
-
+            // @todo it works correctly. But for ease of use, we should add a new placeholder
+            // called default_value, so that this placeholder gets replaced with an automatic
+            // value(which is the rule's default passed value); Because now user has to
+            // one value twice, one as the main value of the rule, one a value to be shown
+            // up instead of :value of error message.
             if(data.hasOwnProperty("placeholders"))
             {
+                if(!data.placeholders.hasOwnProperty("::default_value"))
+                    data.placeholders['::default_value'] = rule_value;
+
                 msg_parsed = $mtf.$lives.Valid.message_parse(data.message_text, data.placeholders);
             }
             else
             {
-                msg_parsed = data.message_text.replace([":field", ":value"], [elm.getAttribute("name"), $mtf.E(element_to_match).findAndGetContent()]);
+                // :placeholder are normal placeholders whose values are passed by user
+                // ::placeholder are system placeholders whose values are given out by the system
+                // @todo add above description to the proper section of documentation
+                msg_parsed = data.message_text.replace([":field", "::default_value"], [elm.getAttribute("name"),
+                    rule_value]);
             }
 
             $mtf.E(data.message_element).HTML(msg_parsed);
@@ -799,6 +910,7 @@ MTF_VALID_RULES = {
 
         cleaner : function (elm, rule_value, data){
             $mtf.E(data.message_element).HTML("");
+            //data.message_element.innerHTML = "";
         },
 
         template_allow : true,
@@ -822,7 +934,7 @@ MTF_VALID_RULES = {
             },
 
             error : {
-                en : ":field's value should be :value"
+                en : ":field's value should be ::default_value"
             },
 
             success : {

@@ -3,7 +3,7 @@ window.onload = function(){
 
     $mtf.Input("firstname", { class : "form-input"}).Rule("min", 3)
         .AttachLabel( "First Name: ")
-        .Input("lastname").Rule("min", 3)
+        .Input("lastname").Rule("required").Rule("min", 3)
         .AttachLabel( "Last Name: ")
         .Input("email").Rule("email", null, { template : true , placeholders : { "field" : "Email"}, events : ['blur'] })
         .AttachLabel( "Email Address: ")
@@ -12,6 +12,7 @@ window.onload = function(){
         .Input("education").Rule("min", 3)
         .AttachLabel( "Highest Level of Education: ")
         .Radios("sex", { labels : ['male', 'female', 'Not Mentioned.'], values : ['male', 'female', 'none']})
+        .Rule("value", 'male', {events : ['click']})
         .AttachLabel(  "Your Gender: ")
         .Textarea("bio", { placeholder : "A Brief Description About Yourself."})
         .AttachLabel( "Your Brief Bio: ")
@@ -22,7 +23,7 @@ window.onload = function(){
         .Input("_token", "true", { type : 'hidden'})
         .Select("favorite_position", { labels : ['Backend Programmer', 'Frontend Programer', 'Sales Expert'],
             values : ['bp', 'fp', 'se'], attrs : { 'data-type' : 'example'}, options_attrs : [{ class : 'each-option'}], repeat : true })
-        .Rule("value", 'bp', { template : true , placeholders : { "field" : "Favorite Position"}, events : ['blur', 'change'] })
+        .Rule("value", 'bp', { template : true , placeholders : { "field" : "Favorite Position"}, events : ['change'] })
         .HtmlBefore("<br />").HtmlAfter("<br /><br /><br /><br />")
         .AttachLabel("Your Favorite Position")
 

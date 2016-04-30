@@ -25,7 +25,7 @@ function mtFormInit(container_selector){
 
     this.collections =              MTF_Collection;
     this.form_components_names =    MTF_COMPONENTS;
-    this.placeholders =             MTF_PLACEHOLDERS;
+    this.placeholders_storage =     MTF_PLACEHOLDERS;
 
     this.attrs = ""; // assigns the attributes translated from args to this var
     this.htmls = ""; // assigns the attributes translated from args to this var

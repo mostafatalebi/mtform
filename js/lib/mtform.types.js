@@ -32,15 +32,19 @@ var MTF_HTML = {
  * @type {{rules: string, component: string, before: string, after: string, message: string, label: string, attrs: string, value: string, innerValue: string}}
  */
 var MTF_PLACEHOLDERS = {
-    rules : ":rules",
-    component : ":component",
-    before : ":before",
-    after : ":after",
-    message : ":message",
-    label : ":label",
-    attrs : ":attrs",
-    value : ":value",
-    innerValue : ":innerValue",
+    en : {
+        mtform : {
+            rules : ":rules",
+            component : ":component",
+            before : ":before",
+            after : ":after",
+            message : ":message",
+            label : ":label",
+            attrs : ":attrs",
+            value : ":value",
+            innerValue : ":innerValue",
+        }
+    }
 };
 
 /**

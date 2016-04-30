@@ -300,16 +300,60 @@ MTF_Valid.prototype.rules_bind = function(){
         if(typeof attribute_component_info !== 'string' ) attribute_component_info = "";
         if(typeof rule_parsed !== 'string' ) rule_parsed = "";
         if(typeof msg_container !== 'string' ) msg_container = "";
-
-
-        if( typeof component === 'object' )
+        /**
+         * @todo in later versions we must make a more powerful, modular and
+         * object oriented approach for injecting rule's associated template params.
+         * Now, we achieve this through template processing, but in future revisions,
+         * it is worth transferring the following code into a more standard code, the
+         * one which uses the system's EvenEngine and relies on pointers tha actual
+         * [hardened] string values.
+         */
+        if( component_info.type == 'select')
         {
-            // for aggregated collections such as radios or selects
-            for( var w = 0; w < component.length; w++)
+            var component_split = reg_rule.exec(component);
+            component = component.replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+        }
+        else if( component_info.type === 'radio' ||  component_info.type === 'checkbox' )
+        {
+            /**
+             * What we do here?
+             * Since in aggregated collections, we do have several instances of a component,
+             * such as two or more radios, all of them are created using <input type='radio' ... />
+             * hence, our regular RegEx does not suffice, as it would only match one instance
+             * (the very first one) of a certain component. Hence, the rest of instances
+             * would remain untouched by the rules&events, resulting in a broken validation
+             * system for that set of components. The following block of code process the first
+             * component, regularly as the other types of component, then the component_temp_name
+             * which is a randomly generated value, appended to a designated name ("CUSTOM_TEMPLATE_NAME")
+             * to make a totally partly sensible, partly random name, replaces the very first component's
+             * real name, hence removing it from later match candidates; then, since the while still returns
+             * true, the next first available component would be matched, processed, and then replaced
+             * with the temporary name, making room for the next potential component to be matched
+             * and so and on....
+             */
+            var component_temp_name = "<CUSTOM_TEMPLATE_NAME"+$mtf.rand(15); // a randomName
+            while( reg_rule.test(component) !== false )
             {
-                var component_split = reg_rule.exec(component[w]);
-                component[w] = component[w].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+                var component_split = reg_rule.exec(component);
+                var tag_temp_replacement = component_temp_name; // this prevents the next match to stop at this component
+                component = component.replace(reg_rule, tag_temp_replacement + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
             }
+
+            /**
+             * This while simply replaces all temp name with the component's real name.
+             */
+            while( component.indexOf(component_temp_name) != -1 )
+            {
+                component = component.replace(component_temp_name, "<"+reg_comp_type);
+            }
+
+
+            // // for aggregated collections such as radios or checkboxes
+            // for( var w = 0; w < component.length; w++)
+            // {
+            //     var component_split = reg_rule.exec(component[w]);
+            //     component[w] = component[w].replace(reg_rule, component_split[1] + " " + attribute_component_info + " " + rule_parsed + " " + msg_container + " " + component_split[2]);
+            // }
         }
         else
         {
@@ -336,11 +380,24 @@ MTF_Valid.prototype.rules_bind = function(){
                     var tpl =  this.template_detect(msg_info.ruleName);
                     var attr = $MTF_Valid_Config.message_attr_name + "='" + component_rules.message_id + "'";
                     var final_template = "";
-                    if( typeof temp_comp === "string")
+                    /**
+                     * Because the last segment of aggregated templates, such as radios and
+                     * checkboxes are not the self-closing tags, but rather are a piece of
+                     * label, we have to push the message template to the end of the template,
+                     */
+                    if( component_info.type == 'radio' || component_info.type == 'checkbox' )
+                    {
+                        current_comp = $mtf.collections[msg_info.type][msg_info.index];
+                        // form_comp_extracted = reg_msg_rule.exec(current_comp);
+                        tpl = tpl.replace( $mtf.placeholders_get_default("attrs", 'mtform'), attr);
+                        tpl = current_comp + tpl;
+                        final_template = tpl;
+                    }
+                    else if( typeof temp_comp === "string")
                     {
                         current_comp = $mtf.collections[msg_info.type][msg_info.index];
                         form_comp_extracted = reg_msg_rule.exec(current_comp);
-                        tpl = tpl.replace( $mtf.ph("attrs"), attr);
+                        tpl = tpl.replace( $mtf.placeholders_get_default("attrs", 'mtform'), attr);
                         tpl = form_comp_extracted[1] + tpl;
                         final_template = current_comp.replace(form_comp_extracted[1], tpl);
                     }
@@ -357,7 +414,7 @@ MTF_Valid.prototype.rules_bind = function(){
 
                         current_comp = $mtf.collections[msg_info.type][msg_info.index];
                         form_comp_extracted = reg_msg_rule.exec(current_comp[positioning_index]);
-                        tpl = tpl.replace( $mtf.ph("attrs"), attr);
+                        tpl = tpl.replace( $mtf.placeholders_get_default("attrs", 'mtform') , attr);
 
                         // @todo for radios and checkboxes we pass the message container before the elements and not after them
                         if( type == 'checkbox' || type == 'radio' )
@@ -821,7 +878,7 @@ MTF_Valid.prototype.event_get_default = function(tag_name){
 
 /**
  * Adds event listener to the form-component children of a form. This function iterates recursively through
- * all the children of a form's,checks if their are of type form component, if yes, then
+ * all the children of a form,checks if they are of type form component, if yes, then
  * checks if they have any events to be attached to them. In case true, it creates a callback,
  * passes all necessary arguments of that specific rule to that call back, and then attaches the event
  * with that callback set as its callback, to the element.
@@ -831,174 +888,201 @@ MTF_Valid.prototype.events_add_listeners = function(form_selector){
     var parent_cont = document.querySelector(form_selector);
     var mainFunction = this;
     this.each(parent_cont, function(current_child, current_parent){
-        var item = current_child;
-        var events = [];
-        if($mtf.is_form_component(item))
+        // @todo devise a way to retrieve <select>, because the iterator loops through
+        // <options> by bypassing (not considering) the <select>
+        var parent_tag_name = current_parent.tagName.toLowerCase();
+        var parent_childTag_name = current_parent.tagName.toLowerCase();
+        var items = [];
+
+        // @todo we do a simple comparison here to check if its <select>
+        // but later on, we must create a more convenient, comprehensive
+        // and extensible way. Because we might have future modules allowing
+        // users to create custom FORM Elements, which probably require
+        // special treatments in all regions
+        if( parent_tag_name == 'select' )
         {
-            var rules_array = mainFunction.rules_find(item);
-            var callbackProcessQueue = [];
-            if(rules_array)
+            items.push(current_parent);
+        }
+
+        items.push(current_child);
+
+        var events = [];
+
+        // why do we create another loop?
+        // because having a loop allows us to have more control
+        // over our elements, even when they passed from is_form_component()
+        // and we can change the collection right before it gets bound 
+        for( var itr = 0; itr < items.length; itr++ )
+        {
+            var item = items[itr];
+            if($mtf.is_form_component(item))
             {
-                var keys = Object.keys(rules_array);
-                for(var w = 0; w < keys.length; w++)
+                var rules_array = mainFunction.rules_find(item);
+                var callbackProcessQueue = [];
+                if(rules_array)
                 {
-                    var callback_function = rules_array[keys[w]]['callback'];
-                    var callback_success_function = rules_array[keys[w]]['success'];
-                    var callback_error_function = rules_array[keys[w]]['error'];
-                    var callback_cleaner_function = rules_array[keys[w]]['cleaner'];
-                    var rule_value = rules_array[keys[w]]['value'];
-                    var messages = rules_array[keys[w]]['messages'];
-                    var placeholders = rules_array[keys[w]]['placeholders'];
-                    var other_options = rules_array[keys[w]];
-                    var rule_name = keys[w];
-
-                    // since events accepts an array of events, we loops through events as well, no matter
-                    // if the user has passed one event or more.
-                    events = rules_array[keys[w]]['events-default'];
-                    var events_to_rules_collection = mainFunction.events_fetch(item);
-                    if( events_to_rules_collection && events_to_rules_collection.length > 0 )
+                    var keys = Object.keys(rules_array);
+                    for(var w = 0; w < keys.length; w++)
                     {
-                        events = events_to_rules_collection;
+                        var callback_function = rules_array[keys[w]]['callback'];
+                        var callback_success_function = rules_array[keys[w]]['success'];
+                        var callback_error_function = rules_array[keys[w]]['error'];
+                        var callback_cleaner_function = rules_array[keys[w]]['cleaner'];
+                        var rule_value = rules_array[keys[w]]['value'];
+                        var messages = rules_array[keys[w]]['messages'];
+                        var placeholders = rules_array[keys[w]]['placeholders'];
+                        var other_options = rules_array[keys[w]];
+                        var rule_name = keys[w];
+
+                        // since events accepts an array of events, we loops through events as well, no matter
+                        // if the user has passed one event or more.
+                        events = rules_array[keys[w]]['events-default'];
+                        var events_to_rules_collection = mainFunction.events_fetch(item);
+                        if( events_to_rules_collection && events_to_rules_collection.length > 0 )
+                        {
+                            events = events_to_rules_collection;
+                        }
+                        var event_callback_handler = mainFunction.event_callback_handler;
+
+                        var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
+
+
+
+
+                        /**
+                         * This function creates a function-pack out of three methods of current rule. It paves the way for
+                         * variables assignment in a scope-friendly way. Without such approach, it is not possible to keep
+                         * an array of functions with their own local variables's values the same as when they very assigned/declared
+                         * /created. We have to use the following motherFunction to create a function for us to be used later.
+                         * @usage Allows us to delegate function execution to a later time if current rule returns false
+                         * @param event the current event
+                         * @param item the current element
+                         * @param rule_value the current rule's value assigned in Form Creation
+                         * @param msg_container the message element
+                         * @param messages_main string for mainCallback
+                         * @param messages_error string for errorCallback
+                         * @param messages_success string for successCallback
+                         * @param placeholders object an object containing key&value pairs. Key is the name
+                         *                     of placeholder and value is its replacing value.
+                         * @param others object the rest of options
+                         * @returns {Function}
+                         */
+                        var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, cb_cleaner, msg_container,
+                                                      messages_main, messages_error, messages_success, placeholders, others) {
+                            return function (event) {
+                                var current_element = item;
+                                var event_object = event;
+                                return $mtf.$lives.Valid.event_callback_handler(
+                                    function () {
+                                        var configuration = {
+                                            "message_element": msg_container,
+                                            "message_text": messages_main,
+                                            "event": event_object,
+                                            "placeholders": placeholders,
+                                            // such extra data is needed if the rule's main
+                                            // function tries to call error callback or success
+                                            // callback internally. This is needed for functions
+                                            // which contains asynchronous AJAX.
+                                            // But regardless of AJAX-bound functions, there
+                                            // are unpredicted conditions where a developer
+                                            // might want to write a customized rule which
+                                            // would do operations inside its main() function
+                                            // and hence should have access to this information
+                                            system: {
+                                                error_callback: cb_error,
+                                                success_callback: cb_success,
+                                                cleaner_callback: cb_cleaner,
+                                                message_error: messages_error,
+                                                message_success: messages_success
+                                            }
+                                        };
+
+                                        var conf_keys = Object.keys(others);
+                                        for(var x = 0; x < conf_keys.length; x++)
+                                        {
+                                            if( !configuration.hasOwnProperty(conf_keys[x]) )
+                                            {
+                                                configuration[conf_keys[x]] = others[conf_keys[x]];
+                                            }
+                                        }
+
+
+                                        return cb_main(current_element, rule_value, configuration);
+                                    },
+                                    function () {
+                                        return cb_error(current_element, rule_value, {
+                                            "message_element": msg_container,
+                                            "message_text": messages_error,
+                                            "event": event_object,
+                                            "placeholders" : placeholders,
+                                        })
+                                    },
+                                    function () {
+                                        return cb_success(current_element, rule_value, {
+                                            "message_element": msg_container,
+                                            "message_text": messages_success,
+                                            "event": event_object,
+                                            "placeholders" : placeholders,
+                                        })
+                                    },
+                                    function () {
+                                        return cb_cleaner(current_element, rule_value, {
+                                            "message_element": msg_container,
+                                            "message_text": messages_success,
+                                            "event": event_object,
+                                            "placeholders" : placeholders,
+                                        })
+                                    }
+                                );
+                            }
+                        };
+
+                        // we have to initialize the event object to avoid undefined error
+                        var event = null;
+
+                        callbackProcessQueue.push(
+                            createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function,
+                                callback_cleaner_function, msg_container, messages.main[$mtf.lang],
+                                messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders, other_options)
+                        );
+
+
+
                     }
-                    var event_callback_handler = mainFunction.event_callback_handler;
-
-                    var msg_container = item.parentElement.querySelector("["+$MTF_Valid_Config.message_attr_name+"='"+item.getAttribute($MTF_Valid_Config.input_message_attr_name)+"']");
-
-
-
 
                     /**
-                     * This function creates a function-pack out of three methods of current rule. It paves the way for
-                     * variables assignment in a scope-friendly way. Without such approach, it is not possible to keep
-                     * an array of functions with their own local variables's values the same as when they very assigned/declared
-                     * /created. We have to use the following motherFunction to create a function for us to be used later.
-                     * @usage Allows us to delegate function execution to a later time if current rule returns false
-                     * @param event the current event
-                     * @param item the current element
-                     * @param rule_value the current rule's value assigned in Form Creation
-                     * @param msg_container the message element
-                     * @param messages_main string for mainCallback
-                     * @param messages_error string for errorCallback
-                     * @param messages_success string for successCallback
-                     * @param placeholders object an object containing key&value pairs. Key is the name
-                     *                     of placeholder and value is its replacing value.
-                     * @param others object the rest of options
-                     * @returns {Function}
+                     * This loops through the events array and attach the proper callback to the
+                     * iterated event(though most of the time there is just one event).
                      */
-                    var createFunction = function(event, item, rule_value, cb_main, cb_error, cb_success, cb_cleaner, msg_container,
-                                                  messages_main, messages_error, messages_success, placeholders, others) {
-                        return function (event) {
-                            var current_element = item;
-                            var event_object = event;
-                            return $mtf.$lives.Valid.event_callback_handler(
-                                function () {
-                                    var configuration = {
-                                        "message_element": msg_container,
-                                        "message_text": messages_main,
-                                        "event": event_object,
-                                        "placeholders": placeholders,
-                                        // such extra data is needed if the rule's main
-                                        // function tries to call error callback or success
-                                        // callback internally. This is needed for functions
-                                        // which contains asynchronous AJAX.
-                                        // But regardless of AJAX-bound functions, there
-                                        // are unpredicted conditions where a developer
-                                        // might want to write a customized rule which
-                                        // would do operations inside its main() function
-                                        // and hence should have access to this information
-                                        system: {
-                                            error_callback: cb_error,
-                                            success_callback: cb_success,
-                                            cleaner_callback: cb_cleaner,
-                                            message_error: messages_error,
-                                            message_success: messages_success
-                                        }
-                                    };
+                    for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
+                    {
+                        var mainCallbackAttacher = function(event){
+                            for(var i = 0; i < callbackProcessQueue.length; i++)
+                            {
+                                var result = callbackProcessQueue[i](event);
 
-                                    var conf_keys = Object.keys(others);
-                                    for(var x = 0; x < conf_keys.length; x++)
-                                    {
-                                        if( !configuration.hasOwnProperty(conf_keys[x]) )
-                                        {
-                                            configuration[conf_keys[x]] = others[conf_keys[x]];
-                                        }
-                                    }
-
-
-                                    return cb_main(current_element, rule_value, configuration);
-                                },
-                                function () {
-                                    return cb_error(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages_error,
-                                        "event": event_object,
-                                        "placeholders" : placeholders,
-                                    })
-                                },
-                                function () {
-                                    return cb_success(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages_success,
-                                        "event": event_object,
-                                        "placeholders" : placeholders,
-                                    })
-                                },
-                                function () {
-                                    return cb_cleaner(current_element, rule_value, {
-                                        "message_element": msg_container,
-                                        "message_text": messages_success,
-                                        "event": event_object,
-                                        "placeholders" : placeholders,
-                                    })
+                                if( result.hasOwnProperty("status") )
+                                {
+                                    if(result.status !== true )
+                                        break;
                                 }
-                            );
-                        }
-                    };
+                                else
+                                {
+                                    if( result !== true )
+                                        break;
+                                }
+                            }
+                        };
 
-                    // we have to initialize the event object to avoid undefined error
-                    var event = null;
-
-                    callbackProcessQueue.push(
-                        createFunction(event, item, rule_value, callback_function, callback_error_function, callback_success_function,
-                            callback_cleaner_function, msg_container, messages.main[$mtf.lang],
-                            messages.error[$mtf.lang], messages.success[$mtf.lang], placeholders, other_options)
-                    );
-
-
+                        item.addEventListener( events[eventIncr], mainCallbackAttacher )
+                    }
 
                 }
 
-                /**
-                 * This loops through the events array and attach the proper callback to the
-                 * iterated event(though most of the time there is just one event).
-                 */
-                for( var eventIncr = 0 ; eventIncr < events.length; eventIncr++)
-                {
-                    var mainCallbackAttacher = function(event){
-                        for(var i = 0; i < callbackProcessQueue.length; i++)
-                        {
-                            var result = callbackProcessQueue[i](event);
-
-                            if( result.hasOwnProperty("status") )
-                            {
-                                if(result.status !== true )
-                                    break;
-                            }
-                            else
-                            {
-                                if( result !== true )
-                                    break;
-                            }
-                        }
-                    };
-
-                    item.addEventListener( events[eventIncr], mainCallbackAttacher )
-                }
 
             }
-
-
         }
+
     });
 
 }
@@ -1122,10 +1206,15 @@ MTF_Valid.prototype.message_id_into_template = function(element_selector_or_obje
  */
 MTF_Valid.prototype.message_parse = function(message, placeholders){
     var keys = Object.keys(placeholders);
-    var msg_parsed = "";
+    var msg_parsed = message;
     for(var i = 0; i < keys.length; i++)
     {
-        msg_parsed = message.replace(":"+keys[i].toLowerCase(), placeholders[keys[i]]);
+        var key_name = ":"+keys[i].toLowerCase();
+        if( keys[i].toLowerCase().indexOf("::") == 0 ) // means it is a system placeholder
+        {
+            key_name = keys[i].toLowerCase();
+        }
+        msg_parsed = message.replace(key_name, placeholders[keys[i]]);
     }
     return msg_parsed;
 }

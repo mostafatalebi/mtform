@@ -9,7 +9,7 @@ mtFormInit.prototype.template_parse = function(placeholder, replaceValue)
     {
         for(var i = 0; i < this.inputs.length; i++)
         {
-            result.push(this.templateImmediate.replace(this.ph(placeholder), this.inputs[i]));
+            result.push(this.templateImmediate.replace(this.placeholders.get_default(placeholder, "mtform"), this.inputs[i]));
         }
         return result;
     }

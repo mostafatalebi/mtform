@@ -10,9 +10,9 @@ mtFormInit.prototype.language_set = function(lang_name){
 
 /**
  * Gets current default language.
- * @param lang_name {String} the name of the language
  * @returns {string}
  */
-mtFormInit.prototype.language_fetch = function(lang_name){
+mtFormInit.prototype.language_fetch = function(){
     return this.lang;
 }
+

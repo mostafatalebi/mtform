@@ -457,7 +457,7 @@ mtFormInit.prototype.objectJoinWithFormData = function( object, formData ) {
 }
 
 /**
- * Generates a random string containing numbers and letters based on a the length passed.
+ * Generates a random string containing numbers and letters based on the length passed.
  * @param len {Integer} a number representing the length of
  *                      the generated string.
  * @returns {string}

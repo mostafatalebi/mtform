@@ -68,6 +68,7 @@ mtFormInit.prototype.hasRule = function(){
  * @param emptyRules erases the rules array after each rule relates super-function (AddRule(), AddRules() etc)
  * @returns {mtFormInit} returns the main Object
  * @private
+ * @deprecated Use valid plugin
  */
 mtFormInit.prototype.__parseRules = function(emptyRules){
 
