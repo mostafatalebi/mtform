@@ -140,6 +140,8 @@ function mtFormInit(container_selector){
         message : "<div :attrs >:message</div>",
         label : "<label :attrs >:innerValue:</label>"
     }
+
+    EventEngine.dispatchEvent("onInit", "mtform", new EventObject({ target : this, type : 'onInit'}));
 };
 
 /**
