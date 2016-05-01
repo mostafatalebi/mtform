@@ -1,9 +1,10 @@
 mtform
 ======
 
-Create forms of any kind and magnitude with MTFormJS, then add your complex validation, theme in your
+Create forms of any kind and magnitude with MTFormJS,
+then add your complex validation, theme in your
 own style and fashion, and let it go!
-You may export or import all data if you need to.
+You may export or import all the data if you need to.
 
 MTFormJS Features:
 Template-based form components
@@ -15,4 +16,4 @@ Multilingual, Integrated, Template-Based Message System
 
 ======
 
-Due to working on the system, the beta version yet has not been released.
+The beta version yet has not been released.
