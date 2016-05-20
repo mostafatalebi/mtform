@@ -145,7 +145,7 @@ function mtFormInit(container_selector){
      * @target No Target
      * @type onInit
      */
-    EventEngine.dispatchEvent("onInit", "mtform", new EventObject({ target : null, type : 'onInit'}));
+    EventEngine.dispatchEvent("onInit", new EventObject({ target : null, type : 'onInit'}));
 };
 
 /**

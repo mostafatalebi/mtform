@@ -33,7 +33,7 @@ window.onload = function(){
         $mtf.Eventize("#login-form");
 
     EventEngine.addEventListener("onExportAdd", function(event){
-            console.log("hello");
+            console.log("I am from Export Module");
     });
     
     $mtf.Export.Add({ id : 23}, "keyName", "core");

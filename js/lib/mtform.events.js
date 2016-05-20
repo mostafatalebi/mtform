@@ -12,15 +12,15 @@ var MTFORM_EVENT_GROUP= 'mtform';
 /**
  * Core
  */
-EventEngine.Register("onInit", MTFORM_EVENT_GROUP);
-EventEngine.Register("onTemplateParsing", MTFORM_EVENT_GROUP);
+EventEngine.Register("onInit");
+EventEngine.Register("onTemplateParsing");
 
 
 /**
  * Export
  */
-EventEngine.Register("onExportAdd", "export");
-EventEngine.Register("onExport", "export");
+EventEngine.Register("onExportAdd");
+EventEngine.Register("onExport");
 
 
 
@@ -28,13 +28,13 @@ EventEngine.Register("onExport", "export");
 /**
  * example
  */
-EventEngine.addEventListener("onInit", MTFORM_EVENT_GROUP, function(event){
+EventEngine.addEventListener("onInit", function(event){
     event.preventDefault();
     console.log("I have been triggered.");
 });
 /**
  * example
  */
-EventEngine.addEventListener("onAfterGenerate", MTFORM_EVENT_GROUP, function(event){
+EventEngine.addEventListener("onAfterGenerate", function(event){
     console.log(event.target);
 });

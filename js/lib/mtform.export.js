@@ -29,7 +29,7 @@ mtFormExportAPI.prototype.Add = function(exportData, exportKey, exportGroup, for
      * @target Object
      * @type onInit
      */
-    eventObject = EventEngine.dispatchEvent("onExportAdd", "export", eventObject);
+    eventObject = EventEngine.dispatchEvent("onExportAdd", eventObject);
 
 
     return this.ExportSystem.EntryRegister(exportData, exportKey, exportGroup, forceOverride);
