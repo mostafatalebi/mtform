@@ -10,7 +10,12 @@
  * No parsing should be done after this function.
  */
 mtFormInit.prototype.generate = function(){
-
+    /**
+     * @target No Target
+     * @type onInit
+     */
+    EventEngine.dispatchEvent("onBeforeGenerate", "mtform",
+        new EventObject({ target : this.collections, type : 'onBeforeGenerate'}));
 
     // if it is set, then applies it
     // this.alternate();
@@ -56,6 +61,13 @@ mtFormInit.prototype.generate = function(){
     collection_to_html = this.components_into_form(collection_to_html);
 
     this.htmls = collection_to_html;
+
+    /**
+     * @target No Target
+     * @type onInit
+     */
+    EventEngine.dispatchEvent("onAfterGenerate", "mtform",
+        new EventObject({ target : collection_to_html, type : 'onAfterGenerate'}));
 };
 
 
@@ -158,22 +170,29 @@ mtFormInit.prototype.html_wrapper = function(openTag, closeTag){
     return this;
 };
 
-
-mtFormInit.prototype.Export = function( inclusion, exclusion ){
-    var export_result = {};
-    console.log(this.exports);
-    for( var i = 0; i < this.exports.length; i++ )
-    {
-        var callback = null;
-        try{
-            callback = this.exports[i]['callback'];
-            export_result[this.exports[i].name] = callback();
-        }
-        catch(e)
-        {
-
-        }
-    }
-    return export_result;
-};
+/**
+ *
+ * @param inclusion
+ * @param exclusion
+ * @returns {{}}
+ * @constructor
+ * @deprecated
+ */
+// mtFormInit.prototype.Export = function( inclusion, exclusion ){
+//     var export_result = {};
+//     console.log(this.exports);
+//     for( var i = 0; i < this.exports.length; i++ )
+//     {
+//         var callback = null;
+//         try{
+//             callback = this.exports[i]['callback'];
+//             export_result[this.exports[i].name] = callback();
+//         }
+//         catch(e)
+//         {
+//
+//         }
+//     }
+//     return export_result;
+// };
 

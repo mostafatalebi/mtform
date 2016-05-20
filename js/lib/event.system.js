@@ -9,6 +9,21 @@ EventSystem.prototype.events_listening = {};
 
 
 EventSystem.prototype.__event_system_add_listener = function(eventName, eventGroupKey, eventCallback, eventWeight){
+    /**
+     * @todo should make arguments handling more flexible. So it would be possible
+     * to ignore eventGroupKey totally when using addEventListener() and use it
+     * as eventCallback instead
+     */
+    if( typeof eventGroupKey !== 'string'  &&  typeof eventGroupKey === 'object')
+    {
+        eventCallback = eventGroupKey;
+        eventGroupKey = "SEARCH_ENTIRELY";
+    }
+    else if( (typeof eventGroupKey !== 'string' && typeof eventGroupKey !== 'object') && eventCallback === 'object')
+    {
+        eventGroupKey = "SEARCH_ENTIRELY";
+    }
+
     if( this.__event_exists(eventName, eventGroupKey) )
     {
         if( !this.events_listening.hasOwnProperty(eventGroupKey) )
@@ -27,7 +42,6 @@ EventSystem.prototype.__event_system_add_listener = function(eventName, eventGro
 }
 
 EventSystem.prototype.__event_system_register = function(eventName, eventGroupKey){
-    eventGroupKey = (typeof eventGroupKey != 'string' ) ? "basic" : eventGroupKey;
     if(!this.events_list.hasOwnProperty(eventGroupKey))
     {
         if(!this.__event_exists(eventName, eventGroupKey))
@@ -104,22 +118,42 @@ EventSystem.prototype.__event_exists = function(eventName, eventGroupKey){
     eventGroupKey = (typeof eventGroupKey != 'string' ) ? "basic" : eventGroupKey;
 
     try {
-        if(!this.events_list.hasOwnProperty(eventGroupKey))
+        // search entirely: does not limit the search to the
+        // a specific group and searches the whole collection
+        // and stops at the first occurrence and return true,
+        // it reached to the end of collection, returns false
+        if( eventGroupKey === 'SEARCH_ENTIRELY')
         {
-            return false;
-        }
-        else if(!this.events_list[eventGroupKey].hasOwnProperty(eventName))
-        {
+            var keys = Object.keys(this.events_list);
+            for(var i = 0; i < keys.length; i++)
+            {
+                if(this.events_list[keys[i]].hasOwnProperty(eventName))
+                {
+                    return true;
+                }
+            }
             return false;
         }
         else
         {
-            return true;
+            if(!this.events_list.hasOwnProperty(eventGroupKey))
+            {
+                return false;
+            }
+            else if(!this.events_list[eventGroupKey].hasOwnProperty(eventName))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
+
     }
     catch(e)
     {
-
+        console.warn(e.message);
     }
 }
 

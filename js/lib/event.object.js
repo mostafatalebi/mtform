@@ -76,5 +76,4 @@ function EventObject(eventData) {
         this.setTarget(eventData.target);
     if(eventData.hasOwnProperty("type"))
         this.type = eventData.type;
-
 };

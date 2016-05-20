@@ -31,4 +31,10 @@ window.onload = function(){
         .Bind().MakeAppend();
 
         $mtf.Eventize("#login-form");
+
+    EventEngine.addEventListener("onExportAdd", function(event){
+            console.log("hello");
+    });
+    
+    $mtf.Export.Add({ id : 23}, "keyName", "core");
 }

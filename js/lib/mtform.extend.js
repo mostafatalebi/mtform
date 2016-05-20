@@ -13,7 +13,13 @@ mtFormInit.prototype.extends = function( name, callback ){
         mtFormInit.prototype[name] = callback;
 }
 
-
+/**
+ *
+ * Defines a callback to be called on $mtd.Export()
+ * @param name
+ * @param exportFunction
+ * @deprecated use Export service instead
+ */
 mtFormInit.prototype.exportDefine = function( name, exportFunction ){
     var new_plugin = { name : "", callback : null };
     new_plugin.name = name;
@@ -21,17 +27,32 @@ mtFormInit.prototype.exportDefine = function( name, exportFunction ){
     this.exports.push(new_plugin);
 }
 
-
+/**
+ *
+ * @param name
+ * @param importFunction
+ * @deprecated use Import module instead
+ */
 mtFormInit.prototype.importDefine = function( name, importFunction ){
     var new_plugin = { name : importFunction };
     this.imports.push(new_plugin);
 }
 
+/**
+ *
+ * @param name
+ * @param resetFunction
+ */
 mtFormInit.prototype.resetDefine = function( name, resetFunction ){
     var new_plugin = { name : resetFunction };
     this.resets.push(new_plugin);
 }
 
+/**
+ *
+ * @param name
+ * @returns {boolean}
+ */
 mtFormInit.prototype.pluginLoaded = function( name ){
     return $mtf.hasOwnProperty( name );
 }

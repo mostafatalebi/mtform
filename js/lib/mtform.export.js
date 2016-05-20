@@ -1,9 +1,82 @@
-$mtf.exportDefine( "mtForm", function(){
-    var data = {};
-    data.collection = $mtf.collection;
-    data.collection_ordered = $mtf.collectionOrdered;
-    data.collection_sequential = $mtf.collectionSequential;
-    data.collection_parsed = $mtf.collectionParsed;
-    data.form = $mtf.form;
-    return data;
-});
+
+
+var mtFormExportAPI = function(){};
+
+mtFormExportAPI.prototype.ExportSystem = new ExportSystem();
+
+/**
+ * Adds an export registry
+ * @param exportData Object|Array|String|Integer|Double the raw data to be exported
+ * @param exportKey String the name of the export item
+ * @param exportGroup String the group to which export belongs. Useful for third-party modules.
+ * @param forceOverride Boolean If true, then it does not check if an export item with the same key and group exists or not,
+ *                      and if one exists, it overrides that.
+ * @reference Uses EventSystem API
+ * @constructor
+ */
+mtFormExportAPI.prototype.Add = function(exportData, exportKey, exportGroup, forceOverride){
+    var Arguments = {
+        "exportData" : exportData,
+        "exportKey" : exportKey,
+        "exportGroup" : exportGroup,
+        "forceOverride" : forceOverride,
+    };
+
+    var eventObject = new EventObject({ target : Arguments, type : 'onExportAdd'});
+
+
+    /**
+     * @target Object
+     * @type onInit
+     */
+    eventObject = EventEngine.dispatchEvent("onExportAdd", "export", eventObject);
+
+
+    return this.ExportSystem.EntryRegister(exportData, exportKey, exportGroup, forceOverride);
+}
+
+/**
+ * Does the same as Add() function, but first checks to see if the entry is added,
+ * and if yes, skips the operation.
+ * @param exportData Object|Array|String|Integer|Double
+ * @param exportKey String
+ * @param exportGroup String
+ * @constructor
+ */
+mtFormExportAPI.prototype.AddIfNotExists = function(exportData, exportKey, exportGroup){
+    return this.ExportSystem.EntryRegister(exportData, exportKey, exportGroup, 0);
+}
+
+/**
+ * Returns the final version of all exports data
+ * @param exportGroupName String [optional] if passed, the the returned object is limited to the group
+ * @param exportKey String [optional] Should only be used if exportGroupName is specified. Limits the
+ *                                         returned output to a key of a group.
+ * @constructor
+ */
+mtFormExportAPI.prototype.Output = function(exportGroupName, exportKey){
+    if(typeof exportGroupName == 'string')
+    {
+        if(typeof exportKey == 'string')
+        {
+            return this.ExportSystem.__export_get_entry(exportKey, exportGroupName);
+        }
+        else
+        {
+            return this.ExportSystem.__export_get_all_entries(exportKey);
+        }
+    }
+    return this.ExportSystem.__export_get_all_entries();
+}
+
+
+
+
+
+
+
+
+
+
+
+mtFormInit.prototype.Export = new mtFormExportAPI();

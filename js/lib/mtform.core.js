@@ -141,7 +141,11 @@ function mtFormInit(container_selector){
         label : "<label :attrs >:innerValue:</label>"
     }
 
-    EventEngine.dispatchEvent("onInit", "mtform", new EventObject({ target : this, type : 'onInit'}));
+    /**
+     * @target No Target
+     * @type onInit
+     */
+    EventEngine.dispatchEvent("onInit", "mtform", new EventObject({ target : null, type : 'onInit'}));
 };
 
 /**
@@ -157,6 +161,12 @@ mtFormInit.prototype.getInstance = function(){
  * @returns {*} container element
  */
 mtFormInit.prototype.getContainer = function(){
+    var contr = this.container;
+    /**
+     * @target No Target
+     * @type onContainerRetrieval
+     */
+    EventEngine.dispatchEvent("onContainerRetrieval", "mtform", new EventObject({ target : contr, type : 'onContainerRetrieval'}));
     return this.container;
 }
 
@@ -174,6 +184,7 @@ mtFormInit.prototype.setContainer = function(selector){
  *
  * @param keep_old_stuff
  * @constructor
+ * @deprecated
  */
 mtFormInit.prototype.Reset = function(keep_old_stuff){
 
@@ -259,7 +270,11 @@ mtFormInit.prototype.__setLastComponentType = function(componentType){
     // returns nothing, since this is a system function
 }
 
-
+/**
+ * @todo An Export/Import System should be introduced
+ * @deprecated
+ * @private
+ */
 mtFormInit.prototype.__transferToStore = function(){
 
     this.store.push(
