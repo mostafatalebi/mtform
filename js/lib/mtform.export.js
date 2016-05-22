@@ -23,13 +23,12 @@ mtFormExportAPI.prototype.Add = function(exportData, exportKey, exportGroup, for
     };
 
     var eventObject = new EventObject({ target : Arguments, type : 'onExportAdd'});
-
-
     /**
+     * @Event onExportAdd
      * @target Object
      * @type onInit
      */
-    eventObject = EventEngine.dispatchEvent("onExportAdd", eventObject);
+    eventObject = $mtf.Event.dispatchEvent("onExportAdd", eventObject);
 
 
     return this.ExportSystem.EntryRegister(exportData, exportKey, exportGroup, forceOverride);
@@ -55,28 +54,32 @@ mtFormExportAPI.prototype.AddIfNotExists = function(exportData, exportKey, expor
  * @constructor
  */
 mtFormExportAPI.prototype.Output = function(exportGroupName, exportKey){
+    var result = null;
     if(typeof exportGroupName == 'string')
     {
         if(typeof exportKey == 'string')
         {
-            return this.ExportSystem.__export_get_entry(exportKey, exportGroupName);
+            result = this.ExportSystem.__export_get_entry(exportKey, exportGroupName);
         }
         else
         {
-            return this.ExportSystem.__export_get_all_entries(exportKey);
+            result = this.ExportSystem.__export_get_all_entries(exportGroupName);
         }
     }
-    return this.ExportSystem.__export_get_all_entries();
+    else
+    {
+        result =  this.ExportSystem.__export_get_all_entries();
+    }
+
+    var eventObject = new EventObject({ target : result, type : 'onExportOutput'});
+    /**
+     * @Event onExportOutput
+     * @target Object
+     * @type onInit
+     */
+    eventObject = $mtf.Event.dispatchEvent("onExportOutput", eventObject);
+
+    return eventObject.target;
 }
-
-
-
-
-
-
-
-
-
-
 
 mtFormInit.prototype.Export = new mtFormExportAPI();

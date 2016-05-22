@@ -14,7 +14,7 @@ mtFormInit.prototype.generate = function(){
      * @target No Target
      * @type onInit
      */
-    EventEngine.dispatchEvent("onBeforeGenerate", "mtform",
+    $mtf.Event.dispatchEvent("onBeforeGenerate", "mtform",
         new EventObject({ target : this.collections, type : 'onBeforeGenerate'}));
 
     // if it is set, then applies it
@@ -66,7 +66,7 @@ mtFormInit.prototype.generate = function(){
      * @target No Target
      * @type onInit
      */
-    EventEngine.dispatchEvent("onAfterGenerate", "mtform",
+    $mtf.Event.dispatchEvent("onAfterGenerate", "mtform",
         new EventObject({ target : collection_to_html, type : 'onAfterGenerate'}));
 };
 

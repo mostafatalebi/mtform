@@ -145,7 +145,7 @@ function mtFormInit(container_selector){
      * @target No Target
      * @type onInit
      */
-    EventEngine.dispatchEvent("onInit", new EventObject({ target : null, type : 'onInit'}));
+    this.Event.dispatchEvent("onInit", new EventObject({ target : null, type : 'onInit'}));
 };
 
 /**
@@ -166,7 +166,8 @@ mtFormInit.prototype.getContainer = function(){
      * @target No Target
      * @type onContainerRetrieval
      */
-    EventEngine.dispatchEvent("onContainerRetrieval", "mtform", new EventObject({ target : contr, type : 'onContainerRetrieval'}));
+    $mtf.Event.dispatchEvent("onContainerRetrieval", new EventObject({ target : contr,
+        type : 'onContainerRetrieval'}));
     return this.container;
 }
 
@@ -260,6 +261,7 @@ mtFormInit.prototype.versionCompare = function(version_string, strict){
  * @private
  */
 mtFormInit.prototype.__addComponentInstance = function(component, componentCollection){
+
     this.collections[componentCollection].push(component);
     // returns nothing, since this is a system function
 }

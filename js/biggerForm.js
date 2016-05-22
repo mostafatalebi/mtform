@@ -1,6 +1,7 @@
 window.onload = function(){
     $mtf.setContainer(".form-holder");
 
+
     $mtf.Input("firstname", { class : "form-input"}).Rule("min", 3)
         .AttachLabel( "First Name: ")
         .Input("lastname").Rule("required").Rule("min", 3)
@@ -32,8 +33,40 @@ window.onload = function(){
 
         $mtf.Eventize("#login-form");
 
-    EventEngine.addEventListener("onExportAdd", function(event){
-            console.log("I am from Export Module");
+
+
+    /**
+     * Core
+     */
+    $mtf.Event.Register("onInit");
+    $mtf.Event.Register("onTemplateParsing");
+
+
+    /**
+     * Export
+     */
+    $mtf.Event.Register(["onExportAdd", "onExportOutput"]); 
+
+
+
+
+    /**
+     * example
+     */
+    $mtf.Event.addEventListener("onInit", function(event){
+        event.preventDefault();
+        console.log("I have been triggered.");
+    });
+    /**
+     * example
+     */
+    $mtf.Event.addEventListener("onAfterGenerate", function(event){
+        console.log(event.target);
+    });
+
+    $mtf.Event.addEventListener("onExportOutput", function(event){
+        event.mostafa = 'onExportOutput';
+        console.log("I am from Export Module");
     });
     
     $mtf.Export.Add({ id : 23}, "keyName", "core");

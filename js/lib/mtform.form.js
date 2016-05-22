@@ -1,8 +1,11 @@
 /**
  The main interface for creating the components. This file contains all the methods and properties
- which required to generate a form component of any type.
+ which are required to generate a form component of any type.
  **/
-
+//@todo should make a new mode for dead form components. This allows the user to add form components which s/he does not want to trace.
+//@todo [continued]. An example can be: $mtf.makeDead().Input(). This adds an HTML input without any system trace.
+//@todo [continued]. We can some tweaks such as MakeNextDead() to turn on DeadMode just for one component and turn it off right after one usage.
+//@todo [continued]. But this can also be something to be considered for future versions.
 // ===================
 // FORM COMPONENTS
 // ===================

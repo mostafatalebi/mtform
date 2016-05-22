@@ -1,6 +1,17 @@
 
 EventSystem.prototype.Register = function(eventName){
-    return this.__event_system_register(eventName);
+    if( typeof eventName == 'string' )
+    {
+        return this.__event_system_register(eventName);
+    }
+    else if (typeof eventName == 'object')
+    {
+        for(var eventInc = 0; eventInc < eventName.length; eventInc++)
+        {
+            this.__event_system_register(eventName[eventInc]);
+            return true;
+        }
+    }
 }
 
 EventSystem.prototype.Exists = function(eventName ){
@@ -14,25 +25,36 @@ EventSystem.prototype.addEventListener = function(eventName, eventCallback, even
 EventSystem.prototype.dispatchEvent = function(eventName, eventObject) {
     if( this.__event_exists(eventName) )
     {
-        var events = this.__event_system_fetch_by_event_name(eventName);
-        var keys = Object.keys(events);
+        try{
+            var events = this.__event_system_fetch_by_event_name(eventName);
+            if( events )
+            {
+                var keys = Object.keys(events);
 
-        for(var eventItr = 0; (eventItr < keys.length); eventItr++)
-        {
-            /* if(!eventObject.allowBubble())*/
-            //{
-                var callback = events[keys[eventItr]];
-                callback.callback(eventObject);
-            //}
+                for(var eventItr = 0; (eventItr < keys.length); eventItr++)
+                {
+                    /* if(!eventObject.allowBubble())*/
+                    //{
+                    var callback = events[keys[eventItr]];
+                    callback.callback(eventObject);
+                    //}
+                }
+                if(eventObject.isDefaultPrevented())
+                {
+                    /**
+                     * @todo we should devise some mechanism to utilize this return false. Because it would be of
+                     * no use if preventDefault() allow the normal execution flow of an event.
+                     */
+                    return false;
+                }
+                return eventObject;
+            }
+
         }
-        if(eventObject.isDefaultPrevented())
+        catch(e)
         {
-            /**
-             * @todo we should devise some mechanism to utilize this return false. Because it would be of
-             * no use if preventDefault() allow the normal execution flow of an event.
-             */
-            return false;
+            console.error("Cannot dispatch the event '"+eventName+". Check to see if the event name is correct.");
         }
-        return eventObject;
+
     }
 }
