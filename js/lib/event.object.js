@@ -27,6 +27,19 @@ EventObject.prototype.target  = null;
  * @type {null}
  */
 EventObject.prototype.timestamp  = null;
+/**
+ * @dependency Should be used when preventDefault() is used.
+ * The result of a listener; it used to return [data] in necessary methods where preventDefault is
+ * checked for an event. It cannot be used everywhere is the method in which the dispatchEvents() is
+ * used should accommodate the usage of result. Since $EventObject.result replaces a method's default
+ * return and hence it should be used with full awareness.
+ * Note: $EventObject.result is a property which should be used with the end-user's listener, it is not
+ * system-assigned property. For instance while adding an event listener for event "templateProcess", you
+ * can use this property to return your own version of the template. It is a MUST to call preventDefault()
+ * on event object because otherwise the .result value is ignored and technically it would not be used.
+ * @type {null}
+ */
+EventObject.prototype.result  = null;
 
 /**
  * Prevents the event from executing its default
@@ -41,7 +54,7 @@ EventObject.prototype.preventDefault = function(){
  * Checks if the event is prevented
  */
 EventObject.prototype.isDefaultPrevented = function(){
-    this.defaultPrevented = false;
+    return this.defaultPrevented;
 }
 
 /**
@@ -56,7 +69,7 @@ EventObject.prototype.continueDefault = function(){
  * @param targetObject Object|Array|String|Integer
  */
 EventObject.prototype.setTarget = function(targetObject){
-    // this.timestamp = sth
+    this.target = targetObject;
 }
 
 /**

@@ -1,6 +1,17 @@
 window.onload = function(){
     $mtf.setContainer(".form-holder");
 
+    /**
+     * Sample addEventListener Usage
+     */
+    $mtf.Event.addEventListener("onTemplateProcess", function(event){
+        event.preventDefault();
+        if(event.target.args.hasOwnProperty("name"))
+        {
+            event.target.args.name += "-APPENDED";
+        }
+    });
+
 
     $mtf.Input("firstname", { class : "form-input"}).Rule("min", 3)
         .AttachLabel( "First Name: ")
@@ -35,11 +46,7 @@ window.onload = function(){
 
 
 
-    /**
-     * Core
-     */
-    $mtf.Event.Register("onInit");
-    $mtf.Event.Register("onTemplateParsing");
+
 
 
     /**
@@ -68,6 +75,8 @@ window.onload = function(){
         event.mostafa = 'onExportOutput';
         console.log("I am from Export Module");
     });
+
+
     
     $mtf.Export.Add({ id : 23}, "keyName", "core");
 }

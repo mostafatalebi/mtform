@@ -7,6 +7,19 @@ EventSystem.prototype.events_list = {'root' : {}};
 
 EventSystem.prototype.events_listening = {'root':{}};
 
+EventSystem.prototype.config = {
+    /**
+     * A value used by preventDefault() to determine its state of
+     * strictness.
+     * 1 ==> [normal] allows continuation of the default flow
+     * 2 ==> [strict] Prevents the default flow and closes the caller-function
+     * by returning any accessible value
+     */
+    prevention_type : 1,
+};
+
+EventSystem.prototype.$EventObject = {};
+
 
 EventSystem.prototype.__event_system_add_listener = function(eventName, eventCallback, eventWeight){
     /**
@@ -66,6 +79,49 @@ EventSystem.prototype.__event_exists = function(eventName){
     catch(e)
     {
         console.warn(e.message);
+    }
+}
+
+
+/**
+ *
+ * @param eventObject
+ * @returns {*}
+ * @private
+ */
+EventSystem.prototype.__check_prevention_state = function(eventObject){
+    try {
+        if(typeof eventObject !== 'object' )
+        {
+            return false;
+        }
+
+        if( eventObject.isDefaultPrevented() )
+        {
+            if(eventObject.hasOwnProperty('result'))
+            {
+                return eventObject.result;
+            }
+            else
+            {
+                if( this.config.prevention_type == 2 ) // STRICT
+                {
+                    //this.ErrorHandler.show("STRICT", "Event", 101)@todo must create an error handler
+                    console.error("Event's default is prevented but no event.result is defined which results in NULL return value. You can change this behavior through event prevention's parameters.");
+                    return false;
+                }
+                else if(this.config.prevention_type == 2) // NORMAL
+                {
+                    // nothing
+                }
+            }
+        }
+        return -1;
+    }
+    catch(e)
+    {
+        console.warn(e.message);
+        return false;
     }
 }
 

@@ -1,5 +1,21 @@
-mtFormInit.prototype.html_inject = function(component_last_collection_properties, insertion_type, array_skip)
+mtFormInit.prototype.html_inject = function(component_last_collection_properties, insertion_type, skip_aggregated)
 {
+    /**
+     * @event onHTMLBeforeInjection
+     * @type {*}
+     */
+    var eventObject = $mtf.Event.dispatchEvent("onHTMLBeforeInjection", new EventObject({
+        target : {
+            "component_last_collection_properties" : component_last_collection_properties,
+            "insertion_type" : insertion_type,
+            "skip_aggregated" : skip_aggregated
+        } ,
+        type : 'onHTMLBeforeInjection'}));
+    var eventPrevention = this.Event.checkPreventionState(eventObject);
+    if(eventPrevention != false && eventPrevention != -1)
+        return eventPrevention;
+    
+
     if(insertion_type == 'after')
     {
         if(typeof this.collections[component_last_collection_properties.type][component_last_collection_properties.index] !== "object")
@@ -9,7 +25,7 @@ mtFormInit.prototype.html_inject = function(component_last_collection_properties
         }
         else // if it is object
         {
-            if(array_skip == false)
+            if(skip_aggregated == false)
             {
                 for(var i = 0; i < this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length; i++)
                 {
@@ -43,7 +59,7 @@ mtFormInit.prototype.html_inject = function(component_last_collection_properties
         }
         else // if it is object
         {
-            if(array_skip == false)
+            if(skip_aggregated == false)
             {
                 for(var i = 0; i < this.collections[component_last_collection_properties.type][component_last_collection_properties.index].length; i++)
                 {
@@ -123,6 +139,7 @@ mtFormInit.prototype.create_custom = function(component_type, value, args){
     return this;
 }
 /**
+ * @todo documentation of this method is wrong and incomplete. Must be re-written
  * Create a form element from a set of pre-defined elements (covering all form elements)
  * @param element string name of the form element: "input" "textarea" etc.
  * @param args object key represent the name attribute and value is its value
@@ -132,7 +149,29 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     var arguments = "";
 
 
+    /**
+     * @event onComponentBeforeCreate
+     * @type {*}
+     */
+    var eventObject = $mtf.Event.dispatchEvent("onComponentBeforeCreate", new EventObject({
+        target : {
+            "component_type" : component_type,
+            "args" : args,
+            "secondaryArgs" : secondaryArgs
+        } ,
+        type : 'onComponentBeforeCreate'}));
+    var eventPrevention = this.Event.checkPreventionState(eventObject);
+    if(eventPrevention != false && eventPrevention != -1)
+        return eventPrevention;
 
+
+    if(typeof eventObject == 'object')
+    {
+        component_type = eventObject.target.component_type;
+        args = eventObject.target.args;
+        secondaryArgs = eventObject.target.secondaryArgs;
+    }
+    // END OF EVENT DISPATCHING
 
     // we make sure if no param is passed, to re-declare it
     // as a object so to avoid future undefined errors
@@ -210,6 +249,19 @@ mtFormInit.prototype.create = function(component_type, args, secondaryArgs){
     // we keep track of the last generated component's type and index.
     this.lastQueried = component_type;
     this.componentLastInfo = component_last_collection_properties;
+
+    /**
+     * Dispatching Event Listeners
+     * @type {EventObject}
+     */
+    $mtf.Event.dispatchEvent("onComponentAfterCreate", new EventObject({ target : {
+        "component_type" : component_type,
+        "args" : args,
+        "secondaryArgs" : secondaryArgs,
+        "component_last_info" : component_last_collection_properties,
+        "template" : inp,
+    }, type : 'onComponentAfterCreate'}));
+    // END OF EVENT DISPATCHING
 }
 
 mtFormInit.prototype.addInput = function(attrs){

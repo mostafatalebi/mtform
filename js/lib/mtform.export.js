@@ -28,7 +28,7 @@ mtFormExportAPI.prototype.Add = function(exportData, exportKey, exportGroup, for
      * @target Object
      * @type onInit
      */
-    eventObject = $mtf.Event.dispatchEvent("onExportAdd", eventObject);
+    $mtf.Event.dispatchEvent("onExportAdd", eventObject);
 
 
     return this.ExportSystem.EntryRegister(exportData, exportKey, exportGroup, forceOverride);

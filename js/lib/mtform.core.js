@@ -162,13 +162,15 @@ mtFormInit.prototype.getInstance = function(){
  */
 mtFormInit.prototype.getContainer = function(){
     var contr = this.container;
+
+    var eventObject = new EventObject({ target : contr, type : 'onContainerGet'});
     /**
      * @target No Target
      * @type onContainerRetrieval
      */
-    $mtf.Event.dispatchEvent("onContainerRetrieval", new EventObject({ target : contr,
-        type : 'onContainerRetrieval'}));
-    return this.container;
+    $mtf.Event.dispatchEvent("onContainerGet", eventObject);
+
+    return eventObject.target;
 }
 
 /**
@@ -185,7 +187,7 @@ mtFormInit.prototype.setContainer = function(selector){
  *
  * @param keep_old_stuff
  * @constructor
- * @deprecated
+ * @deprecated Use Reset subModule
  */
 mtFormInit.prototype.Reset = function(keep_old_stuff){
 
@@ -274,7 +276,7 @@ mtFormInit.prototype.__setLastComponentType = function(componentType){
 
 /**
  * @todo An Export/Import System should be introduced
- * @deprecated
+ * @deprecated Use Export Module Instead
  * @private
  */
 mtFormInit.prototype.__transferToStore = function(){

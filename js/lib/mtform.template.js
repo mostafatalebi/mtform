@@ -25,6 +25,15 @@ mtFormInit.prototype.template_parse = function(placeholder, replaceValue)
  * @returns {*}
  */
 mtFormInit.prototype.template_fetch = function(key){
+    /**
+     * @event onTemplateBeforeFetch
+     */
+    var eventObject = $mtf.Event.dispatchEvent("onTemplateBeforeFetch", new EventObject({
+        target : key , type : 'onTemplateBeforeFetch'}));
+
+    if(typeof eventObject == 'object' && eventObject.hasOwnProperty("target"))
+        key = eventObject.target;
+
     return this.templatesFormComponents[key];
 }
 
@@ -34,10 +43,30 @@ mtFormInit.prototype.template_fetch = function(key){
  * @param placeholders an array of placeholders to be searched inside the template.
  * @param values an array of values to replace the placeholders. This array must be the same size of
  *               placeholders
- * @returns {string} a fully qualified template string
+ * @returns {string|boolean|integer|null} a fully qualified template string
  */
 mtFormInit.prototype.template_process = function(template, placeholders, values)
 {
+    /**
+     * @event onTemplateBeforeFetch
+     */
+    var eventObject = $mtf.Event.dispatchEvent("onTemplateProcess", new EventObject({
+        target : { "template" : template, "placeholders" : placeholders, "values" : values} , type : 'onTemplateProcess'}));
+    var eventPrevention = this.Event.checkPreventionState(eventObject);
+    if(eventPrevention != false && eventPrevention != -1)
+        return eventPrevention;
+
+
+
+    if(eventObject.hasOwnProperty("target"))
+    {
+        template = eventObject.target.template;
+        placeholders = eventObject.target.placeholders;
+        values = eventObject.target.values;
+    }
+
+
+    
     // we check to see if the template is a callback function, we execute the callback, get
     // the result of it, and go for the parsing.
     if(typeof template === 'function')
